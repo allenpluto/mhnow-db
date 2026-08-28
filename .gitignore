@@ -1,0 +1,7 @@
+node_modules/
+
+# Written by build.js only when data.json actually changes, so that `npm run
+# check` can diff against the previous snapshot. It is a 6.7 MB working file
+# that would otherwise land in every commit; the diff it supports is a local
+# concern, and data.json itself is committed.
+data.prev.json

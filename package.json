@@ -1,0 +1,17 @@
+{
+  "name": "mhnow-db",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Monster Hunter Now equipment & skills database, plus an armour picker",
+  "scripts": {
+    "build": "node build.js",
+    "check": "node build.js && node diff.js",
+    "export": "node export.js",
+    "sheet": "node sheet.js"
+  },
+  "devDependencies": {
+    "clean-css": "4.2.4",
+    "exceljs": "^4.3.0",
+    "terser": "4.8.1"
+  }
+}

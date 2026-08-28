@@ -1,0 +1,24 @@
+# In-game kinsect readings, supplied by the user, for deriving the display names
+# of the source's kinsect enums.
+#
+# The game shows four attributes, in this order:
+#   Kinsect type / Performance type / Attack type / Kinsect bonus
+# mapping onto kinsect_attack_type / kinsect_parameter_type /
+# kinsect_attack_attribute / kinsect_bonus_kind.
+#
+# The source's attack level and stamina level are NOT shown in game; they form a
+# single hidden axis with only three combinations.
+#
+# Format:  Weapon name | slot1, slot2, slot3, slot4
+# Read cold, without reference to what the database already holds.
+
+Abominable Glaive | Assist, Power, Severing, Assist Bonus
+Amber Piton+ | Flight, Rapid, Blunt, Follow-Up Bonus
+Azure Flightmaster | Powder, Stamina, Blunt, Stamina Bonus
+Accursed Rod | Assist, Rapid, Blunt, Charged Harvest Bonus
+Beo Glaive | Assist, Stamina, Blunt, Stun Bonus
+Catastrophe's Light | Flight, Power, Blunt, Aerial Bonus
+Deadline | Assist, Stamina, Severing, Elemental Bonus
+Hard Bone Rod | Assist, Rapid, Blunt, Harvest Bonus
+Despot's Twinbolt | Powder, Power, Severing, Mighty Powder Bonus
+Hazy Caster | Powder, Power, Blunt, Cluster Powder Bonus

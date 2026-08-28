@@ -1,0 +1,1239 @@
+{
+  "_README": [
+    "Event weapons that monsterhunternow.com does not publish. The source has NO",
+    "event weapons at all, so these can never arrive via build.js — they live here",
+    "and are merged in on every build, which is why they survive a rebuild.",
+    "",
+    "Only supply what you actually know. A weapon with just its 10-5 state gets one",
+    "grade entry at grade 10 with a single level 5 row; it will then appear in",
+    "v_weapon_10_5 and the picker, and correctly NOT appear in v_weapon_8_2.",
+    "",
+    "Ids: series ids from 9000 and game_weapon_id from 900000 are reserved for",
+    "manual rows. build.js fails loudly if one ever collides with a real game id.",
+    "",
+    "recoil/reload use the game's enum vocabulary so they match the rows that",
+    "come from the source. The in-game wording maps as follows — derived by",
+    "matching 192 ammo entries in MHN.xlsx against the same entries in the",
+    "source, so this is measured rather than guessed:",
+    "  recoil  Low=SMALL  Average=MEDIUM  High=LARGE *or* LARGE_2  Very high=EXTRA_LARGE  Wyvern=WYVERN",
+    "  reload  Fast=SMALL Normal=MEDIUM   Slow=LARGE *or* LARGE_2   Very slow=EXTRA_LARGE",
+    "",
+    "NOTE the game collapses LARGE and LARGE_2 into one label for both stats, so",
+    "an in-game reading of 'High recoil' or 'Slow reload' cannot tell you which",
+    "of the two it is. Rose Assault's entries below pick LARGE; if it turns out",
+    "to be LARGE_2 the only thing that changes is the displayed wording.",
+    "",
+    "skills[] holds event skills the source does not publish either. They are",
+    "merged BEFORE the weapons, so an event weapon can reference one. Ids from",
+    "9100 are reserved for them; real skill ids currently reach 221."
+  ],
+  "series": [
+    {
+      "id": 9001,
+      "kind": "SERIES_MANUAL_EVENT",
+      "name": "Event (manual)",
+      "sort_order": 999000001,
+      "_note": "Placeholder grouping. If Rose Assault belongs to a named event set, rename this or add a series of its own."
+    },
+    {
+      "id": 9002,
+      "kind": "SERIES_MANUAL_HOPE_SET",
+      "name": "Hope Set",
+      "sort_order": 999009002
+    },
+    {
+      "id": 9003,
+      "kind": "SERIES_MANUAL_FORTUNE_DRAGON_SET",
+      "name": "Fortune Dragon Set",
+      "sort_order": 999009003
+    },
+    {
+      "id": 9004,
+      "kind": "SERIES_MANUAL_HALLOWEEN_SET",
+      "name": "Halloween Set",
+      "sort_order": 999009004
+    },
+    {
+      "id": 9005,
+      "kind": "SERIES_MANUAL_SWIMMER_SET",
+      "name": "Swimmer Set",
+      "sort_order": 999009005
+    },
+    {
+      "id": 9006,
+      "kind": "SERIES_MANUAL_MRBEAST_SET",
+      "name": "MrBeast Set",
+      "sort_order": 999009006
+    },
+    {
+      "id": 9007,
+      "kind": "SERIES_MANUAL_NEW_YEAR_2026_SET",
+      "name": "New Year 2026 Set",
+      "sort_order": 999009007,
+      "_note": "Name confirmed by the user 2026-08-20 when supplying Wrapping Bow."
+    },
+    {
+      "id": 9008,
+      "kind": "SERIES_MANUAL_SPRING_2025_SET",
+      "name": "Spring 2025 Set",
+      "sort_order": 999009008
+    },
+    {
+      "id": 9009,
+      "kind": "SERIES_MANUAL_SUMMER_OF_HUNTERS_2026",
+      "name": "Summer of Hunters 2026",
+      "sort_order": 999009009,
+      "_note": "In-game event name, given by the user 2026-08-27."
+    }
+  ],
+  "weapons": [
+    {
+      "kind": "MANUAL_ROSE_ASSAULT",
+      "name": "Rose Assault",
+      "low_name": "Rose Assault",
+      "series_id": 9001,
+      "category": "LIGHT_BOWGUN",
+      "category_label": "Light Bowgun",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "Supplied by the user 2026-08-07: fully upgraded, 10-5 only.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900001,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2633,
+              "element_attack": 0,
+              "affinity": -40
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Critical Ferocity",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "ammo": [
+        {
+          "ammo_type": "PIERCING",
+          "element": "NO_ELEMENT",
+          "name": "Pierce Ammo 1",
+          "capacity": 4,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_LARGE",
+          "_ingame": "High recoil, Slow reload"
+        },
+        {
+          "ammo_type": "SLICING",
+          "element": "NO_ELEMENT",
+          "name": "Slicing Ammo",
+          "capacity": 2,
+          "recoil": "RECOIL_EXTRA_LARGE",
+          "reload": "RELOAD_MEDIUM",
+          "_ingame": "Very high recoil, Normal reload"
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1,
+      "_style": "Style selectable per the user 2026-08-20. Set on the weapon rather than on the \"Event (manual)\" series, which is only a placeholder grouping and may later hold weapons that are not."
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_SWORD",
+      "name": "Esperanza Sword",
+      "low_name": "Hope Sword",
+      "series_id": 9002,
+      "category": "SWORD_SHIELD",
+      "category_label": "Sword & Shield",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900002,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_FORTUNE_DRAGON_FANS",
+      "name": "Fortune Dragon Fans",
+      "low_name": "Fortune Dragon Fans",
+      "series_id": 9003,
+      "category": "DUAL_BLADES",
+      "category_label": "Dual Blades",
+      "element": "DRAGON",
+      "element_label": "Dragon",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900003,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1549,
+              "element_attack": 1131,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Divine Blessing",
+              "level": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_DAGGERS",
+      "name": "Esperanza Daggers",
+      "low_name": "Hope Daggers",
+      "series_id": 9002,
+      "category": "DUAL_BLADES",
+      "category_label": "Dual Blades",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900004,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_BLADE",
+      "name": "Esperanza Blade",
+      "low_name": "Hope Blade",
+      "series_id": 9002,
+      "category": "GREAT_SWORD",
+      "category_label": "Great Sword",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900005,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_SQUAWKSCYTHE",
+      "name": "Squawkscythe",
+      "low_name": "Cawscythe",
+      "series_id": 9004,
+      "category": "LONG_SWORD",
+      "category_label": "Long Sword",
+      "element": "DRAGON",
+      "element_label": "Dragon",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900006,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1463,
+              "element_attack": 1420,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Power Prolonger",
+              "level": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_EDGE",
+      "name": "Esperanza Edge",
+      "low_name": "Hope Edge",
+      "series_id": 9002,
+      "category": "LONG_SWORD",
+      "category_label": "Long Sword",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900007,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_LUCKY_DRAGON_HAMMER",
+      "name": "Lucky Dragon Hammer",
+      "low_name": "Lucky Dragon Hammer",
+      "series_id": 9003,
+      "category": "HAMMER",
+      "category_label": "Hammer",
+      "element": "DRAGON",
+      "element_label": "Dragon",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900008,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1549,
+              "element_attack": 1131,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Divine Blessing",
+              "level": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_HAMMER",
+      "name": "Esperanza Hammer",
+      "low_name": "Hope Hammer",
+      "series_id": 9002,
+      "category": "HAMMER",
+      "category_label": "Hammer",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900009,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_SKULLWHISTLE",
+      "name": "Skullwhistle",
+      "low_name": "Skullwhistle",
+      "series_id": 9004,
+      "category": "HUNTING_HORN",
+      "category_label": "Hunting Horn",
+      "element": "PARALYSIS",
+      "element_label": "Paralysis",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900010,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1912,
+              "element_attack": 417,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Shared Sword",
+              "level": 3
+            }
+          ]
+        }
+      ],
+      "melodies": [
+        {
+          "kind": "MELODY_EARPLUGS_L",
+          "name": "Earplugs (L)"
+        },
+        {
+          "kind": "MELODY_DIVINE_PROTECTION",
+          "name": "Divine Protection"
+        },
+        {
+          "kind": "MELODY_ATTACK_BOOST_S",
+          "name": "Attack Up (S)"
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_LANCE",
+      "name": "Esperanza Lance",
+      "low_name": "Hope Lance",
+      "series_id": 9002,
+      "category": "LANCE",
+      "category_label": "Lance",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900011,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_GUNLANCE",
+      "name": "Esperanza Gunlance",
+      "low_name": "Hope Gunlance",
+      "series_id": 9002,
+      "category": "GUNLANCE",
+      "category_label": "Gunlance",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900012,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "shelling_type": "SHELLING_NORMAL",
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_AXE",
+      "name": "Esperanza Axe",
+      "low_name": "Hope Axe",
+      "series_id": 9002,
+      "category": "SWITCH_AXE",
+      "category_label": "Switch Axe",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900013,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "phial_type": "PHIAL_POWER",
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_STRONGARM",
+      "name": "Esperanza Strongarm",
+      "low_name": "Hope Strongarm",
+      "series_id": 9002,
+      "category": "CHARGE_BLADE",
+      "category_label": "Charge Blade",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900014,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "phial_type": "PHIAL_IMPACT",
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_LUCKY_LIGHT_BOWGUN",
+      "name": "Lucky Light Bowgun",
+      "low_name": "Lucky Light Bowgun",
+      "series_id": 9003,
+      "category": "LIGHT_BOWGUN",
+      "category_label": "Light Bowgun",
+      "element": "DRAGON",
+      "element_label": "Dragon",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900015,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1463,
+              "element_attack": 1420,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Slugger",
+              "level": 2
+            }
+          ]
+        }
+      ],
+      "ammo": [
+        {
+          "ammo_type": "NORMAL",
+          "element": "DRAGON",
+          "name": "Dragon Ammo",
+          "capacity": 5,
+          "recoil": "RECOIL_MEDIUM",
+          "reload": "RELOAD_MEDIUM"
+        },
+        {
+          "ammo_type": "STICKY",
+          "element": "DRAGON",
+          "name": "Sticky Dragon Ammo",
+          "capacity": 3,
+          "recoil": "RECOIL_EXTRA_LARGE",
+          "reload": "RELOAD_LARGE"
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_RIFLE",
+      "name": "Esperanza Rifle",
+      "low_name": "Hope Rifle",
+      "series_id": 9002,
+      "category": "LIGHT_BOWGUN",
+      "category_label": "Light Bowgun",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900016,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Artful Dodger",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "ammo": [
+        {
+          "ammo_type": "NORMAL",
+          "element": "POISON",
+          "name": "Poison Ammo 1",
+          "capacity": 3,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_MEDIUM"
+        },
+        {
+          "ammo_type": "PIERCING",
+          "element": "NO_ELEMENT",
+          "name": "Pierce Ammo 1",
+          "capacity": 3,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_MEDIUM"
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_CANNON",
+      "name": "Esperanza Cannon",
+      "low_name": "Hope Cannon",
+      "series_id": 9002,
+      "category": "HEAVY_BOWGUN",
+      "category_label": "Heavy Bowgun",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records; read in game at 10-4 by the user, 2026-08-14",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900017,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Guard",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "ammo": [
+        {
+          "ammo_type": "PIERCING",
+          "element": "NO_ELEMENT",
+          "name": "Pierce Ammo 1",
+          "capacity": 6,
+          "recoil": "RECOIL_MEDIUM",
+          "reload": "RELOAD_EXTRA_LARGE"
+        },
+        {
+          "ammo_type": "STICKY",
+          "element": "NO_ELEMENT",
+          "name": "Sticky Ammo 1",
+          "capacity": 4,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_EXTRA_LARGE"
+        },
+        {
+          "ammo_type": "NORMAL",
+          "element": "POISON",
+          "name": "Poison Ammo 1",
+          "capacity": 5,
+          "recoil": "RECOIL_MEDIUM",
+          "reload": "RELOAD_LARGE"
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_SUMMER_BLASTER",
+      "name": "Summer Blaster",
+      "low_name": "Summer Blaster",
+      "series_id": 9005,
+      "category": "HEAVY_BOWGUN",
+      "category_label": "Heavy Bowgun",
+      "element": "FIRE",
+      "element_label": "Fire",
+      "_source": "user 2026-08-19, read at max: attack 1463, fire 1420, affinity 0, plus the ammo loadout. Both stat figures are confirmed 10-5 tiers. High recoil and Very slow reload could be LARGE or LARGE_2 — the game collapses the pair into one word — so LARGE is assumed.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900018,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1463,
+              "element_attack": 1420,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Super Swimmer 2025",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "ammo": [
+        {
+          "ammo_type": "NORMAL",
+          "element": "FIRE",
+          "name": "Flaming Ammo",
+          "capacity": 4,
+          "recoil": "RECOIL_SMALL",
+          "reload": "RELOAD_MEDIUM",
+          "_ingame": "Low recoil, Normal reload"
+        },
+        {
+          "ammo_type": "STICKY",
+          "element": "FIRE",
+          "name": "Sticky Fire Ammo",
+          "capacity": 3,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_EXTRA_LARGE",
+          "_ingame": "High recoil, Very slow reload"
+        },
+        {
+          "ammo_type": "CLUSTER",
+          "element": "FIRE",
+          "name": "Cluster Fire Ammo",
+          "capacity": 1,
+          "recoil": "RECOIL_LARGE",
+          "reload": "RELOAD_EXTRA_LARGE",
+          "_ingame": "High recoil, Very slow reload"
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_BOW",
+      "name": "Esperanza Bow",
+      "low_name": "Hope Bow",
+      "series_id": 9002,
+      "category": "BOW",
+      "category_label": "Bow",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records; skill corrected to Focus 1 by the user 2026-08-14 (sheet had Lock On, a melee skill)",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900019,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Focus",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "arrows": [
+        {
+          "kind": "ARROW_RAPID_01",
+          "family": "RAPID",
+          "name": "Rapid Lv. 1"
+        },
+        {
+          "kind": "ARROW_RAPID_02",
+          "family": "RAPID",
+          "name": "Rapid Lv. 2"
+        },
+        {
+          "kind": "ARROW_RAPID_03",
+          "family": "RAPID",
+          "name": "Rapid Lv. 3"
+        },
+        {
+          "kind": "ARROW_SPREAD_04",
+          "family": "SPREAD",
+          "name": "Spread Lv. 4"
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_MRBEAST_SWORD_SHIELD",
+      "name": "MrBeast Sword & Shield",
+      "low_name": "MrBeast Sword & Shield",
+      "series_id": 9006,
+      "category": "SWORD_SHIELD",
+      "category_label": "Sword & Shield",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "user 2026-08-14; 10-1 = 1821, 10-2 = 1911, 10-3 = 2001",
+      "_estimated": "10-5 attack 2182 is ESTIMATED. 1821 is not one of the 46 observed 10-1 tiers, so it could not be looked up. The true value is 2181 or 2182 — the observed ladders admit both and even a 10-4 reading would not separate them. Replace with the exact figure once the weapon is maxed.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900020,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2182,
+              "element_attack": 0,
+              "affinity": 30
+            }
+          ],
+          "skills": [
+            {
+              "skill": "MrBeast Challenge!",
+              "level": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_TWIN_WREATHES",
+      "name": "Twin Wreathes",
+      "low_name": "Twin Wreathes",
+      "series_id": 9007,
+      "category": "DUAL_BLADES",
+      "category_label": "Dual Blades",
+      "element": "PARALYSIS",
+      "element_label": "Paralysis",
+      "_source": "user 2026-08-14, read at max: attack 1903, paralysis buildup 516, affinity 0. Both figures verified against the known 10-5 tiers. Buildup is not damage and is excluded from the derived columns.",
+      "_low_name_unknown": "The low-grade name was not supplied; the max-grade name is repeated.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900021,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1903,
+              "element_attack": 516,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Evade Extender",
+              "level": 3
+            },
+            {
+              "skill": "Solidarity (New Year 2026)",
+              "level": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_BALLOON_BLADE",
+      "name": "Balloon Blade",
+      "low_name": "Balloon Blade",
+      "series_id": 9008,
+      "category": "GREAT_SWORD",
+      "category_label": "Great Sword",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "user-supplied: Balloon Blade | Great Sword | None | 1893 | 0 | Balloon Charge +Lv1 | set: Spring 2025 Set 10-5 attack 2268 confirmed by the user 2026-08-20; it was estimated from the off-table 10-1 1893 and turned out exact.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900022,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2268,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Balloon Charge",
+              "level": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_HORN",
+      "name": "Esperanza Horn",
+      "low_name": "Hope Horn",
+      "series_id": 9002,
+      "category": "HUNTING_HORN",
+      "category_label": "Hunting Horn",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "user-supplied: Esperanza Horn (hope) | Hunting Horn | melodies: Special Replenishment (S), Earplugs (L), Divine Protection",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900023,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "_assumed": "skill assumed to be the Hope Set melee default, Lock On 1",
+      "melodies": [
+        {
+          "kind": "MELODY_SPECIAL_GAUGE_S",
+          "name": "Special Replenishment (S)"
+        },
+        {
+          "kind": "MELODY_EARPLUGS_L",
+          "name": "Earplugs (L)"
+        },
+        {
+          "kind": "MELODY_DIVINE_PROTECTION",
+          "name": "Divine Protection"
+        }
+      ],
+      "customizable": 1,
+      "style_selectable": 1
+    },
+    {
+      "kind": "MANUAL_EGG_STRONGARM",
+      "name": "Egg Strongarm",
+      "low_name": "Egg Strongarm",
+      "series_id": 9008,
+      "category": "CHARGE_BLADE",
+      "category_label": "Charge Blade",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "user-supplied: Egg Strongarm | Charge Blade | None | 1893 | 0 | Eggsplosive +Lv1 | phial: Impact | set: Spring 2025 Set 10-5 attack 2268 confirmed by the user 2026-08-20; it was estimated from the off-table 10-1 1893 and turned out exact.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900024,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2268,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Eggsplosive",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "phial_type": "PHIAL_IMPACT"
+    },
+    {
+      "kind": "MANUAL_ESPERANZA_GLAIVE",
+      "name": "Esperanza Glaive",
+      "low_name": "Hope Glaive",
+      "series_id": 9002,
+      "category": "INSECT_GLAIVE",
+      "category_label": "Insect Glaive",
+      "element": "NO_ELEMENT",
+      "element_label": "No Element",
+      "_source": "user-supplied: Esperanza Glaive (hope) | Insect Glaive | kinsect: Flight / Rapid / Severing / Harvest Bonus",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900025,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 2251,
+              "element_attack": 0,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Lock On",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "_assumed": "skill assumed to be the Hope Set melee default, Lock On 1",
+      "kinsect_attack_attribute": "ATTACK_ATTRIBUTE_CUT",
+      "kinsect_parameter_type": "PARAMETER_TYPE_QUICK",
+      "kinsect_bonus_kind": "EXTEND_ENHANCEMENT",
+      "customizable": 1,
+      "style_selectable": 1,
+      "_style": "Marked style selectable on the user's reading 2026-08-20: insect glaives gained style selection in game and the source has not caught up.",
+      "kinsect_attack_type": "PIERCE",
+      "_kinsect": "In game: Flight / Rapid / Severing / Harvest Bonus. Mapped from readings taken 2026-08-20: Flight=PIERCE, Rapid=PARAMETER_TYPE_QUICK, Severing=ATTACK_ATTRIBUTE_CUT, Harvest Bonus=EXTEND_ENHANCEMENT. Attack level and stamina level are not shown in game and remain unknown for this weapon."
+    },
+    {
+      "kind": "MANUAL_WRAPPING_BOW",
+      "name": "Wrapping Bow",
+      "low_name": "Wrapping Bow",
+      "series_id": 9007,
+      "category": "BOW",
+      "category_label": "Bow",
+      "element": "THUNDER",
+      "element_label": "Thunder",
+      "_source": "user-supplied: Wrapping Bow | Bow | Thunder 1458 (max) | 1222 (max) | 0 | Ballistics +Lv2 | arrows: Rapid 1, Rapid 2, Rapid 3, Rapid 4 | set: New Year 2026 Set",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900026,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1222,
+              "element_attack": 1458,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Ballistics",
+              "level": 2
+            }
+          ]
+        }
+      ],
+      "arrows": [
+        {
+          "kind": "ARROW_RAPID_01",
+          "family": "RAPID",
+          "name": "Rapid Lv. 1"
+        },
+        {
+          "kind": "ARROW_RAPID_02",
+          "family": "RAPID",
+          "name": "Rapid Lv. 2"
+        },
+        {
+          "kind": "ARROW_RAPID_03",
+          "family": "RAPID",
+          "name": "Rapid Lv. 3"
+        },
+        {
+          "kind": "ARROW_RAPID_04",
+          "family": "RAPID",
+          "name": "Rapid Lv. 4"
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_TROPICAL_CANNON",
+      "name": "Tropical Cannon",
+      "low_name": "Tropical Cannon",
+      "series_id": 9009,
+      "category": "GUNLANCE",
+      "category_label": "Gunlance",
+      "element": "SLEEP",
+      "element_label": "Sleep",
+      "_source": "user 2026-08-27, read at max: attack 1817, sleep buildup 516, affinity 0 (confirmed). Both stat figures verified against the known 10-5 tiers. Sleep is a status, so the buildup value is not damage and is excluded from the derived columns.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_weapon_id": 900027,
+          "levels": [
+            {
+              "level": 5,
+              "attack": 1817,
+              "element_attack": 516,
+              "affinity": 0
+            }
+          ],
+          "skills": [
+            {
+              "skill": "Rude Awakener",
+              "level": 3
+            }
+          ]
+        }
+      ],
+      "shelling_type": "SHELLING_LONG",
+      "customizable": 1,
+      "style_selectable": 1,
+      "_style": "Style selectable and customisable per the user 2026-08-27."
+    }
+  ],
+  "skills": [
+    {
+      "id": 9101,
+      "kind": "MANUAL_BALLOON_CHARGE",
+      "name": "Balloon Charge",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "levels": [
+        "Whenever you charge up an attack/Special Skill to the max, your weapon will expand, increasing damage."
+      ]
+    },
+    {
+      "id": 9102,
+      "kind": "MANUAL_MRBEAST_CHALLENGE",
+      "name": "MrBeast Challenge!",
+      "category": "OTHERS",
+      "category_label": "Other",
+      "levels": [
+        "Great things will happen after using certain attacks!"
+      ]
+    },
+    {
+      "id": 9103,
+      "kind": "MANUAL_SOLIDARITY_HALLOWEEN",
+      "name": "Solidarity (Halloween)",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "levels": [
+        "Increases attack power relative to the number of fellow hunters with this skill activated. *If active during the Halloween event the effect is multiplied by 5."
+      ]
+    },
+    {
+      "id": 9104,
+      "kind": "MANUAL_EGGSPLOSIVE",
+      "name": "Eggsplosive",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "levels": [
+        "Whenever you activate Element Boost, your shield will begin to glow, powering up your phials’ explosions."
+      ]
+    },
+    {
+      "id": 9105,
+      "kind": "MANUAL_SWELTERING_SUMMER_2025",
+      "name": "Sweltering Summer 2025",
+      "category": "ELEMENT_BOOST",
+      "category_label": "Element",
+      "levels": [
+        "Increases weapon’s fire element value by 10.",
+        "Increases weapon’s fire element value by 20.",
+        "Increases weapon’s fire element value by 50."
+      ]
+    },
+    {
+      "id": 9106,
+      "kind": "MANUAL_SUPER_SWIMMER_2025",
+      "name": "Super Swimmer 2025",
+      "category": "OTHERS",
+      "category_label": "Other",
+      "levels": [
+        "Equipping 1 piece of the Swimmer Set significantly reduces bowgun reload time."
+      ]
+    },
+    {
+      "id": 9107,
+      "kind": "MANUAL_SOLIDARITY_NEW_YEAR_2026",
+      "name": "Solidarity (New Year 2026)",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "levels": [
+        "Increases attack power relative to the number of fellow hunters with this skill activated. *If active during the A Happy Hunting New Year 2026 event, the effect is multiplied by 5."
+      ],
+      "_source": "effect text read in game by the user 2026-08-14"
+    }
+  ]
+}

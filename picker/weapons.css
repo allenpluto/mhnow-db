@@ -1,0 +1,128 @@
+/* Weapon picker. Reuses the palette and base rules from app.css,
+   including the .sub a link colour. */
+
+/* ---------- filters ---------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+  align-items: flex-start;
+  padding: 12px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.fgroup { display: flex; flex-direction: column; gap: 5px; }
+.fgroup.narrow { min-width: 150px; }
+.flabel {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.checkrow { display: flex; flex-wrap: wrap; gap: 4px; max-width: 560px; }
+.checkrow label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.checkrow label:hover { border-color: var(--accent); }
+.checkrow input { accent-color: var(--accent); margin: 0; }
+.checkrow label.on { background: var(--accent-dim); border-color: var(--accent); }
+
+.filters select,
+.filters input[type=text] {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 13px;
+  min-width: 150px;
+}
+.filters select:focus, .filters input[type=text]:focus { outline: none; border-color: var(--accent); }
+.filters .linkbtn { align-self: flex-end; }
+
+/* ---------- assumptions note ---------- */
+
+.assumptions {
+  padding: 9px 20px;
+  background: #191c23;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.assumptions strong { color: var(--text); }
+.assumptions b { color: var(--text); font-weight: 600; }
+.assumptions em { color: var(--muted); }
+.assumptions .a {
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 8px;
+}
+.assumptions .warn { color: var(--danger); }
+
+/* ---------- table ---------- */
+
+main { padding: 12px 20px 50px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--line);
+  padding: 7px 9px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  z-index: 5;
+}
+thead th:hover { color: var(--text); }
+thead th.sorted { color: var(--accent); }
+thead th .dir { font-size: 9px; margin-left: 3px; }
+thead th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+tbody td { padding: 6px 9px; border-bottom: 1px solid #232833; white-space: nowrap; }
+tbody tr:hover { background: #1e222b; }
+tbody tr:nth-child(even) { background: #191d24; }
+tbody tr:nth-child(even):hover { background: #1e222b; }
+
+td.name { font-weight: 600; white-space: nowrap; }
+td.low { color: var(--muted); font-size: 11.5px; }
+td.attr { white-space: normal; min-width: 240px; color: #c3c9d6; font-size: 11.5px; }
+td.neg { color: var(--danger); }
+/* status buildup rate, not damage — deliberately de-emphasised so it is not
+   read as a damage number */
+td.buildup { color: var(--muted); font-style: italic; }
+td.buildup::after { content: '\2020'; font-style: normal; opacity: .7; margin-left: 2px; }
+td.calc { color: var(--match); }
+td.best { color: var(--accent); font-weight: 600; }
+
+/* the Best column: the winner of the three builds */
+th:nth-last-child(2), td.bestcol {
+  border-left: 1px solid var(--line);
+  background: rgba(217, 164, 65, .07);
+}
+td.bestcol { color: var(--accent); font-weight: 600; }
+
+.count { color: var(--muted); font-size: 12px; padding: 9px 2px 0; }
+.empty { padding: 22px; text-align: center; color: var(--muted); }
