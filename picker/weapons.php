@@ -187,15 +187,45 @@ foreach ($arrowLevels as $id => $lv) {
 // weapon have this melody at all. Keyed on `kind` rather than the display name,
 // because the manual entries used to carry a placeholder kind and keying on the
 // name would have quietly merged them.
-$melodyNames = array();
-foreach ($pdo->query('SELECT weapon_id, kind, name FROM weapon_horn_melody ORDER BY weapon_id, position')->fetchAll(PDO::FETCH_ASSOC) as $r) {
-    $id = (int) $r['weapon_id'];
-    if (!isset($weapons[$id])) continue;
-    $weapons[$id]['attr'][] = $r['name'];
-    if (!in_array($r['kind'], $weapons[$id]['ml'], true)) $weapons[$id]['ml'][] = $r['kind'];
-    $melodyNames[$r['kind']] = $r['name'];
+$melodyRows = $pdo->query('SELECT weapon_id, kind, name FROM weapon_horn_melody ORDER BY weapon_id, position')->fetchAll(PDO::FETCH_ASSOC);
+
+$rawNames = array();
+foreach ($melodyRows as $r) $rawNames[$r['kind']] = $r['name'];
+
+// The (L) and (S) sizes of one effect filter as a single option: asking for
+// "Attack Up" almost always means either size, and keeping them apart put five
+// near-duplicate pairs in a list that is already the longest here.
+//
+// Pairing is decided by the DISPLAYED name with the size suffix removed, not by
+// the enum's _L/_S ending. Those mostly agree, but MELODY_WINDPROOF_L and _S are
+// "Wind Pressure Negated" and "Wind Pressure Resistance" — the game presents them
+// as two different effects rather than two sizes of one, so they stay separate.
+// Going by the label also means a new pair merges on its own.
+$melodyGroups = array();
+foreach ($rawNames as $kind => $name) {
+    $melodyGroups[preg_replace('/\s*\((?:L|S)\)$/', '', $name)][] = $kind;
+}
+$melodyCode = array();      // raw kind -> the code the filter matches on
+$melodyNames = array();     // that code -> the label without the size suffix
+foreach ($melodyGroups as $label => $kinds) {
+    usort($kinds, function ($a, $b) {
+        if (strlen($a) !== strlen($b)) return strlen($a) - strlen($b);
+        return strcmp($a, $b);
+    });
+    $code = $kinds[0];      // shortest kind, which is the unsuffixed one when there is one
+    foreach ($kinds as $k) $melodyCode[$k] = $code;
+    $melodyNames[$code] = $label;
 }
 asort($melodyNames);
+
+foreach ($melodyRows as $r) {
+    $id = (int) $r['weapon_id'];
+    if (!isset($weapons[$id])) continue;
+    // The table still shows the exact melody, sizes and all — only the filter merges.
+    $weapons[$id]['attr'][] = $r['name'];
+    $code = $melodyCode[$r['kind']];
+    if (!in_array($code, $weapons[$id]['ml'], true)) $weapons[$id]['ml'][] = $code;
+}
 
 $types    = $pdo->query('SELECT DISTINCT category_label FROM weapon ORDER BY category_label')->fetchAll(PDO::FETCH_COLUMN);
 $elements = $pdo->query('SELECT DISTINCT element_label FROM weapon ORDER BY element_label')->fetchAll(PDO::FETCH_COLUMN);
