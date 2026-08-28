@@ -140,34 +140,30 @@
 
   var sortKey = 'best', sortDir = -1;
 
-  // Several filters only ever match one weapon type — a kinsect belongs to an
-  // insect glaive and nothing else. Tick a different type as well and the result
-  // is always empty, which on its own reads as "this filter is broken" rather
-  // than "these two filters contradict". Naming the clash costs one line and
-  // saves the guessing.
-  var TYPE_ONLY = [
-    { el: 'f-ammo', types: ['Light Bowgun', 'Heavy Bowgun'], what: 'ammo' },
-    { el: 'f-arrow', types: ['Bow'], what: 'arrow' },
-    { el: 'f-shell', types: ['Gunlance'], what: 'shelling' },
-    { el: 'f-kinsect', types: ['Insect Glaive'], what: 'kinsect' },
-  ];
-
+  // The per-type attribute filter can still be asked for something the ticked
+  // types cannot supply — pick a melody, then tick Great Sword. The control
+  // rebuilds itself in that case, but a stale selection can survive one render,
+  // so the empty state still names the clash rather than leaving it to guesswork.
   function emptyReason() {
-    var ticked = Object.keys(sel.type).filter(function (t) { return sel.type[t]; });
-    if (ticked.length) {
-      for (var i = 0; i < TYPE_ONLY.length; i++) {
-        var f = TYPE_ONLY[i];
-        var e = document.getElementById(f.el);
-        if (!e || !e.value) continue;
-        var overlap = f.types.filter(function (t) { return ticked.indexOf(t) > -1; });
-        if (!overlap.length) {
-          return 'No weapon matches these filters. The ' + f.what + ' filter only applies to ' +
-            f.types.join(' and ') + ', which ' + (f.types.length > 1 ? 'are' : 'is') +
-            ' not among the weapon types you have ticked.';
-        }
-      }
+    var g = groupOf(elAttr.value);
+    var ticked = tickedTypes();
+    if (g && ticked.length && !g.types.some(function (t) { return ticked.indexOf(t) > -1; })) {
+      return 'No weapon matches these filters. "' + g.label + '" only applies to ' +
+        g.types.join(' and ') + ', which ' + (g.types.length > 1 ? 'are' : 'is') +
+        ' not among the weapon types you have ticked.';
     }
     return 'No weapon matches these filters.';
+  }
+
+  function tickedTypes() {
+    return Object.keys(sel.type).filter(function (t) { return sel.type[t]; });
+  }
+
+  function groupOf(value) {
+    if (!value) return null;
+    return (DATA.attrGroups || []).filter(function (g) {
+      return g.opts.some(function (o) { return o.v === value; });
+    })[0] || null;
   }
 
   // --- filters -------------------------------------------------------------
@@ -176,14 +172,11 @@
   var elType = document.getElementById('f-type');
   var elElem = document.getElementById('f-element');
   var elSkill = document.getElementById('f-skill');
-  var elAmmo = document.getElementById('f-ammo');
-  var elArrow = document.getElementById('f-arrow');
-  var elShell = document.getElementById('f-shell');
-  var elKinsect = document.getElementById('f-kinsect');
+  var elAttr = document.getElementById('f-attr');
   var elCustom = document.getElementById('f-custom');
   var elText = document.getElementById('f-text');
 
-  function checkboxes(host, values, bucket) {
+  function checkboxes(host, values, bucket, after) {
     values.forEach(function (v) {
       var lab = document.createElement('label');
       var cb = document.createElement('input');
@@ -192,6 +185,7 @@
       cb.addEventListener('change', function () {
         if (cb.checked) bucket[v] = true; else delete bucket[v];
         lab.className = cb.checked ? 'on' : '';
+        if (after) after();
         render();
       });
       lab.appendChild(cb);
@@ -199,7 +193,9 @@
       host.appendChild(lab);
     });
   }
-  checkboxes(elType, DATA.types, sel.type);
+  // Changing the weapon types changes which attribute groups can apply, so the
+  // attribute dropdown is rebuilt before the table re-renders.
+  checkboxes(elType, DATA.types, sel.type, function () { buildAttrFilter(); });
   checkboxes(elElem, DATA.elements, sel.element);
 
   function options(host, values) {
@@ -210,7 +206,6 @@
     });
   }
   options(elSkill, DATA.skills);
-  options(elAmmo, DATA.ammo);
 
   // {v,l} pairs so the option value stays the raw code and the label reads
   // the way the game writes it.
@@ -228,27 +223,56 @@
     pairs(g, list);
     host.appendChild(g);
   }
-  group(elArrow, 'Charge level pattern', DATA.arrows && DATA.arrows.pattern);
-  group(elArrow, 'Arrow family', DATA.arrows && DATA.arrows.family);
-  pairs(elShell, DATA.shelling);
-  // Named and ordered as the game shows them on a glaive.
-  group(elKinsect, 'Kinsect type', DATA.kinsect && DATA.kinsect.type);
-  group(elKinsect, 'Performance type', DATA.kinsect && DATA.kinsect.param);
-  group(elKinsect, 'Attack type', DATA.kinsect && DATA.kinsect.attr);
-  group(elKinsect, 'Kinsect bonus', DATA.kinsect && DATA.kinsect.bonus);
+  /**
+   * Rebuild the attribute dropdown for whatever weapon types are ticked.
+   *
+   * With nothing ticked every group is offered, which is the honest default —
+   * you may not have decided on a type yet. Tick some, and only the groups those
+   * types can answer remain, so picking a melody while looking at gunlances is
+   * not something the control lets you express.
+   *
+   * A selection that survives into a rebuild where its group is gone would
+   * silently filter everything away, so it is cleared.
+   */
+  function buildAttrFilter() {
+    var ticked = tickedTypes();
+    var keep = (DATA.attrGroups || []).filter(function (g) {
+      return !ticked.length || g.types.some(function (t) { return ticked.indexOf(t) > -1; });
+    });
+    var was = elAttr.value;
+    elAttr.innerHTML = '';
+    var any = document.createElement('option');
+    any.value = ''; any.textContent = 'any';
+    elAttr.appendChild(any);
+    keep.forEach(function (g) { group(elAttr, g.label, g.opts); });
 
-  [elSkill, elAmmo, elArrow, elShell, elKinsect, elCustom].forEach(function (e) {
+    var stillThere = keep.some(function (g) {
+      return g.opts.some(function (o) { return o.v === was; });
+    });
+    elAttr.value = stillThere ? was : '';
+    return was && !stillThere;          // caller may want to know it was dropped
+  }
+  buildAttrFilter();
+
+  [elSkill, elAttr, elCustom].forEach(function (e) {
     e.addEventListener('change', render);
   });
   elText.addEventListener('input', render);
 
   document.getElementById('f-reset').addEventListener('click', function () {
-    sel.type = {}; sel.element = {};
+    // Clear these in place. Each checkbox closes over the bucket it was built
+    // with, so assigning a fresh {} here leaves every checkbox writing into an
+    // object nothing reads any more — reset would silently stop the type and
+    // element filters from working at all.
+    [sel.type, sel.element].forEach(function (bucket) {
+      Object.keys(bucket).forEach(function (k) { delete bucket[k]; });
+    });
     [].forEach.call(document.querySelectorAll('.checkrow input'), function (cb) {
       cb.checked = false; cb.parentNode.className = '';
     });
-    [elSkill, elAmmo, elArrow, elShell, elKinsect, elCustom].forEach(function (e) { e.value = ''; });
+    [elSkill, elAttr, elCustom].forEach(function (e) { e.value = ''; });
     elText.value = '';
+    buildAttrFilter();          // every group is on offer again
     render();
   });
 
@@ -256,19 +280,22 @@
     if (Object.keys(sel.type).length && !sel.type[w.t]) return false;
     if (Object.keys(sel.element).length && !sel.element[w.e]) return false;
     if (elSkill.value && !w.sk.some(function (s) { return s.n === elSkill.value; })) return false;
-    if (elAmmo.value && (w.ammo || []).indexOf(elAmmo.value) < 0) return false;
-    if (elArrow.value) {
-      var av = elArrow.value.split(':');
-      if (av[0] === 'lv' && w.alv !== av[1]) return false;
-      if (av[0] === 'fam' && (w.arw || []).indexOf(av[1]) < 0) return false;
-    }
-    if (elShell.value && w.sh !== elShell.value) return false;
-    if (elKinsect.value) {
-      var kv = elKinsect.value.split(':');
-      if (kv[0] === 'type' && w.kt !== kv[1]) return false;
-      if (kv[0] === 'param' && w.kp !== kv[1]) return false;
-      if (kv[0] === 'attr' && w.ka !== kv[1]) return false;
-      if (kv[0] === 'bonus' && w.kb !== kv[1]) return false;
+    // One control now carries every per-type attribute. The prefix says which
+    // one; an unknown prefix matches nothing rather than everything, so a stale
+    // saved value cannot quietly disable the filter.
+    if (elAttr.value) {
+      var i = elAttr.value.indexOf(':');
+      var kind = elAttr.value.slice(0, i), v = elAttr.value.slice(i + 1);
+      if (kind === 'ammo') { if ((w.ammo || []).indexOf(v) < 0) return false; }
+      else if (kind === 'lv') { if (w.alv !== v) return false; }
+      else if (kind === 'fam') { if ((w.arw || []).indexOf(v) < 0) return false; }
+      else if (kind === 'shell') { if (w.sh !== v) return false; }
+      else if (kind === 'mel') { if ((w.ml || []).indexOf(v) < 0) return false; }
+      else if (kind === 'type') { if (w.kt !== v) return false; }
+      else if (kind === 'param') { if (w.kp !== v) return false; }
+      else if (kind === 'attr') { if (w.ka !== v) return false; }
+      else if (kind === 'bonus') { if (w.kb !== v) return false; }
+      else return false;
     }
     // ss null = no customisation entry at all, distinct from ss 0.
     if (elCustom.value === 'style' && w.ss !== 1) return false;

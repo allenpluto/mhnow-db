@@ -94,6 +94,7 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
         'ss'   => $r['style_selectable'] === null ? null : (int) $r['style_selectable'],
         // per-type filter keys, the same idea as the bowgun ammo list
         'arw'  => array(),                                   // bow arrow families
+        'ml'   => array(),                                   // hunting horn melodies
         'sh'   => $r['shelling_type'],                       // gunlance shelling
         'kt'   => $r['kinsect_attack_type'],                 // insect glaive kinsect
         'kp'   => $r['kinsect_parameter_type'],
@@ -181,10 +182,20 @@ foreach ($arrowLevels as $id => $lv) {
     $arrowPatternCount[$pattern] = isset($arrowPatternCount[$pattern]) ? $arrowPatternCount[$pattern] + 1 : 1;
 }
 // horn melodies
-foreach ($pdo->query('SELECT weapon_id, name FROM weapon_horn_melody ORDER BY weapon_id, position')->fetchAll(PDO::FETCH_ASSOC) as $r) {
+//
+// A horn plays several, so this filters the same way arrow families do: does the
+// weapon have this melody at all. Keyed on `kind` rather than the display name,
+// because the manual entries used to carry a placeholder kind and keying on the
+// name would have quietly merged them.
+$melodyNames = array();
+foreach ($pdo->query('SELECT weapon_id, kind, name FROM weapon_horn_melody ORDER BY weapon_id, position')->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $id = (int) $r['weapon_id'];
-    if (isset($weapons[$id])) $weapons[$id]['attr'][] = $r['name'];
+    if (!isset($weapons[$id])) continue;
+    $weapons[$id]['attr'][] = $r['name'];
+    if (!in_array($r['kind'], $weapons[$id]['ml'], true)) $weapons[$id]['ml'][] = $r['kind'];
+    $melodyNames[$r['kind']] = $r['name'];
 }
+asort($melodyNames);
 
 $types    = $pdo->query('SELECT DISTINCT category_label FROM weapon ORDER BY category_label')->fetchAll(PDO::FETCH_COLUMN);
 $elements = $pdo->query('SELECT DISTINCT element_label FROM weapon ORDER BY element_label')->fetchAll(PDO::FETCH_COLUMN);
@@ -233,15 +244,49 @@ $skillNames = $pdo->query(
      JOIN weapon_grade_skill wgs ON wgs.weapon_grade_id = wg.id
      JOIN skill k ON k.id = wgs.skill_id ORDER BY k.name')->fetchAll(PDO::FETCH_COLUMN);
 
+$melodyOpts = array();
+foreach ($melodyNames as $kind => $name) {
+    $melodyOpts[] = array('v' => 'mel:' . $kind, 'l' => $name);
+}
+$ammoOpts = array();
+foreach ($ammoTypes as $v) {
+    $ammoOpts[] = array('v' => 'ammo:' . $v, 'l' => $pretty($v, ''));
+}
+foreach ($shellingTypes as $i => $o) {
+    $shellingTypes[$i]['v'] = 'shell:' . $o['v'];
+}
+
+/**
+ * Every per-type attribute filter, as one ordered list of groups.
+ *
+ * These were four separate dropdowns, which let you ask for a cluster-magazine
+ * gunlance — a combination no weapon can satisfy, since ammo belongs to bowguns
+ * and shelling to gunlances. Four controls advertised sixteen pairings of which
+ * only four were ever answerable. One control cannot express the contradiction.
+ *
+ * `types` says which weapon types a group applies to. The page uses it to show
+ * only the groups relevant to whatever types are ticked, which matters because
+ * the melody group alone is 36 options — the full flat list would bury shelling's
+ * three under it.
+ */
+$attrGroups = array(
+    array('label' => 'Bowgun ammo',        'types' => array('Light Bowgun', 'Heavy Bowgun'), 'opts' => $ammoOpts),
+    array('label' => 'Bow charge pattern', 'types' => array('Bow'),                          'opts' => $arrowPatterns),
+    array('label' => 'Bow arrow family',   'types' => array('Bow'),                          'opts' => $arrowTypes),
+    array('label' => 'Gunlance shelling',  'types' => array('Gunlance'),                     'opts' => $shellingTypes),
+    array('label' => 'Hunting horn melody','types' => array('Hunting Horn'),                 'opts' => $melodyOpts),
+    array('label' => 'Kinsect type',       'types' => array('Insect Glaive'),                'opts' => $kinsectGroups['type']),
+    array('label' => 'Kinsect performance','types' => array('Insect Glaive'),                'opts' => $kinsectGroups['param']),
+    array('label' => 'Kinsect attack type','types' => array('Insect Glaive'),                'opts' => $kinsectGroups['attr']),
+    array('label' => 'Kinsect bonus',      'types' => array('Insect Glaive'),                'opts' => $kinsectGroups['bonus']),
+);
+
 $payload = array(
-    'weapons'  => array_values($weapons),
-    'types'    => $types,
-    'elements' => $elements,
-    'ammo'     => $ammoTypes,
-    'arrows'   => array('pattern' => $arrowPatterns, 'family' => $arrowTypes),
-    'shelling' => $shellingTypes,
-    'kinsect'  => $kinsectGroups,
-    'skills'   => $skillNames,
+    'weapons'    => array_values($weapons),
+    'types'      => $types,
+    'elements'   => $elements,
+    'attrGroups' => $attrGroups,
+    'skills'     => $skillNames,
 );
 $json = json_encode($payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
@@ -292,20 +337,8 @@ function asset($f) {
     <select id="f-skill"><option value="">any</option></select>
   </div>
   <div class="fgroup narrow">
-    <label class="flabel" for="f-ammo">Ammo type</label>
-    <select id="f-ammo"><option value="">any</option></select>
-  </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="f-arrow">Bow charge / arrows</label>
-    <select id="f-arrow"><option value="">any</option></select>
-  </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="f-shell">Gunlance shelling</label>
-    <select id="f-shell"><option value="">any</option></select>
-  </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="f-kinsect">Kinsect</label>
-    <select id="f-kinsect"><option value="">any</option></select>
+    <label class="flabel" for="f-attr">Weapon attribute</label>
+    <select id="f-attr"><option value="">any</option></select>
   </div>
   <div class="fgroup narrow">
     <label class="flabel" for="f-custom">Customisation</label>
