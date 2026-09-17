@@ -100,7 +100,12 @@ function renderDescription(template, effect, condition) {
     .replace(/\{condition_amount_(\d+)\}/g, (whole, i) => {
       const v = condition[Number(i) - 1];
       return v === undefined ? whole : String(v);
-    });
+    })
+    // The strings are written for the game's own text renderer, which colours
+    // event caveats with <color=#FF0000>...</color>. In a web page or a
+    // spreadsheet that reads as literal angle brackets, so the tags go and the
+    // text inside stays.
+    .replace(/<\/?color(?:=[^>]*)?>/g, '');
 }
 
 function buildSkills(skillProps) {

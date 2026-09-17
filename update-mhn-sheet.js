@@ -107,10 +107,12 @@ const MONSTER_ORDER_EDITS = {
   after: [
     ['Tobi-Kadachi', 'Viper Tobi-Kadachi'],
     ['Zinogre', 'Stygian Zinogre'],
+    ['Somnacanth', 'Aurora Somnacanth'],      // 2026-09 update; subspecies follow the base
   ],
   append: [
     'Quematrice', 'Goss Harag', 'Astalos', 'Almudron',
     'Seregios', 'Shogun Ceanataur', 'Velkhana',
+    'Brachydios',                              // 2026-09 update; assumed newest = last
   ],
 };
 
