@@ -296,19 +296,40 @@
    *
    * Parsed once per render rather than once per weapon, and held in Q.
    */
-  var Q = { inc: [], exc: [] };
+  var Q = { inc: [], exc: [], note: '' };
 
   function parseQuery(q) {
-    var inc = [], exc = [];
+    var inc = [], exc = [], note = '';
+    var negateNext = false;
     var re = /(-?)(?:"([^"]*)"?|(\S+))/g, m;
     while ((m = re.exec(q)) !== null) {
-      var term = (m[2] !== undefined ? m[2] : (m[3] || '')).trim().toLowerCase();
+      var quoted = m[2] !== undefined;
+      var term = (quoted ? m[2] : (m[3] || '')).trim().toLowerCase();
       // A bare "-" is someone mid-typing, and matching it literally would hide
       // every weapon whose name has a hyphen.
       if (!term || term === '-') continue;
-      if (m[1]) exc.push(term); else inc.push(term);
+
+      // Writing "AND" between terms is the obvious guess, and taken literally it
+      // is a disaster: "and" is a substring of Grande, Bandit, Standard, so the
+      // query quietly narrows to whatever happens to contain those letters.
+      // Terms are already AND, so the word is a no-op. NOT is honoured because
+      // it reads as the long form of the minus. OR cannot be honoured without a
+      // parse tree, and silently treating it as AND would mislead, so it is
+      // called out instead. Quote a word to search for it literally.
+      if (!quoted && !m[1]) {
+        if (term === 'and') continue;
+        if (term === 'not') { negateNext = true; continue; }
+        if (term === 'or') {
+          note = 'OR is not supported — terms are combined with AND. Quote "or" to match it literally.';
+          continue;
+        }
+      }
+
+      var negate = !!m[1] || negateNext;
+      negateNext = false;
+      if (negate) exc.push(term); else inc.push(term);
     }
-    return { inc: inc, exc: exc };
+    return { inc: inc, exc: exc, note: note };
   }
 
   function matches(w) {
@@ -426,7 +447,8 @@
     });
 
     count.textContent = rows.length + ' of ' + DATA.weapons.length + ' weapons' +
-      (rows.length ? '  ·  sorted by ' + sortedCol.h + (sortDir < 0 ? ' descending' : ' ascending') : '');
+      (rows.length ? '  ·  sorted by ' + sortedCol.h + (sortDir < 0 ? ' descending' : ' ascending') : '') +
+      (Q.note ? '  ·  ' + Q.note : '');
   }
 
   render();

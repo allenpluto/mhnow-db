@@ -26,6 +26,35 @@ try {
 }
 
 /**
+ * The words the game shows for recoil and reload.
+ *
+ * The enums are SMALL/MEDIUM/LARGE/LARGE_2/EXTRA_LARGE, which prettify into
+ * "Small", "Large 2" and so on — wording that appears nowhere in the game and
+ * leaks an internal distinction. The game says Low/Average/High/Very high for
+ * recoil and Fast/Normal/Slow/Very slow for reload, and collapses LARGE and
+ * LARGE_2 into the same word. That mapping was measured by matching 192 ammo
+ * entries in MHN.xlsx against the same entries in the source.
+ */
+function ammoLabel($field, $value)
+{
+    static $L = array(
+        'recoil' => array(
+            'RECOIL_SMALL' => 'Low', 'RECOIL_MEDIUM' => 'Average',
+            'RECOIL_LARGE' => 'High', 'RECOIL_LARGE_2' => 'High',
+            'RECOIL_EXTRA_LARGE' => 'Very high', 'RECOIL_WYVERN' => 'Wyvern',
+        ),
+        'reload' => array(
+            'RELOAD_SMALL' => 'Fast', 'RELOAD_MEDIUM' => 'Normal',
+            'RELOAD_LARGE' => 'Slow', 'RELOAD_LARGE_2' => 'Slow',
+            'RELOAD_EXTRA_LARGE' => 'Very slow',
+        ),
+    );
+    if (isset($L[$field][$value])) return $L[$field][$value];
+    // An unmapped enum is worth seeing rather than silently prettifying.
+    return $value;
+}
+
+/**
  * The words the game shows for the kinsect enums. The source publishes only the
  * enums, and its names are not the display names — EXTEND_ENHANCEMENT shows as
  * "Harvest Bonus" while ENHANCEMENT_HARVEST_UP shows as "Charged Harvest Bonus",
@@ -151,10 +180,8 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $code = in_array($r['element'], $STATUS_AMMO, true) ? 'STATUS' : $r['ammo_type'];
     $ammoCodes[$code] = true;
     $weapons[$id]['ammo'][] = $code;
-    // RECOIL_EXTRA_LARGE -> "Extra Large"; the underscores have to go before
-    // ucwords or it yields "Extra_large".
-    $recoil = ucwords(strtolower(str_replace(array('RECOIL_', '_'), array('', ' '), $r['recoil'])));
-    $reload = ucwords(strtolower(str_replace(array('RELOAD_', '_'), array('', ' '), $r['reload'])));
+    $recoil = ammoLabel('recoil', $r['recoil']);
+    $reload = ammoLabel('reload', $r['reload']);
     $weapons[$id]['attr'][] = $r['name'] . ' x' . $r['capacity']
         . ' (' . $recoil . ' recoil, ' . $reload . ' reload)';
 }
