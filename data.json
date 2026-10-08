@@ -109296,210 +109296,196 @@
   ],
   "driftstoneSkills": [
     {
-      "driftstone_id": 76,
-      "skill_id": 75,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 88,
-      "skill_id": 133,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 12,
-      "skill_id": 59,
+      "driftstone_id": 4,
+      "skill_id": 13,
       "level": 1,
       "weight": 30000,
       "sort_id": 1
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 75,
+      "driftstone_id": 4,
+      "skill_id": 107,
       "level": 1,
       "weight": 30000,
       "sort_id": 2
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 154,
+      "driftstone_id": 4,
+      "skill_id": 20,
       "level": 1,
       "weight": 30000,
       "sort_id": 3
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 126,
+      "driftstone_id": 4,
+      "skill_id": 133,
       "level": 1,
       "weight": 30000,
       "sort_id": 4
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 56,
+      "driftstone_id": 4,
+      "skill_id": 88,
       "level": 1,
       "weight": 50000,
       "sort_id": 5
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 42,
+      "driftstone_id": 4,
+      "skill_id": 28,
       "level": 1,
       "weight": 50000,
       "sort_id": 6
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 37,
+      "driftstone_id": 4,
+      "skill_id": 31,
       "level": 1,
       "weight": 50000,
       "sort_id": 7
     },
     {
-      "driftstone_id": 12,
-      "skill_id": 22,
+      "driftstone_id": 4,
+      "skill_id": 33,
       "level": 1,
       "weight": 50000,
       "sort_id": 8
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 2,
       "level": 1,
       "weight": 34000,
       "sort_id": 9
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 3,
       "level": 1,
       "weight": 34000,
       "sort_id": 10
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 1,
       "level": 1,
       "weight": 34000,
       "sort_id": 11
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 32,
       "level": 1,
       "weight": 34000,
       "sort_id": 12
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 24,
       "level": 1,
       "weight": 34000,
       "sort_id": 13
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 26,
       "level": 1,
       "weight": 34000,
       "sort_id": 14
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 46,
       "level": 1,
       "weight": 34000,
       "sort_id": 15
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 36,
       "level": 1,
       "weight": 34000,
       "sort_id": 16
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 111,
       "level": 1,
       "weight": 34000,
       "sort_id": 17
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 103,
       "level": 1,
       "weight": 34000,
       "sort_id": 18
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 7,
       "level": 1,
       "weight": 34000,
       "sort_id": 19
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 8,
       "level": 1,
       "weight": 34000,
       "sort_id": 20
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 10,
       "level": 1,
       "weight": 34000,
       "sort_id": 21
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 9,
       "level": 1,
       "weight": 34000,
       "sort_id": 22
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 197,
       "level": 1,
       "weight": 34000,
       "sort_id": 23
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 5,
       "level": 1,
       "weight": 34000,
       "sort_id": 24
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 6,
       "level": 1,
       "weight": 34000,
       "sort_id": 25
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 63,
       "level": 1,
       "weight": 34000,
       "sort_id": 26
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 73,
       "level": 1,
       "weight": 34000,
       "sort_id": 27
     },
     {
-      "driftstone_id": 12,
+      "driftstone_id": 4,
       "skill_id": 89,
       "level": 1,
       "weight": 34000,
@@ -109702,375 +109688,200 @@
       "sort_id": 28
     },
     {
-      "driftstone_id": 121,
-      "skill_id": 134,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 78,
-      "skill_id": 185,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 83,
-      "skill_id": 30,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 79,
-      "skill_id": 191,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 72,
-      "skill_id": 126,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 113,
-      "skill_id": 213,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 68,
-      "skill_id": 45,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 69,
-      "skill_id": 17,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 98,
-      "skill_id": 205,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 67,
-      "skill_id": 59,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 71,
-      "skill_id": 92,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 64,
-      "skill_id": 13,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 80,
-      "skill_id": 23,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 100,
-      "skill_id": 206,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 73,
-      "skill_id": 107,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 118,
-      "skill_id": 221,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 66,
-      "skill_id": 15,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 77,
-      "skill_id": 116,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 70,
-      "skill_id": 77,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 102,
-      "skill_id": 102,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 74,
-      "skill_id": 108,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 86,
-      "skill_id": 20,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 85,
-      "skill_id": 138,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 75,
-      "skill_id": 154,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 4,
-      "skill_id": 13,
+      "driftstone_id": 6,
+      "skill_id": 16,
       "level": 1,
       "weight": 30000,
       "sort_id": 1
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 107,
+      "driftstone_id": 6,
+      "skill_id": 30,
       "level": 1,
       "weight": 30000,
       "sort_id": 2
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 20,
+      "driftstone_id": 6,
+      "skill_id": 108,
       "level": 1,
       "weight": 30000,
       "sort_id": 3
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 133,
+      "driftstone_id": 6,
+      "skill_id": 185,
       "level": 1,
       "weight": 30000,
       "sort_id": 4
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 88,
+      "driftstone_id": 6,
+      "skill_id": 12,
       "level": 1,
       "weight": 50000,
       "sort_id": 5
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 28,
+      "driftstone_id": 6,
+      "skill_id": 66,
       "level": 1,
       "weight": 50000,
       "sort_id": 6
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 31,
+      "driftstone_id": 6,
+      "skill_id": 76,
       "level": 1,
       "weight": 50000,
       "sort_id": 7
     },
     {
-      "driftstone_id": 4,
-      "skill_id": 33,
+      "driftstone_id": 6,
+      "skill_id": 18,
       "level": 1,
       "weight": 50000,
       "sort_id": 8
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 2,
       "level": 1,
       "weight": 34000,
       "sort_id": 9
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 3,
       "level": 1,
       "weight": 34000,
       "sort_id": 10
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 1,
       "level": 1,
       "weight": 34000,
       "sort_id": 11
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 32,
       "level": 1,
       "weight": 34000,
       "sort_id": 12
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 24,
       "level": 1,
       "weight": 34000,
       "sort_id": 13
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 26,
       "level": 1,
       "weight": 34000,
       "sort_id": 14
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 46,
       "level": 1,
       "weight": 34000,
       "sort_id": 15
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 36,
       "level": 1,
       "weight": 34000,
       "sort_id": 16
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 111,
       "level": 1,
       "weight": 34000,
       "sort_id": 17
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 103,
       "level": 1,
       "weight": 34000,
       "sort_id": 18
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 7,
       "level": 1,
       "weight": 34000,
       "sort_id": 19
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 8,
       "level": 1,
       "weight": 34000,
       "sort_id": 20
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 10,
       "level": 1,
       "weight": 34000,
       "sort_id": 21
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 9,
       "level": 1,
       "weight": 34000,
       "sort_id": 22
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 197,
       "level": 1,
       "weight": 34000,
       "sort_id": 23
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 5,
       "level": 1,
       "weight": 34000,
       "sort_id": 24
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 6,
       "level": 1,
       "weight": 34000,
       "sort_id": 25
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 63,
       "level": 1,
       "weight": 34000,
       "sort_id": 26
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 73,
       "level": 1,
       "weight": 34000,
       "sort_id": 27
     },
     {
-      "driftstone_id": 4,
+      "driftstone_id": 6,
       "skill_id": 89,
       "level": 1,
       "weight": 34000,
       "sort_id": 28
-    },
-    {
-      "driftstone_id": 81,
-      "skill_id": 85,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
     },
     {
       "driftstone_id": 7,
@@ -110267,34 +110078,6 @@
       "level": 1,
       "weight": 34000,
       "sort_id": 28
-    },
-    {
-      "driftstone_id": 87,
-      "skill_id": 47,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 65,
-      "skill_id": 16,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 84,
-      "skill_id": 14,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
-    },
-    {
-      "driftstone_id": 89,
-      "skill_id": 19,
-      "level": 1,
-      "weight": 10000,
-      "sort_id": 1
     },
     {
       "driftstone_id": 10,
@@ -110500,200 +110283,417 @@
       "sort_id": 29
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 64,
+      "skill_id": 13,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 65,
       "skill_id": 16,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 66,
+      "skill_id": 15,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 67,
+      "skill_id": 59,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 68,
+      "skill_id": 45,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 69,
+      "skill_id": 17,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 70,
+      "skill_id": 77,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 71,
+      "skill_id": 92,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 72,
+      "skill_id": 126,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 73,
+      "skill_id": 107,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 74,
+      "skill_id": 108,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 75,
+      "skill_id": 154,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 76,
+      "skill_id": 75,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 77,
+      "skill_id": 116,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 78,
+      "skill_id": 185,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 79,
+      "skill_id": 191,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 80,
+      "skill_id": 23,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 81,
+      "skill_id": 85,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 12,
+      "skill_id": 59,
       "level": 1,
       "weight": 30000,
       "sort_id": 1
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 30,
+      "driftstone_id": 12,
+      "skill_id": 75,
       "level": 1,
       "weight": 30000,
       "sort_id": 2
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 108,
+      "driftstone_id": 12,
+      "skill_id": 154,
       "level": 1,
       "weight": 30000,
       "sort_id": 3
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 185,
+      "driftstone_id": 12,
+      "skill_id": 126,
       "level": 1,
       "weight": 30000,
       "sort_id": 4
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 12,
+      "driftstone_id": 12,
+      "skill_id": 56,
       "level": 1,
       "weight": 50000,
       "sort_id": 5
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 66,
+      "driftstone_id": 12,
+      "skill_id": 42,
       "level": 1,
       "weight": 50000,
       "sort_id": 6
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 76,
+      "driftstone_id": 12,
+      "skill_id": 37,
       "level": 1,
       "weight": 50000,
       "sort_id": 7
     },
     {
-      "driftstone_id": 6,
-      "skill_id": 18,
+      "driftstone_id": 12,
+      "skill_id": 22,
       "level": 1,
       "weight": 50000,
       "sort_id": 8
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 2,
       "level": 1,
       "weight": 34000,
       "sort_id": 9
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 3,
       "level": 1,
       "weight": 34000,
       "sort_id": 10
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 1,
       "level": 1,
       "weight": 34000,
       "sort_id": 11
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 32,
       "level": 1,
       "weight": 34000,
       "sort_id": 12
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 24,
       "level": 1,
       "weight": 34000,
       "sort_id": 13
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 26,
       "level": 1,
       "weight": 34000,
       "sort_id": 14
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 46,
       "level": 1,
       "weight": 34000,
       "sort_id": 15
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 36,
       "level": 1,
       "weight": 34000,
       "sort_id": 16
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 111,
       "level": 1,
       "weight": 34000,
       "sort_id": 17
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 103,
       "level": 1,
       "weight": 34000,
       "sort_id": 18
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 7,
       "level": 1,
       "weight": 34000,
       "sort_id": 19
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 8,
       "level": 1,
       "weight": 34000,
       "sort_id": 20
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 10,
       "level": 1,
       "weight": 34000,
       "sort_id": 21
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 9,
       "level": 1,
       "weight": 34000,
       "sort_id": 22
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 197,
       "level": 1,
       "weight": 34000,
       "sort_id": 23
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 5,
       "level": 1,
       "weight": 34000,
       "sort_id": 24
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 6,
       "level": 1,
       "weight": 34000,
       "sort_id": 25
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 63,
       "level": 1,
       "weight": 34000,
       "sort_id": 26
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 73,
       "level": 1,
       "weight": 34000,
       "sort_id": 27
     },
     {
-      "driftstone_id": 6,
+      "driftstone_id": 12,
       "skill_id": 89,
       "level": 1,
       "weight": 34000,
       "sort_id": 28
+    },
+    {
+      "driftstone_id": 83,
+      "skill_id": 30,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 84,
+      "skill_id": 14,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 85,
+      "skill_id": 138,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 86,
+      "skill_id": 20,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 87,
+      "skill_id": 47,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 88,
+      "skill_id": 133,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 89,
+      "skill_id": 19,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 98,
+      "skill_id": 205,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 100,
+      "skill_id": 206,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 102,
+      "skill_id": 102,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 113,
+      "skill_id": 213,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 118,
+      "skill_id": 221,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 121,
+      "skill_id": 134,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
     }
   ],
   "weapons": [

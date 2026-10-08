@@ -370,18 +370,15 @@ function asset($f) {
     <label class="flabel" for="f-attr">Weapon attribute</label>
     <select id="f-attr"><option value="">any</option></select>
   </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="f-custom">Customisation</label>
-    <select id="f-custom">
-      <option value="">any</option>
-      <option value="style">Style selectable</option>
-      <option value="nostyle">Customisable, no style</option>
-      <option value="none">Not customisable</option>
-    </select>
+  <div class="fgroup">
+    <label class="flabel">Customisation</label>
+    <div class="checkrow" id="f-custom"></div>
   </div>
   <div class="fgroup narrow">
     <label class="flabel" for="f-text">Search</label>
-    <input id="f-text" type="text" autocomplete="off" placeholder="name, series, attribute…">
+    <input id="f-text" type="text" autocomplete="off"
+           placeholder="blast -bowgun"
+           title="Several terms must all match. Put a minus in front of a term to exclude it, and quotes around a phrase that contains a space, e.g. blast -bowgun or &quot;cluster fire ammo&quot;. Searches the name, series, type, element, skills and attributes — not monster names.">
   </div>
   <button type="button" id="f-reset" class="linkbtn">reset filters</button>
 </section>

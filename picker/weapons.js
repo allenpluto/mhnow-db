@@ -168,13 +168,19 @@
 
   // --- filters -------------------------------------------------------------
 
-  var sel = { type: {}, element: {} };
+  var sel = { type: {}, element: {}, custom: {} };
   var elType = document.getElementById('f-type');
   var elElem = document.getElementById('f-element');
   var elSkill = document.getElementById('f-skill');
   var elAttr = document.getElementById('f-attr');
   var elCustom = document.getElementById('f-custom');
   var elText = document.getElementById('f-text');
+
+  // Customisable and style selectable now agree on every weapon in the data, and
+  // nothing is customisable-but-not-style-selectable any more, so the old three
+  // way dropdown had a dead option and a redundant one. What is left is a single
+  // yes/no, which is a checkbox.
+  var CUSTOM_LABEL = 'Style selectable';
 
   function checkboxes(host, values, bucket, after) {
     values.forEach(function (v) {
@@ -197,6 +203,7 @@
   // attribute dropdown is rebuilt before the table re-renders.
   checkboxes(elType, DATA.types, sel.type, function () { buildAttrFilter(); });
   checkboxes(elElem, DATA.elements, sel.element);
+  checkboxes(elCustom, [CUSTOM_LABEL], sel.custom);
 
   function options(host, values) {
     values.forEach(function (v) {
@@ -254,7 +261,8 @@
   }
   buildAttrFilter();
 
-  [elSkill, elAttr, elCustom].forEach(function (e) {
+  // elCustom is a checkrow now, so its own checkbox already triggers render.
+  [elSkill, elAttr].forEach(function (e) {
     e.addEventListener('change', render);
   });
   elText.addEventListener('input', render);
@@ -264,17 +272,44 @@
     // with, so assigning a fresh {} here leaves every checkbox writing into an
     // object nothing reads any more — reset would silently stop the type and
     // element filters from working at all.
-    [sel.type, sel.element].forEach(function (bucket) {
+    [sel.type, sel.element, sel.custom].forEach(function (bucket) {
       Object.keys(bucket).forEach(function (k) { delete bucket[k]; });
     });
     [].forEach.call(document.querySelectorAll('.checkrow input'), function (cb) {
       cb.checked = false; cb.parentNode.className = '';
     });
-    [elSkill, elAttr, elCustom].forEach(function (e) { e.value = ''; });
+    [elSkill, elAttr].forEach(function (e) { e.value = ''; });
     elText.value = '';
     buildAttrFilter();          // every group is on offer again
     render();
   });
+
+  /**
+   * Parse the search box into terms that must match and terms that must not.
+   *
+   *   blast -bowgun            has "blast", does not have "bowgun"
+   *   "cluster ammo" -brachy   phrase with a space, minus one
+   *
+   * Several terms are AND, because narrowing is what you reach for after a
+   * single word returns too much. OR is already covered by the type and element
+   * checkboxes, which union within themselves.
+   *
+   * Parsed once per render rather than once per weapon, and held in Q.
+   */
+  var Q = { inc: [], exc: [] };
+
+  function parseQuery(q) {
+    var inc = [], exc = [];
+    var re = /(-?)(?:"([^"]*)"?|(\S+))/g, m;
+    while ((m = re.exec(q)) !== null) {
+      var term = (m[2] !== undefined ? m[2] : (m[3] || '')).trim().toLowerCase();
+      // A bare "-" is someone mid-typing, and matching it literally would hide
+      // every weapon whose name has a hyphen.
+      if (!term || term === '-') continue;
+      if (m[1]) exc.push(term); else inc.push(term);
+    }
+    return { inc: inc, exc: exc };
+  }
 
   function matches(w) {
     if (Object.keys(sel.type).length && !sel.type[w.t]) return false;
@@ -297,12 +332,10 @@
       else if (kind === 'bonus') { if (w.kb !== v) return false; }
       else return false;
     }
-    // ss null = no customisation entry at all, distinct from ss 0.
-    if (elCustom.value === 'style' && w.ss !== 1) return false;
-    if (elCustom.value === 'nostyle' && w.ss !== 0) return false;
-    if (elCustom.value === 'none' && w.ss !== null) return false;
-    var q = elText.value.trim().toLowerCase();
-    if (q && w.search.indexOf(q) < 0) return false;
+    if (sel.custom[CUSTOM_LABEL] && w.ss !== 1) return false;
+
+    for (var a = 0; a < Q.inc.length; a++) if (w.search.indexOf(Q.inc[a]) < 0) return false;
+    for (var b = 0; b < Q.exc.length; b++) if (w.search.indexOf(Q.exc[b]) > -1) return false;
     return true;
   }
 
@@ -342,6 +375,7 @@
 
   function render() {
     renderHead();
+    Q = parseQuery(elText.value);
     var rows = DATA.weapons.filter(matches);
     rows.sort(function (a, b) {
       var x = a[sortKey], y = b[sortKey];
