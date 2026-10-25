@@ -367,7 +367,7 @@
       "category": "ATTACK_BOOST",
       "category_label": "Attack",
       "max_level": 5,
-      "sort_order": 1068
+      "sort_order": 1070
     },
     {
       "id": 56,
@@ -853,7 +853,7 @@
       "category": "ATTACK_BOOST",
       "category_label": "Attack",
       "max_level": 5,
-      "sort_order": 1066
+      "sort_order": 1067
     },
     {
       "id": 151,
@@ -1150,7 +1150,7 @@
       "category": "ATTACK_BOOST",
       "category_label": "Attack",
       "max_level": 1,
-      "sort_order": 1067
+      "sort_order": 1068
     },
     {
       "id": 218,
@@ -1223,6 +1223,15 @@
       "category_label": "Action",
       "max_level": 3,
       "sort_order": 3025
+    },
+    {
+      "id": 227,
+      "kind": "PART_BREAKER_SECRET",
+      "name": "Advanced Partbreaker",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "max_level": 2,
+      "sort_order": 1066
     },
     {
       "id": 9101,
@@ -5986,6 +5995,24 @@
       "effect_amounts": "[25]",
       "condition_amounts": null,
       "effect_amount_1": 25
+    },
+    {
+      "skill_id": 227,
+      "level": 1,
+      "description": "Increases part damage accumulated on breakable parts by 20% when Partbreaker Lv5+ is active.",
+      "description_template": "Increases part damage accumulated on breakable parts by {effect_amount_1}% when Partbreaker Lv5+ is active.",
+      "effect_amounts": "[20]",
+      "condition_amounts": null,
+      "effect_amount_1": 20
+    },
+    {
+      "skill_id": 227,
+      "level": 2,
+      "description": "Increases part damage accumulated on breakable parts by 40% when Partbreaker Lv5+ is active.",
+      "description_template": "Increases part damage accumulated on breakable parts by {effect_amount_1}% when Partbreaker Lv5+ is active.",
+      "effect_amounts": "[40]",
+      "condition_amounts": null,
+      "effect_amount_1": 40
     },
     {
       "skill_id": 9101,
@@ -109292,6 +109319,22 @@
       "points": 1,
       "walking_distance_m": 2000,
       "is_random_pool": 0
+    },
+    {
+      "id": 124,
+      "kind": "ARTILLERY_FEYSTONE_1",
+      "name": "Artillery Driftgem",
+      "points": 1,
+      "walking_distance_m": 2000,
+      "is_random_pool": 0
+    },
+    {
+      "id": 125,
+      "kind": "BUILDUP_BOOST_FEYSTONE_1",
+      "name": "Buildup Boost Driftgem",
+      "points": 1,
+      "walking_distance_m": 2000,
+      "is_random_pool": 0
     }
   ],
   "driftstoneSkills": [
@@ -110691,6 +110734,20 @@
     {
       "driftstone_id": 121,
       "skill_id": 134,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 124,
+      "skill_id": 81,
+      "level": 1,
+      "weight": 10000,
+      "sort_id": 1
+    },
+    {
+      "driftstone_id": 125,
+      "skill_id": 127,
       "level": 1,
       "weight": 10000,
       "sort_id": 1
@@ -114110,8 +114167,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 123,
@@ -114138,8 +114195,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 124,
@@ -114166,8 +114223,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 125,
@@ -114194,8 +114251,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 126,
@@ -114222,8 +114279,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 127,
@@ -114250,8 +114307,8 @@
       "kinsect_stamina_level": "STAMINA_LEVEL_LOW",
       "kinsect_bonus_kind": "PIERCE_TYPE_2",
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 128,
@@ -114278,8 +114335,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 129,
@@ -341898,8 +341955,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 887,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 888,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 888,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341908,8 +341975,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 889,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 893,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 893,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341918,8 +341995,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 894,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 895,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 895,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341928,8 +342015,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 899,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 900,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 900,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341938,8 +342035,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 901,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 905,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 905,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341948,8 +342055,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 906,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 907,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 907,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341958,8 +342075,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 911,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 912,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 912,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341968,8 +342095,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 913,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 917,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 917,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341978,8 +342115,18 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 918,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 919,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 919,
+      "skill_id": 227,
       "level": 1
     },
     {
@@ -341988,13 +342135,28 @@
       "level": 1
     },
     {
+      "weapon_grade_id": 923,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 924,
       "skill_id": 20,
       "level": 1
     },
     {
+      "weapon_grade_id": 924,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
       "weapon_grade_id": 925,
       "skill_id": 20,
+      "level": 1
+    },
+    {
+      "weapon_grade_id": 925,
+      "skill_id": 227,
       "level": 1
     },
     {
