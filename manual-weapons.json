@@ -84,6 +84,30 @@
       "name": "Summer of Hunters 2026",
       "sort_order": 999009009,
       "_note": "In-game event name, given by the user 2026-08-27."
+    },
+    {
+      "id": 9010,
+      "kind": "SERIES_MANUAL_HALLOWEEN_2024_SET",
+      "name": "Halloween 2024 Set",
+      "sort_order": 999009010
+    },
+    {
+      "id": 9011,
+      "kind": "SERIES_MANUAL_LUNAR_NEW_YEAR_SET",
+      "name": "Lunar New Year Set",
+      "sort_order": 999009011
+    },
+    {
+      "id": 9012,
+      "kind": "SERIES_MANUAL_BUNNY_HEAD",
+      "name": "Bunny Head",
+      "sort_order": 999009012
+    },
+    {
+      "id": 9013,
+      "kind": "SERIES_MANUAL_NEW_YEAR_SET",
+      "name": "New Year Set",
+      "sort_order": 999009013
     }
   ],
   "weapons": [
@@ -1190,7 +1214,8 @@
       "category_label": "Attack",
       "levels": [
         "Increases attack power relative to the number of fellow hunters with this skill activated. *If active during the Halloween event the effect is multiplied by 5."
-      ]
+      ],
+      "_orphaned": "No longer carried by anything. It was on Jack-o'-Head until the 2026-10-26 Halloween revision replaced it with Partbreaker (Halloween), Advanced Partbreaker and Pursuit. Retained because the event recurs."
     },
     {
       "id": 9104,
@@ -1234,6 +1259,225 @@
         "Increases attack power relative to the number of fellow hunters with this skill activated. *If active during the A Happy Hunting New Year 2026 event, the effect is multiplied by 5."
       ],
       "_source": "effect text read in game by the user 2026-08-14"
+    },
+    {
+      "id": 9108,
+      "kind": "MANUAL_HAPPY_NEW_YEAR_2024",
+      "name": "Happy New Year (2024)",
+      "category": "OTHERS",
+      "category_label": "Other",
+      "_source": "Effect text read in game by the user 2026-10-26.",
+      "_note": "The text states no mechanical effect, so it is filed under Other alongside MrBeast Challenge! and Super Swimmer 2025 rather than guessed into Attack.",
+      "levels": [
+        "You'll want to wish other players a Happy New Year!"
+      ]
+    },
+    {
+      "id": 9109,
+      "kind": "MANUAL_PARTBREAKER_HALLOWEEN",
+      "name": "Partbreaker (Halloween)",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "_source": "Effect text read in game by the user 2026-10-26.",
+      "_note": "The second line is shown in red in game, the same treatment as the Solidarity skills and Solidarity (Shibuya 2024). Stored as plain text because build.js strips the <color=...> tags the source wraps such lines in.",
+      "levels": [
+        "Increases part damage accumulated on breakable parts by 5%\n*If active during the Halloween event, the effect is multiplied by 10"
+      ]
+    }
+  ],
+  "armor": [
+    {
+      "kind": "MANUAL_SWIMMER_GOGGLES",
+      "name": "Swimmer Goggles",
+      "series_id": 9005,
+      "slot": "HEAD",
+      "_source": "user-supplied: Swimmer Goggles | Swimmer Set | Head | 1 | Sweltering Summer 2025 +Lv1 Valor +Lv1",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900000,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Sweltering Summer 2025",
+              "level": 1
+            },
+            {
+              "skill": "Valor",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "monster_name": "Arzuros",
+      "_monster": "Required for upgrade material, not the source of the piece."
+    },
+    {
+      "kind": "MANUAL_SIMMER_INFLATABLE",
+      "name": "Simmer Inflatable",
+      "series_id": 9005,
+      "slot": "TORSO",
+      "_source": "user-supplied: Simmer Inflatable | Swimmer Set | Waist | 1 | Sweltering Summer 2025 +Lv1 Shared Sword +Lv2",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900001,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Sweltering Summer 2025",
+              "level": 1
+            },
+            {
+              "skill": "Shared Sword",
+              "level": 2
+            }
+          ]
+        }
+      ],
+      "monster_name": "Arzuros",
+      "_monster": "Required for upgrade material, not the source of the piece."
+    },
+    {
+      "kind": "MANUAL_SWIMMER_FLIPPERS",
+      "name": "Swimmer Flippers",
+      "series_id": 9005,
+      "slot": "LEGS",
+      "_source": "user-supplied: Swimmer Flippers | Swimmer Set | Legs | 1 | Sweltering Summer 2025 +Lv1 Shared Shield +Lv2",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900002,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Sweltering Summer 2025",
+              "level": 1
+            },
+            {
+              "skill": "Shared Shield",
+              "level": 2
+            }
+          ]
+        }
+      ],
+      "monster_name": "Arzuros",
+      "_monster": "Required for upgrade material, not the source of the piece."
+    },
+    {
+      "kind": "MANUAL_GHOST_BALLOON",
+      "name": "Ghost Balloon",
+      "series_id": 9010,
+      "slot": "TORSO",
+      "_source": "user-supplied: Ghost Balloon | Halloween 2024 Set | Waist | 1 | Artful Dodger +Lv2 | monster: Magnamalo",
+      "monster_name": "Magnamalo",
+      "_monster": "Required for upgrade material, not the source of the piece.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900003,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Artful Dodger",
+              "level": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_DRAGON_DANCE_MASK",
+      "name": "Dragon Dance Mask",
+      "series_id": 9011,
+      "slot": "HEAD",
+      "_source": "user-supplied: Dragon Dance Mask | Lunar New Year Set | Head | 1 | Critical Boost +Lv2 | monster: Pink Rathian",
+      "monster_name": "Pink Rathian",
+      "_monster": "Required for upgrade material, not the source of the piece.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900004,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Critical Boost",
+              "level": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_BUNNY_HEAD",
+      "name": "Bunny Head",
+      "series_id": 9012,
+      "slot": "HEAD",
+      "_source": "user-supplied: Bunny Head | Bunny Head | Head | 1 | Artful Dodger +Lv3 | monster: Lagombi",
+      "monster_name": "Lagombi",
+      "_monster": "Required for upgrade material, not the source of the piece.",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900005,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Artful Dodger",
+              "level": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_NEW_YEAR_SPECS_2024",
+      "name": "New Year Specs 2024",
+      "series_id": 9013,
+      "slot": "HEAD",
+      "_source": "user-supplied: New Year Specs 2024 | New Year Set | Head | 1 | Happy New Year (2024)",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900006,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Happy New Year (2024)",
+              "level": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "MANUAL_JACK_O_HEAD",
+      "name": "Jack-o'-Head",
+      "series_id": 9004,
+      "slot": "HEAD",
+      "_source": "user-supplied: Jack-o'-Head | Halloween Set | Head | 1 | Partbreaker (Halloween) +Lv1; Advanced Partbreaker +Lv1; Pursuit +Lv1",
+      "grades": [
+        {
+          "grade": 10,
+          "game_armor_id": 900007,
+          "driftsmelt_slots": 1,
+          "skills": [
+            {
+              "skill": "Partbreaker (Halloween)",
+              "level": 1
+            },
+            {
+              "skill": "Advanced Partbreaker",
+              "level": 1
+            },
+            {
+              "skill": "Pursuit",
+              "level": 1
+            }
+          ]
+        }
+      ],
+      "_revised": "Skills revised in game on 2026-10-26. It previously carried Solidarity (Halloween) alone; that skill is now on nothing. The revision landed the same day the source published Advanced Partbreaker, which this piece now carries — so the two look related rather than coincidental."
     }
   ]
 }

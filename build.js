@@ -534,21 +534,135 @@ function mergeManualSkills(s, skillIdByName) {
 // Event weapons are absent from the source entirely — there is no event series
 // in the payload — so they can only ever come from manual-weapons.json. Merged
 // here on every build so they survive a rebuild.
-function mergeManualWeapons(wp, series, skillIdByName) {
-  const file = MANUAL_FILE;
-  if (!fs.existsSync(file)) return 0;
+/**
+ * Event ARMOUR, for the same reason as event weapons: the source publishes none.
+ *
+ * Defence is not asked for per piece. Across all 355 source pieces and all 50
+ * grade/step combinations it varies by grade and step alone — never by piece,
+ * slot or series — so grade 10 is always 182/186/190/193/197. A piece that
+ * departs from that can say so with its own `defense` array.
+ *
+ * The armour picker inner-joins defence, so a piece with none would vanish from
+ * it rather than appear without a number. That is why the ladder is filled in
+ * instead of left empty.
+ */
+const ARMOR_DEFENSE_BY_GRADE = {
+  10: [182, 186, 190, 193, 197],
+};
 
-  const M = JSON.parse(fs.readFileSync(file, 'utf8'));
+function mergeManualArmor(a, series, skillIdByName) {
+  if (!fs.existsSync(MANUAL_FILE)) return 0;
+  const M = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
+  if (!M.armor || !M.armor.length) return 0;
+
+  const seriesIds = {};
+  series.forEach((s) => { seriesIds[s.id] = true; });
+  const usedGameIds = {};
+  a.grades.forEach((g) => { usedGameIds[g.game_armor_id] = true; });
+  const usedKinds = {};
+  a.armor.forEach((x) => { usedKinds[x.kind] = true; });
+
+  let armorId = Math.max.apply(null, a.armor.map((x) => x.id));
+  let gradeId = Math.max.apply(null, a.grades.map((x) => x.id));
+  let added = 0;
+
+  M.armor.forEach((ma) => {
+    if (usedKinds[ma.kind]) {
+      throw new Error('manual armour kind ' + ma.kind + ' collides with a real one');
+    }
+    if (!seriesIds[ma.series_id]) {
+      throw new Error('manual armour ' + ma.kind + ' references unknown series ' + ma.series_id);
+    }
+    const grades = (ma.grades || []).slice().sort((x, y) => x.grade - y.grade);
+    if (!grades.length) { warnings.push('manual armour ' + ma.kind + ' has no grades — skipped'); return; }
+
+    armorId++;
+    a.armor.push({
+      id: armorId,
+      kind: ma.kind,
+      series_id: ma.series_id,
+      slot: ma.slot,
+      name: ma.name,
+      asset_key: ma.asset_key || null,
+      min_grade: grades[0].grade,
+      max_grade: grades[grades.length - 1].grade,
+    });
+
+    grades.forEach((g) => {
+      if (usedGameIds[g.game_armor_id]) {
+        throw new Error('manual game_armor_id ' + g.game_armor_id + ' collides with a real one');
+      }
+      usedGameIds[g.game_armor_id] = true;
+      gradeId++;
+      a.grades.push({
+        id: gradeId,
+        armor_id: armorId,
+        grade: g.grade,
+        game_armor_id: g.game_armor_id,
+        driftsmelt_slots: g.driftsmelt_slots || 0,
+      });
+
+      const ladder = g.defense || ARMOR_DEFENSE_BY_GRADE[g.grade];
+      if (!ladder) {
+        warnings.push('manual armour ' + ma.kind + ' grade ' + g.grade +
+          ' has no defence and no known ladder for that grade — it will not show in the picker');
+      } else {
+        ladder.forEach((v, i) => { a.defense.push({ armor_grade_id: gradeId, step: i + 1, defense: v }); });
+      }
+
+      const seen = {};
+      (g.skills || []).forEach((sk) => {
+        const sid = skillIdByName[sk.skill];
+        if (sid === undefined) {
+          warnings.push('manual armour ' + ma.kind + ' references unknown skill ' + sk.skill);
+          return;
+        }
+        if (seen[sid]) { seen[sid].level += sk.level; return; }
+        const row = { armor_grade_id: gradeId, skill_id: sid, level: sk.level };
+        seen[sid] = row;
+        a.gradeSkills.push(row);
+      });
+    });
+    added++;
+  });
+
+  return added;
+}
+
+/**
+ * Manual series, registered once before anything references them.
+ *
+ * This used to live inside mergeManualWeapons, which meant armour merged before
+ * the weapons could not see a series the weapons would later add — an event set
+ * with armour but no weapon in it would fail the build outright.
+ */
+function mergeManualSeries(series) {
+  if (!fs.existsSync(MANUAL_FILE)) return 0;
+  const M = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
   const seriesIds = {};
   series.forEach((s) => { seriesIds[s.id] = true; });
 
+  let added = 0;
   (M.series || []).forEach((s) => {
     if (seriesIds[s.id]) {
       throw new Error('manual series id ' + s.id + ' collides with a real game series');
     }
     series.push({ id: s.id, kind: s.kind, name: s.name, sort_order: s.sort_order });
     seriesIds[s.id] = true;
+    added++;
   });
+  return added;
+}
+
+function mergeManualWeapons(wp, series, skillIdByName) {
+  const file = MANUAL_FILE;
+  if (!fs.existsSync(file)) return 0;
+
+  const M = JSON.parse(fs.readFileSync(file, 'utf8'));
+
+  // Series are registered by mergeManualSeries before this runs.
+  const seriesIds = {};
+  series.forEach((s) => { seriesIds[s.id] = true; });
 
   const usedGameIds = {};
   wp.weaponGrades.forEach((g) => { usedGameIds[g.game_weapon_id] = true; });
@@ -759,6 +873,8 @@ async function main() {
   const skillIdByName = {};
   s.skills.forEach((x) => (skillIdByName[x.name] = x.id));
   const manualSkills = mergeManualSkills(s, skillIdByName);
+  mergeManualSeries(a.series);
+  const manualArmor = mergeManualArmor(a, a.series, skillIdByName);
   const manualCount = mergeManualWeapons(wp, a.series, skillIdByName);
   fixSeriesCustomisation(wp, a.series, warnings);
 
@@ -809,6 +925,7 @@ async function main() {
   console.log('counts:', JSON.stringify(counts));
 
   if (manualSkills) console.log('  merged ' + manualSkills + ' manual skill(s) the source does not publish');
+  if (manualArmor) console.log('  merged ' + manualArmor + ' manual armour piece(s) the source does not publish');
   if (manualCount) console.log('  merged ' + manualCount + ' manual weapon(s) the source does not publish');
 
   const bySlot = {};

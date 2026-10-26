@@ -200,6 +200,26 @@ async function main() {
     const s = seriesById[a.series_id];
     monsterOfArmour[a.name] = (s && monsterOfSeriesKind[s.kind]) || '';
   });
+
+  // Event armour carries a monster too, but it is the one whose material the
+  // piece is built from rather than one that drops it, so the source's
+  // series-to-monster map knows nothing about it. It lives in
+  // manual-weapons.json instead and is overlaid here, otherwise the column is
+  // blank for pieces whose monster we actually know.
+  const MANUAL_SERIES_MIN = 9000;
+  const manualSeriesNames = new Set(
+    d.series.filter((s) => s.id >= MANUAL_SERIES_MIN).map((s) => s.name));
+  try {
+    const MF = path.join(HERE, 'manual-weapons.json');
+    if (fs.existsSync(MF)) {
+      const MM = JSON.parse(fs.readFileSync(MF, 'utf8'));
+      (MM.armor || []).forEach((x) => {
+        if (x.monster_name) monsterOfArmour[x.name] = x.monster_name;
+      });
+    }
+  } catch (e) {
+    say('  WARNING could not read manual-weapons.json for event monsters: ' + e.message);
+  }
   const seriesNameOfArmour = {};
   d.armor.forEach((a) => { seriesNameOfArmour[a.name] = (seriesById[a.series_id] || {}).name || ''; });
 
@@ -417,7 +437,8 @@ async function main() {
   // ---- Equipment_Skill: renames, levels, append ---------------------------
   let esIds = [], lastEsRow = 1;
   const seen = new Set();
-  let lvFixed = 0, esRenamed = 0;
+  let lvFixed = 0, esRenamed = 0, esRemoved = 0;
+  const staleList = [];
   for (let r = 2; r <= shEs.rowCount; r++) {
     const row = shEs.getRow(r);
     let en = str(row.getCell(2));
@@ -427,6 +448,22 @@ async function main() {
     const id = Number(raw(row.getCell(1)));
     if (id) esIds.push(id);
     if (renames.has(en)) { en = renames.get(en); row.getCell(2).value = en; esRenamed++; }
+
+    // A skill can be taken OFF a piece — Jack-o'-Head lost Solidarity
+    // (Halloween) in the 2026-10-26 revision. Adding and updating but never
+    // removing left it claiming both the old skill and its three replacements.
+    //
+    // Only enforced for pieces the source knows: skillsOf has an entry for every
+    // piece in d.armor, so an absent entry means a row the sheet owns and this
+    // script has no business pruning.
+    if (skillsOf[en] && !skillsOf[en].some((x) => x.skill === sn)) {
+      for (let c = 1; c <= 6; c++) row.getCell(c).value = null;
+      row.commit();
+      esRemoved++;
+      staleList.push(en + ' — ' + sn);
+      continue;
+    }
+
     seen.add(en + '|' + sn);
     const ours = (skillsOf[en] || []).find((x) => x.skill === sn);
     if (ours && Number(raw(row.getCell(4))) !== ours.level) {
@@ -455,7 +492,11 @@ async function main() {
       esAdded++;
     });
   });
-  say('  Equipment_Skill: ' + esAdded + ' added, ' + lvFixed + ' levels updated, ' + esRenamed + ' renamed');
+  say('  Equipment_Skill: ' + esAdded + ' added, ' + lvFixed + ' levels updated, ' +
+      esRenamed + ' renamed, ' + esRemoved + ' removed');
+  // Naming a removal is worth the line: it is the only thing here that takes
+  // information away, so it should never happen silently.
+  staleList.forEach((x) => say('    - removed ' + x + ' (the source no longer has it on that piece)'));
 
   // ---- reorder everything to in-game display order -------------------------
 
@@ -514,7 +555,14 @@ async function main() {
   say('\n  Monster: reordered to display order, ids renumbered 1..' + order.length);
 
   // Equipment: three bands, monster order inside band 2.
-  const sourceSets = new Set(d.series.map((s) => s.name));
+  //
+  // Band 3 is event gear. It used to be identified as "a set the source does not
+  // publish", which held until event armour was added to the database — the
+  // manual series then counted as source sets and eight pieces silently dropped
+  // into band 1 among Leather and Alloy. The manual series id range is the
+  // reliable test, since that is what reserves them in the first place.
+  const sourceSets = new Set(
+    d.series.filter((s) => s.id < MANUAL_SERIES_MIN).map((s) => s.name));
   const eqRows = [];
   for (let r = 2; r <= shEq.rowCount; r++) {
     const n = str(shEq.getRow(r).getCell(2));

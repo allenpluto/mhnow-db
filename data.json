@@ -1295,6 +1295,24 @@
       "category_label": "Attack",
       "max_level": 1,
       "sort_order": 999009107
+    },
+    {
+      "id": 9108,
+      "kind": "MANUAL_HAPPY_NEW_YEAR_2024",
+      "name": "Happy New Year (2024)",
+      "category": "OTHERS",
+      "category_label": "Other",
+      "max_level": 1,
+      "sort_order": 999009108
+    },
+    {
+      "id": 9109,
+      "kind": "MANUAL_PARTBREAKER_HALLOWEEN",
+      "name": "Partbreaker (Halloween)",
+      "category": "ATTACK_BOOST",
+      "category_label": "Attack",
+      "max_level": 1,
+      "sort_order": 999009109
     }
   ],
   "skillLevels": [
@@ -6094,6 +6112,24 @@
       "effect_amounts": null,
       "condition_amounts": null,
       "effect_amount_1": null
+    },
+    {
+      "skill_id": 9108,
+      "level": 1,
+      "description": "You'll want to wish other players a Happy New Year!",
+      "description_template": "You'll want to wish other players a Happy New Year!",
+      "effect_amounts": null,
+      "condition_amounts": null,
+      "effect_amount_1": null
+    },
+    {
+      "skill_id": 9109,
+      "level": 1,
+      "description": "Increases part damage accumulated on breakable parts by 5%\n*If active during the Halloween event, the effect is multiplied by 10",
+      "description_template": "Increases part damage accumulated on breakable parts by 5%\n*If active during the Halloween event, the effect is multiplied by 10",
+      "effect_amounts": null,
+      "condition_amounts": null,
+      "effect_amount_1": null
     }
   ],
   "series": [
@@ -6618,6 +6654,30 @@
       "kind": "SERIES_MANUAL_SUMMER_OF_HUNTERS_2026",
       "name": "Summer of Hunters 2026",
       "sort_order": 999009009
+    },
+    {
+      "id": 9010,
+      "kind": "SERIES_MANUAL_HALLOWEEN_2024_SET",
+      "name": "Halloween 2024 Set",
+      "sort_order": 999009010
+    },
+    {
+      "id": 9011,
+      "kind": "SERIES_MANUAL_LUNAR_NEW_YEAR_SET",
+      "name": "Lunar New Year Set",
+      "sort_order": 999009011
+    },
+    {
+      "id": 9012,
+      "kind": "SERIES_MANUAL_BUNNY_HEAD",
+      "name": "Bunny Head",
+      "sort_order": 999009012
+    },
+    {
+      "id": 9013,
+      "kind": "SERIES_MANUAL_NEW_YEAR_SET",
+      "name": "New Year Set",
+      "sort_order": 999009013
     }
   ],
   "armor": [
@@ -10169,6 +10229,86 @@
       "name": "Zinogre Coil",
       "asset_key": "w_wst107_0000",
       "min_grade": 5,
+      "max_grade": 10
+    },
+    {
+      "id": 356,
+      "kind": "MANUAL_SWIMMER_GOGGLES",
+      "series_id": 9005,
+      "slot": "HEAD",
+      "name": "Swimmer Goggles",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 357,
+      "kind": "MANUAL_SIMMER_INFLATABLE",
+      "series_id": 9005,
+      "slot": "TORSO",
+      "name": "Simmer Inflatable",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 358,
+      "kind": "MANUAL_SWIMMER_FLIPPERS",
+      "series_id": 9005,
+      "slot": "LEGS",
+      "name": "Swimmer Flippers",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 359,
+      "kind": "MANUAL_GHOST_BALLOON",
+      "series_id": 9010,
+      "slot": "TORSO",
+      "name": "Ghost Balloon",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 360,
+      "kind": "MANUAL_DRAGON_DANCE_MASK",
+      "series_id": 9011,
+      "slot": "HEAD",
+      "name": "Dragon Dance Mask",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 361,
+      "kind": "MANUAL_BUNNY_HEAD",
+      "series_id": 9012,
+      "slot": "HEAD",
+      "name": "Bunny Head",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 362,
+      "kind": "MANUAL_NEW_YEAR_SPECS_2024",
+      "series_id": 9013,
+      "slot": "HEAD",
+      "name": "New Year Specs 2024",
+      "asset_key": null,
+      "min_grade": 10,
+      "max_grade": 10
+    },
+    {
+      "id": 363,
+      "kind": "MANUAL_JACK_O_HEAD",
+      "series_id": 9004,
+      "slot": "HEAD",
+      "name": "Jack-o'-Head",
+      "asset_key": null,
+      "min_grade": 10,
       "max_grade": 10
     }
   ],
@@ -27461,6 +27601,62 @@
       "armor_id": 355,
       "grade": 10,
       "game_armor_id": 1008,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2471,
+      "armor_id": 356,
+      "grade": 10,
+      "game_armor_id": 900000,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2472,
+      "armor_id": 357,
+      "grade": 10,
+      "game_armor_id": 900001,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2473,
+      "armor_id": 358,
+      "grade": 10,
+      "game_armor_id": 900002,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2474,
+      "armor_id": 359,
+      "grade": 10,
+      "game_armor_id": 900003,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2475,
+      "armor_id": 360,
+      "grade": 10,
+      "game_armor_id": 900004,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2476,
+      "armor_id": 361,
+      "grade": 10,
+      "game_armor_id": 900005,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2477,
+      "armor_id": 362,
+      "grade": 10,
+      "game_armor_id": 900006,
+      "driftsmelt_slots": 1
+    },
+    {
+      "id": 2478,
+      "armor_id": 363,
+      "grade": 10,
+      "game_armor_id": 900007,
       "driftsmelt_slots": 1
     }
   ],
@@ -89214,6 +89410,206 @@
       "armor_grade_id": 2470,
       "step": 5,
       "defense": 197
+    },
+    {
+      "armor_grade_id": 2471,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2471,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2471,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2471,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2471,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2472,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2472,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2472,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2472,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2472,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2473,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2473,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2473,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2473,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2473,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2474,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2474,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2474,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2474,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2474,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2475,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2475,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2475,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2475,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2475,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2476,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2476,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2476,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2476,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2476,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2477,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2477,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2477,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2477,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2477,
+      "step": 5,
+      "defense": 197
+    },
+    {
+      "armor_grade_id": 2478,
+      "step": 1,
+      "defense": 182
+    },
+    {
+      "armor_grade_id": 2478,
+      "step": 2,
+      "defense": 186
+    },
+    {
+      "armor_grade_id": 2478,
+      "step": 3,
+      "defense": 190
+    },
+    {
+      "armor_grade_id": 2478,
+      "step": 4,
+      "defense": 193
+    },
+    {
+      "armor_grade_id": 2478,
+      "step": 5,
+      "defense": 197
     }
   ],
   "gradeSkills": [
@@ -109020,6 +109416,71 @@
     {
       "armor_grade_id": 2470,
       "skill_id": 35,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2471,
+      "skill_id": 9105,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2471,
+      "skill_id": 109,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2472,
+      "skill_id": 9105,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2472,
+      "skill_id": 111,
+      "level": 2
+    },
+    {
+      "armor_grade_id": 2473,
+      "skill_id": 9105,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2473,
+      "skill_id": 103,
+      "level": 2
+    },
+    {
+      "armor_grade_id": 2474,
+      "skill_id": 36,
+      "level": 2
+    },
+    {
+      "armor_grade_id": 2475,
+      "skill_id": 45,
+      "level": 2
+    },
+    {
+      "armor_grade_id": 2476,
+      "skill_id": 36,
+      "level": 3
+    },
+    {
+      "armor_grade_id": 2477,
+      "skill_id": 9108,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2478,
+      "skill_id": 9109,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2478,
+      "skill_id": 227,
+      "level": 1
+    },
+    {
+      "armor_grade_id": 2478,
+      "skill_id": 134,
       "level": 1
     }
   ],
