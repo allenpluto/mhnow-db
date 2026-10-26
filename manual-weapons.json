@@ -1313,11 +1313,11 @@
       "_monster": "Required for upgrade material, not the source of the piece."
     },
     {
-      "kind": "MANUAL_SIMMER_INFLATABLE",
-      "name": "Simmer Inflatable",
+      "kind": "MANUAL_SWIMMER_INFLATABLE",
+      "name": "Swimmer Inflatable",
       "series_id": 9005,
       "slot": "TORSO",
-      "_source": "user-supplied: Simmer Inflatable | Swimmer Set | Waist | 1 | Sweltering Summer 2025 +Lv1 Shared Sword +Lv2",
+      "_source": "user-supplied: Swimmer Inflatable | Swimmer Set | Waist | 1 | Sweltering Summer 2025 +Lv1 Shared Sword +Lv2 (the line as typed read \"Simmer\"; corrected to \"Swimmer\" by the user)",
       "grades": [
         {
           "grade": 10,

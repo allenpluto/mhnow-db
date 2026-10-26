@@ -10243,10 +10243,10 @@
     },
     {
       "id": 357,
-      "kind": "MANUAL_SIMMER_INFLATABLE",
+      "kind": "MANUAL_SWIMMER_INFLATABLE",
       "series_id": 9005,
       "slot": "TORSO",
-      "name": "Simmer Inflatable",
+      "name": "Swimmer Inflatable",
       "asset_key": null,
       "min_grade": 10,
       "max_grade": 10

@@ -1167,7 +1167,7 @@ INSERT INTO `armor` (`id`,`kind`,`series_id`,`slot`,`name`,`asset_key`,`min_grad
   (354, 'ZINOGRE_LEGS', 25, 'LEGS', 'Zinogre Greaves', 'w_leg107_0000', 5, 10),
   (355, 'ZINOGRE_WAIST', 25, 'TORSO', 'Zinogre Coil', 'w_wst107_0000', 5, 10),
   (356, 'MANUAL_SWIMMER_GOGGLES', 9005, 'HEAD', 'Swimmer Goggles', NULL, 10, 10),
-  (357, 'MANUAL_SIMMER_INFLATABLE', 9005, 'TORSO', 'Simmer Inflatable', NULL, 10, 10),
+  (357, 'MANUAL_SWIMMER_INFLATABLE', 9005, 'TORSO', 'Swimmer Inflatable', NULL, 10, 10),
   (358, 'MANUAL_SWIMMER_FLIPPERS', 9005, 'LEGS', 'Swimmer Flippers', NULL, 10, 10),
   (359, 'MANUAL_GHOST_BALLOON', 9010, 'TORSO', 'Ghost Balloon', NULL, 10, 10),
   (360, 'MANUAL_DRAGON_DANCE_MASK', 9011, 'HEAD', 'Dragon Dance Mask', NULL, 10, 10),
