@@ -107,6 +107,11 @@ console.log('  search space: ' + SLOTS.map((s) => bundles[s].length).join(' x ')
 
 // ---------------------------------------------------------------- search
 const TOP = Number(val('--top', 5));
+// The utility weights are assumptions, and on a close field they decide the
+// winner rather than merely colouring it. --damage-only ranks on damage alone so
+// the two views can be compared and the cost of a utility skill made explicit.
+const DAMAGE_ONLY = flag('--damage-only');
+if (DAMAGE_ONLY) console.log('  ranking: damage only, utility weights ignored');
 const H = bundles.HEAD, C = bundles.CHEST, A = bundles.ARMS, T = bundles.TORSO, L = bundles.LEGS;
 
 // Keep only the leaders. Collecting all 2.1 million results (times a gem choice
@@ -141,7 +146,7 @@ for (const h of H) for (const c of C) for (const a of A) for (const t of T) for 
   for (const gem of gemCandidates) {
     let before;
     if (gem && slots) { before = totals[gem] || 0; totals[gem] = before + slots; }
-    const v = E.scoreTotal(totals, W);
+    const v = DAMAGE_ONLY ? E.score(totals, W).dmg : E.scoreTotal(totals, W);
     if (gem && slots) { if (before) totals[gem] = before; else delete totals[gem]; }
     if (v > bestScore) { bestScore = v; bestGem = gem; }
   }
