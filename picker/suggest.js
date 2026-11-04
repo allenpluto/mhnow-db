@@ -170,15 +170,19 @@
       var box = document.createElement('div');
       box.className = 'setcard';
 
+      // Always lead with damage, in both modes. Heading the utility ranking with
+      // its score invited comparing that score against a damage figure from the
+      // other mode — they are different units, and the score is always the
+      // larger of the two, which made utility ranking look like more damage.
       var h = document.createElement('h2');
-      h.textContent = '#' + (i + 1) + '  ' +
-        (opts.damageOnly ? 'damage ' + Math.round(r.detail.dmg).toLocaleString()
-                         : 'score ' + Math.round(r.detail.total).toLocaleString());
-      if (!opts.damageOnly && r.detail.util) {
+      h.textContent = '#' + (i + 1) + '  damage ' + Math.round(r.detail.dmg).toLocaleString();
+      if (!opts.damageOnly) {
         var sm = document.createElement('span');
         sm.className = 'muted';
-        sm.textContent = '  (damage ' + Math.round(r.detail.dmg).toLocaleString() +
-          ' x ' + (1 + r.detail.util).toFixed(2) + ' utility)';
+        sm.textContent = r.detail.util
+          ? '  ·  ranked on score ' + Math.round(r.detail.total).toLocaleString() +
+            ' (x' + (1 + r.detail.util).toFixed(2) + ' utility)'
+          : '  ·  no utility skills, so score = damage';
         h.appendChild(sm);
       }
       box.appendChild(h);
@@ -229,7 +233,15 @@
       Object.keys(b.pieces[0].skills || {}).forEach(function (n) { if (!out.known[n]) ignored[n] = true; });
     });
     var a = E.ASSUME;
-    var lines = [
+    var lines = [];
+    if (!opts.damageOnly) {
+      lines.push('Ranked on SCORE, which is damage multiplied by the utility weights — ' +
+        'Power Prolonger up to x1.15, Quick Work up to x1.08, Lock On x1.05. ' +
+        'A score is therefore never comparable with a damage figure, and the top set ' +
+        'here will usually carry less damage than the one "damage only" finds. ' +
+        'Those weights are assumptions, not data.');
+    }
+    lines = lines.concat([
       'Assumptions: average health ' + (a.hpFraction * 100) + '% (the Vital skills), ' +
         'Valor ' + (a.valorUptime * 100) + '% uptime, Elemental Release ' +
         (a.elementalReleaseUptime * 100) + '%, Burst ' + (a.burstUptime * 100) + '%, ' +
@@ -239,7 +251,7 @@
         ? W.element + ' is a status, so its value is buildup and contributes no damage — ' +
           'Critical Element, Elemental Release and the Vital skills are excluded with it.'
         : 'Only ' + W.element + ' skills are considered; other elements cannot help this weapon.',
-    ];
+    ]);
     if (Object.keys(ignored).length) {
       lines.push('On the winning set, these skills are scored as zero because damage cannot price them: ' +
         Object.keys(ignored).sort().join(', ') + '.');

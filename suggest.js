@@ -151,11 +151,12 @@ if (GEMS) {
 
 console.log('\nBest ' + TOP + ' sets:');
 out.results.forEach((r, i) => {
-  console.log('\n  #' + (i + 1) + '  ' + (DAMAGE_ONLY
-    ? 'damage ' + r.detail.dmg.toFixed(0) +
-      (r.detail.util ? '   (utility ignored; it would add x' + (1 + r.detail.util).toFixed(2) + ')' : '')
-    : 'score ' + r.detail.total.toFixed(0) + '   (damage ' + r.detail.dmg.toFixed(0) +
-      (r.detail.util ? ' x ' + (1 + r.detail.util).toFixed(2) + ' utility' : '') + ')'));
+  // Damage leads in both modes, so the two can be compared at a glance. A score
+  // is damage times the utility weights and is always the larger number.
+  console.log('\n  #' + (i + 1) + '  damage ' + r.detail.dmg.toFixed(0) + '   ' + (DAMAGE_ONLY
+    ? (r.detail.util ? '(utility ignored; it would add x' + (1 + r.detail.util).toFixed(2) + ')' : '')
+    : (r.detail.util ? 'ranked on score ' + r.detail.total.toFixed(0) +
+        ' (x' + (1 + r.detail.util).toFixed(2) + ' utility)' : '(no utility skills)')));
   S.SLOTS.forEach((slot, j) => {
     const b = r.picks[j];
     const names = b.pieces.map((p) => p.name);
