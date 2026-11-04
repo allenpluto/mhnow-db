@@ -51,7 +51,11 @@ const ASSUME = {
   // the right input for it, while the threshold skills either fire or do not.
   hpFraction: 0.60,
   baseHp: 100,             // before Health Boost
-  valorUptime: 0.60,       // Valor only fires after a roar, once per hunt
+  // Valor fires once per hunt, on the first roar, and lasts the rest of it. 60%
+  // therefore means the first roar lands 40% of the way in. That is the
+  // pessimistic reading: a longer fight pushes the figure up, never down, so
+  // this understates Valor rather than flattering it.
+  valorUptime: 0.60,
 
   // Set by the user rather than measured — none of these can be read off
   // anything, and the earlier figures were my guesses. They were deliberately
