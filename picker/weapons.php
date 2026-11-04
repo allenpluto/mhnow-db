@@ -376,7 +376,8 @@ function asset($f) {
   <h1>Weapon Picker</h1>
   <p class="sub">
     <?php echo count($weapons); ?> weapons &middot; stats at grade 10-5 &middot;
-    <a href="./">armour picker</a>
+    <a href="./">armour picker</a> &middot;
+    <a href="suggest.php">set suggester</a>
   </p>
 </header>
 

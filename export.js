@@ -34,13 +34,15 @@ const PICKER = path.join(HERE, 'picker');
 const PAGES = [
   { page: 'index.php', out: 'mhnow-picker.html', label: 'armour picker' },
   { page: 'weapons.php', out: 'mhnow-weapon-picker.html', label: 'weapon picker' },
+  { page: 'suggest.php', out: 'mhnow-set-suggester.html', label: 'set suggester' },
 ];
 
-// Links between the two pages on the site -> the exported filenames.
+// Links between the pages on the site -> the exported filenames.
 const SIBLING = {
   './': 'mhnow-picker.html',
   'index.php': 'mhnow-picker.html',
   'weapons.php': 'mhnow-weapon-picker.html',
+  'suggest.php': 'mhnow-set-suggester.html',
 };
 
 const kb = (s) => (Buffer.byteLength(s, 'utf8') / 1024).toFixed(1) + ' KB';
@@ -193,14 +195,25 @@ function publishDocs() {
   const docs = path.join(HERE, 'docs');
   if (!fs.existsSync(docs)) fs.mkdirSync(docs);
 
-  const armour = fs.readFileSync(path.join(HERE, 'mhnow-picker.html'), 'utf8');
+  // The armour picker becomes index.html; every other page keeps its filename
+  // and has its link to the armour picker repointed. Derived from PAGES so a
+  // fourth page needs no change here — an earlier version named the two files
+  // directly and silently left the set suggester out of the published site.
+  const ARMOUR_OUT = PAGES[0].out;
+  const armour = fs.readFileSync(path.join(HERE, ARMOUR_OUT), 'utf8');
   fs.writeFileSync(path.join(docs, 'index.html'), armour, 'utf8');
 
-  let weapons = fs.readFileSync(path.join(HERE, 'mhnow-weapon-picker.html'), 'utf8');
-  const before = (weapons.match(/href="mhnow-picker\.html"/g) || []).length;
-  weapons = weapons.replace(/href="mhnow-picker\.html"/g, 'href="index.html"');
-  if (!before) console.log('  WARNING the weapon picker has no link back to the armour picker');
-  fs.writeFileSync(path.join(docs, 'mhnow-weapon-picker.html'), weapons, 'utf8');
+  let repointed = 0;
+  PAGES.slice(1).forEach((spec) => {
+    let html = fs.readFileSync(path.join(HERE, spec.out), 'utf8');
+    const re = new RegExp('href="' + ARMOUR_OUT.replace('.', '\\.') + '"', 'g');
+    const n = (html.match(re) || []).length;
+    if (!n) console.log('  WARNING ' + spec.out + ' has no link back to the armour picker');
+    repointed += n;
+    html = html.replace(re, 'href="index.html"');
+    fs.writeFileSync(path.join(docs, spec.out), html, 'utf8');
+  });
+  const before = repointed;
 
   // Without this GitHub runs the pages through Jekyll, which skips files whose
   // names begin with an underscore. Nothing here does, but the build step is
@@ -208,7 +221,8 @@ function publishDocs() {
   fs.writeFileSync(path.join(docs, '.nojekyll'), '', 'utf8');
 
   console.log('docs/ ready for GitHub Pages: index.html (armour), ' +
-    'mhnow-weapon-picker.html, .nojekyll — ' + before + ' back-link(s) repointed');
+    PAGES.slice(1).map((p) => p.out).join(', ') + ', .nojekyll — ' +
+    before + ' back-link(s) repointed');
 }
 
 // Rendering needs PHP and a live database; mirroring into docs/ needs neither.

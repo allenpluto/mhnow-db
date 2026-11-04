@@ -128,7 +128,8 @@ function asset($f) {
   <p class="sub">
     <?php echo count($armor); ?> pieces &middot; <?php echo count($skills); ?> skills &middot;
     skills shown at each piece's max grade &middot;
-    <a href="weapons.php">weapon picker</a>
+    <a href="weapons.php">weapon picker</a> &middot;
+    <a href="suggest.php">set suggester</a>
   </p>
 </header>
 

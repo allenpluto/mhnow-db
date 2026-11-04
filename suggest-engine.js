@@ -28,13 +28,21 @@
  * silently guessed at.
  */
 
+/*
+ * Loads both in Node (require) and in the browser (<script>). The damage model
+ * has had several subtle faults already — uniform gems, unobtainable gems, a
+ * missing Raw Power — so the website runs this exact file rather than a second
+ * copy of the same arithmetic.
+ *
+ * No file or network access here: callers supply the data.
+ */
+
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-
-const HERE = __dirname;
-const d = JSON.parse(fs.readFileSync(path.join(HERE, 'data.json'), 'utf8'));
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.SuggestEngine = factory();
+}(typeof self !== 'undefined' ? self : this, function () {
 
 // ---------------------------------------------------------------- assumptions
 const ASSUME = {
@@ -321,5 +329,7 @@ function makeScorer(w, damageOnly) {
   return { names: names, at: at, scoreVec: scoreVec };
 }
 
-module.exports = { ASSUME, UTILITY, UTILITY_SCOPE, score, scoreTotal, makeScorer,
-  knownSkills, ELEMENTS, STATUS, d };
+return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
+  score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
+  knownSkills: knownSkills, ELEMENTS: ELEMENTS, STATUS: STATUS };
+}));

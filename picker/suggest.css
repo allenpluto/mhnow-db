@@ -1,0 +1,76 @@
+/* Set suggester. Builds on app.css — only what that file does not already
+   provide is here. */
+
+#s-weapon { min-width: 22rem; max-width: 100%; }
+
+.filters input[type="number"] {
+  width: 5.5rem;
+  padding: .35rem .5rem;
+  border: 1px solid var(--line, #3a3a42);
+  border-radius: 4px;
+  background: var(--panel, #22222a);
+  color: inherit;
+  font: inherit;
+}
+
+.filters.own { padding-top: 0; }
+.filters .fgroup.grow { flex: 1 1 100%; min-width: 0; }
+#s-own {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: .4rem .5rem;
+  border: 1px solid var(--line, #3a3a42);
+  border-radius: 4px;
+  background: var(--panel, #22222a);
+  color: inherit;
+  font: inherit;
+  font-size: .9rem;
+  resize: vertical;
+}
+.hint { margin: .3rem 0 0; font-size: .8rem; opacity: .6; }
+.hint.warn { opacity: 1; color: #e0a05a; }
+
+.setcard {
+  border: 1px solid var(--line, #3a3a42);
+  border-radius: 6px;
+  padding: .75rem 1rem 1rem;
+  margin: 0 0 1rem;
+  background: var(--panel, #22222a);
+}
+.setcard h2 {
+  margin: 0 0 .6rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.setcard h2 .muted { font-weight: 400; opacity: .65; font-size: .9rem; }
+
+table.setparts { border-collapse: collapse; width: 100%; }
+table.setparts td {
+  padding: .3rem .6rem .3rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+  vertical-align: top;
+}
+table.setparts tr:last-child td { border-bottom: 0; }
+table.setparts td.slot { width: 4.5rem; opacity: .7; }
+table.setparts td.sk { opacity: .85; }
+
+.gems, .totals { margin: .5rem 0 0; font-size: .9rem; }
+.gems { color: var(--accent, #7fd1ae); }
+.totals { opacity: .7; }
+
+/* The assumptions behind the numbers. Deliberately not hidden away: several of
+   them are guesses, and the winning set often turns on one. */
+.notes {
+  margin: 1.5rem 0 3rem;
+  font-size: .85rem;
+  opacity: .7;
+  max-width: 70ch;
+}
+.notes p { margin: .4rem 0; }
+
+@media (max-width: 640px) {
+  #s-weapon { min-width: 0; width: 100%; }
+  table.setparts td { display: block; padding: .1rem 0; border: 0; }
+  table.setparts tr { display: block; padding: .4rem 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+  table.setparts td.slot { width: auto; font-weight: 600; opacity: .55; }
+}
