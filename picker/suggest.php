@@ -150,6 +150,16 @@ function parentAsset($f) {
     <label class="flabel" for="s-aff">Affinity bonus</label>
     <input id="s-aff" type="number" value="0" step="10">
   </div>
+  <!-- Latent Power's uptime and how far Rising Tide ramps both follow from
+       this, so it is an input rather than a constant. -->
+  <div class="fgroup narrow">
+    <label class="flabel" for="s-hunt">Hunt length</label>
+    <select id="s-hunt">
+      <option value="75" selected>75s &mdash; standard hunt</option>
+      <option value="150">150s &mdash; base defence</option>
+      <option value="240">240s &mdash; long fight</option>
+    </select>
+  </div>
   <div class="fgroup">
     <label class="flabel">Options</label>
     <div class="checkrow" id="s-opts"></div>

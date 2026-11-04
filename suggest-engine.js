@@ -71,7 +71,18 @@ const ASSUME = {
   // rather than being deleted or taken at face value.
   peakPerformanceUptime: 0.10,  // needs FULL health
   heroicsUptime: 0.10,          // needs health at 29% or lower
-  latentPowerUptime: 0.00,      // "certain conditions" — not stated anywhere
+
+  // How long the fight lasts. Two skills key off the clock rather than off
+  // anything you do, so this is a real input: a standard hunt is 75 seconds
+  // (Latent Power's two stated conditions, 47 seconds of combat and the last
+  // 28 seconds, are the same moment only if the hunt is 75), while a base
+  // defence runs about 2.5 minutes.
+  huntSeconds: 75,
+
+  // Latent Power starts at roughly 47 seconds of combat and holds to the end,
+  // so its uptime follows from the hunt length rather than being guessed.
+  // Attacking hard brings it forward, so this is a floor.
+  latentPowerStart: 47,
 };
 
 // Worth as a fraction of the set's damage, for skills damage cannot price.
@@ -120,6 +131,28 @@ const ADV_BURST = { 1: 0.05, 2: 0.10 };
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
+
+// Rising Tide ramps on the clock: measured at +30 attack from 25 seconds and
+// another +30 from 50, per level. Averaging both stages over the hunt gives the
+// attack it is worth across the whole fight, which is why a long base defence
+// is where it earns its place.
+const TIDE_PER_LEVEL = 30;
+const TIDE_STAGES = [25, 50];
+function tideAttack(level, huntSeconds) {
+  if (!level) return 0;
+  var total = 0;
+  for (var i = 0; i < TIDE_STAGES.length; i++) {
+    var active = huntSeconds - TIDE_STAGES[i];
+    if (active > 0) total += TIDE_PER_LEVEL * level * (active / huntSeconds);
+  }
+  return total;
+}
+
+// Latent Power's share of the hunt, from when it starts to the end.
+function latentUptime() {
+  var up = (ASSUME.huntSeconds - ASSUME.latentPowerStart) / ASSUME.huntSeconds;
+  return up < 0 ? 0 : up > 1 ? 1 : up;
+}
 // Raw Power: flat attack bought with affinity.
 const RAW_ATK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };
 const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
@@ -149,7 +182,9 @@ function knownSkills(weapon) {
     // Trades affinity for flat attack, which makes it a real option on a
     // negative-affinity weapon and a partner for Critical Ferocity. Omitting it
     // meant the optimiser scored it zero and never considered that build.
-    'Raw Power']);
+    'Raw Power',
+    // Ramps on the clock, so it is worth most on a long base defence.
+    'Rising Tide']);
 
   Object.keys(UTILITY).forEach((k) => {
     const scope = UTILITY_SCOPE[k];
@@ -180,6 +215,7 @@ function score(totals, w) {
   atk += ATTACK_BOOST[lv('Attack Boost')] || 0;
   if (lv('Attack Boost') >= 5) atk += ADV_ATTACK[lv('Advanced Attack Boost')] || 0;
   atk += RAW_ATK[lv('Raw Power')] || 0;
+  atk += tideAttack(lv('Rising Tide'), ASSUME.huntSeconds);
   atk += (VALOR[lv('Valor')] || 0) * ASSUME.valorUptime;
   atk += (PEAK[lv('Peak Performance')] || 0) * ASSUME.peakPerformanceUptime;
 
@@ -193,7 +229,7 @@ function score(totals, w) {
 
   aff += (CEYE[lv('Critical Eye')] || 0);
   aff += (WEX[lv('Weakness Exploit')] || 0) * ASSUME.weakPointUptime;
-  aff += (LATENT[lv('Latent Power')] || 0) * ASSUME.latentPowerUptime;
+  aff += (LATENT[lv('Latent Power')] || 0) * latentUptime();
   aff -= (CFERO_AFF[lv('Critical Ferocity')] || 0);
   aff -= (RAW_AFF[lv('Raw Power')] || 0);
 
@@ -270,7 +306,7 @@ function makeScorer(w, damageOnly) {
   const iCEye = I('Critical Eye'), iWEx = I('Weakness Exploit'), iLat = I('Latent Power');
   const iCF = I('Critical Ferocity'), iCB = I('Critical Boost'), iCE = I('Critical Element');
   const iBurst = I('Burst'), iAB2 = I('Advanced Burst'), iOG = I('Offensive Guard');
-  const iRaw = I('Raw Power');
+  const iRaw = I('Raw Power'), iTide = I('Rising Tide');
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
@@ -291,6 +327,7 @@ function makeScorer(w, damageOnly) {
     atk += ATTACK_BOOST[g(v, iAB)] || 0;
     if (g(v, iAB) >= 5) atk += ADV_ATTACK[g(v, iAAB)] || 0;
     atk += RAW_ATK[g(v, iRaw)] || 0;
+    atk += tideAttack(g(v, iTide), ASSUME.huntSeconds);
     atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
     atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
 
@@ -304,7 +341,7 @@ function makeScorer(w, damageOnly) {
 
     aff += CEYE[g(v, iCEye)] || 0;
     aff += (WEX[g(v, iWEx)] || 0) * ASSUME.weakPointUptime;
-    aff += (LATENT[g(v, iLat)] || 0) * ASSUME.latentPowerUptime;
+    aff += (LATENT[g(v, iLat)] || 0) * latentUptime();
     aff -= CFERO_AFF[g(v, iCF)] || 0;
     aff -= RAW_AFF[g(v, iRaw)] || 0;
 

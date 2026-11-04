@@ -50,7 +50,7 @@ d.driftstoneSkills.forEach((x) => { GEMMABLE[skillById[x.skill_id].name] = true;
 const argv = process.argv.slice(2);
 const flag = (n) => argv.indexOf(n) > -1;
 const val = (n, dflt) => { const i = argv.indexOf(n); return i > -1 ? argv[i + 1] : dflt; };
-const TAKES_VALUE = ['--atk', '--ele', '--aff', '--top', '--own', '--skills'];
+const TAKES_VALUE = ['--atk', '--ele', '--aff', '--top', '--own', '--skills', '--hunt'];
 const name = argv.filter((a, i) => a.charAt(0) !== '-' && TAKES_VALUE.indexOf(argv[i - 1]) < 0)[0];
 if (!name) {
   console.error('usage: node suggest.js "Weapon Name" [--gems] [--damage-only]' +
@@ -87,6 +87,10 @@ const W = {
 const isStatus = E.STATUS.indexOf(W.element) >= 0;
 const DAMAGE_ONLY = flag('--damage-only');
 const GEMS = flag('--gems');
+
+// Hunt length drives Latent Power's uptime and how far Rising Tide ramps.
+// 75s is a standard hunt, a base defence runs about 150.
+E.ASSUME.huntSeconds = Number(val('--hunt', E.ASSUME.huntSeconds));
 
 console.log(W.name + '  ' + W.category + '  ' + W.element);
 console.log('  attack ' + W.atk + '   ' + (isStatus ? 'buildup ' : 'element ') + W.ele +
@@ -133,6 +137,8 @@ if (Object.keys(own).length) {
       (exists ? '' : '   <-- NO SUCH PIECE, ignored'));
   });
 }
+console.log('  hunt ' + E.ASSUME.huntSeconds + 's — Latent Power up for ' +
+  Math.round(Math.max(0, (E.ASSUME.huntSeconds - E.ASSUME.latentPowerStart) / E.ASSUME.huntSeconds) * 100) + '%');
 console.log('  driftsmelt: ' + (GEMS ? 'assumed to hold the set\'s most useful skill' : 'ignored'));
 if (DAMAGE_ONLY) console.log('  ranking: damage only, utility weights ignored');
 

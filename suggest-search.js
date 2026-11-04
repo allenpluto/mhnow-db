@@ -19,9 +19,12 @@
 
   var SLOTS = ['HEAD', 'CHEST', 'ARMS', 'TORSO', 'LEGS'];
 
-  // Critical Ferocity and Raw Power both BUY something with affinity, so "more
-  // is never worse" fails for them and they must never be pruned away.
-  var NON_MONOTONIC = { 'Critical Ferocity': 1, 'Raw Power': 1 };
+  // Skills where "more is never worse" fails, so Pareto pruning must leave them
+  // alone. Critical Ferocity and Raw Power buy something with affinity. Latent
+  // Power is the mirror image: it RAISES affinity, which wrecks a Critical
+  // Ferocity build by dragging the final figure back towards zero, so a bundle
+  // carrying it is not automatically better than one without.
+  var NON_MONOTONIC = { 'Critical Ferocity': 1, 'Raw Power': 1, 'Latent Power': 1 };
 
   /**
    * Collapse each slot's pieces into distinct skill bundles, then drop any

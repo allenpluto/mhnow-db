@@ -142,6 +142,10 @@
     };
     var isStatus = E.STATUS.indexOf(W.element) >= 0;
 
+    // Hunt length drives Latent Power's uptime and Rising Tide's ramp, so it
+    // must be set before the scorer is built.
+    E.ASSUME.huntSeconds = Number(document.getElementById('s-hunt').value) || 75;
+
     elStatus.textContent = 'Searching…';
     elOut.innerHTML = '';
     // Let the browser paint "Searching…" before the loop blocks it.
@@ -265,6 +269,12 @@
         (a.elementalReleaseUptime * 100) + '%, Burst ' + (a.burstUptime * 100) + '%, ' +
         'Weakness Exploit ' + (a.weakPointUptime * 100) + '%, ' +
         'the health-threshold skills at ' + (a.peakPerformanceUptime * 100) + '%.',
+      'Over a ' + a.huntSeconds + 's hunt, Latent Power is up for ' +
+        Math.round(Math.max(0, (a.huntSeconds - a.latentPowerStart) / a.huntSeconds) * 100) +
+        '% and Rising Tide averages ' + (30 * ((a.huntSeconds - 25) / a.huntSeconds +
+        Math.max(0, a.huntSeconds - 50) / a.huntSeconds)).toFixed(0) +
+        ' attack per level. Latent Power raises affinity, so it helps a crit build and ' +
+        'hurts a Critical Ferocity one.',
       isStatus
         ? W.element + ' is a status, so its value is buildup and contributes no damage — ' +
           'Critical Element, Elemental Release and the Vital skills are excluded with it.'
