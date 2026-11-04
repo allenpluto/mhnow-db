@@ -65,6 +65,26 @@ console.log('  attack ' + W.atk + '   ' + (isStatus ? 'buildup ' : 'element ') +
 const GEMS = flag('--gems');
 console.log('  driftsmelt: ' + (GEMS ? 'assumed to hold the set\'s most useful skill' : 'ignored'));
 
+// --skills scores one explicit build instead of searching, so the engine can be
+// checked against a figure worked out independently.
+//   --skills "Critical Element 5, Critical Eye 2, Weakness Exploit 2, Dragon Attack 2, Advanced Dragon Attack 1"
+const explicit = val('--skills', null);
+if (explicit) {
+  const totals = {};
+  explicit.split(',').forEach((part) => {
+    const m = part.trim().match(/^(.*?)\s+(\d+)$/);
+    if (!m) { console.error('cannot read "' + part.trim() + '"'); process.exit(2); }
+    totals[m[1].trim()] = Number(m[2]);
+  });
+  const unknown = Object.keys(totals).filter((n) => !E.knownSkills(W).has(n));
+  const s = E.score(totals, W);
+  console.log('\n  ' + Object.keys(totals).map((n) => n + ' ' + totals[n]).join(', '));
+  console.log('  damage ' + s.dmg.toFixed(1) +
+    (s.util ? '   utility x' + (1 + s.util).toFixed(2) + ' -> ' + s.total.toFixed(1) : ''));
+  if (unknown.length) console.log('  NOT PRICED (scored as zero): ' + unknown.join(', '));
+  process.exit(0);
+}
+
 // ---------------------------------------------------------------- bundles
 const known = E.knownSkills(W);
 const relevant = (sk) => {
