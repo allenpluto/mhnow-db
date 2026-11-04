@@ -96,6 +96,19 @@
     var SC = E.makeScorer(weapon, !!opts.damageOnly);
     var totals = new Int16Array(SC.names.length);
 
+    // The weapon's OWN skills are part of every set and were being ignored
+    // entirely. All 748 weapons carry at least one: Wyvern Strife brings
+    // Critical Element 2, so it needs three more from armour rather than five,
+    // and Bloom Snow Wail+ brings Elemental Release 1. Seeding them here means
+    // the search sees what the armour actually has to supply, and the Lv5
+    // thresholds that switch on the Advanced skills are measured correctly.
+    var weaponSkills = {};
+    Object.keys(weapon.skills || {}).forEach(function (n) {
+      if (!known[n]) return;                 // not relevant to this weapon's damage
+      weaponSkills[n] = weapon.skills[n];
+      totals[SC.at[n]] += weapon.skills[n];
+    });
+
     SLOTS.forEach(function (slot) {
       bundles[slot].forEach(function (b) {
         b.idx = [];
@@ -189,6 +202,7 @@
     // Rebuild the detail for the finalists only.
     results.forEach(function (r) {
       var tot = {};
+      Object.keys(weaponSkills).forEach(function (n) { tot[n] = weaponSkills[n]; });
       r.picks.forEach(function (b) {
         Object.keys(b.v).forEach(function (n) { tot[n] = (tot[n] || 0) + b.v[n]; });
       });
@@ -202,7 +216,8 @@
       r.detail = E.score(tot, weapon);
     });
 
-    return { results: results, space: space, bundles: bundles, names: SC.names, known: known };
+    return { results: results, space: space, bundles: bundles, names: SC.names,
+      known: known, weaponSkills: weaponSkills };
   }
 
   return { run: run, buildBundles: buildBundles, SLOTS: SLOTS };

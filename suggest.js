@@ -70,11 +70,19 @@ const gr = gradeOf[wRow.id + '|' + wRow.max_grade];
 const st = levelOf[gr.id] && levelOf[gr.id][5];
 if (!st) { console.error(name + ' has no 10-5 stats'); process.exit(2); }
 
+// A weapon's own skills count towards the set and must be seeded, not ignored.
+const weaponSkills = {};
+d.weaponGradeSkills.forEach((ws) => {
+  if (ws.weapon_grade_id !== gr.id) return;
+  weaponSkills[skillById[ws.skill_id].name] = ws.level;
+});
+
 const W = {
   name: wRow.name, category: wRow.category_label, element: wRow.element_label,
   atk: st.attack + Number(val('--atk', 0)),
   ele: st.element_attack + Number(val('--ele', 0)),
   aff: st.affinity + Number(val('--aff', 0)),
+  skills: weaponSkills,
 };
 const isStatus = E.STATUS.indexOf(W.element) >= 0;
 const DAMAGE_ONLY = flag('--damage-only');
@@ -83,6 +91,10 @@ const GEMS = flag('--gems');
 console.log(W.name + '  ' + W.category + '  ' + W.element);
 console.log('  attack ' + W.atk + '   ' + (isStatus ? 'buildup ' : 'element ') + W.ele +
   (isStatus ? ' (status: excluded from damage)' : '') + '   affinity ' + W.aff + '%');
+if (Object.keys(weaponSkills).length) {
+  console.log('  the weapon brings: ' +
+    Object.keys(weaponSkills).map((n) => n + ' ' + weaponSkills[n]).join(', '));
+}
 
 // --skills scores one explicit build, so the engine can be checked against a
 // figure derived independently.

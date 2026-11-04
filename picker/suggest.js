@@ -97,6 +97,7 @@
       atk: pick.atk + (Number(elAtk.value) || 0),
       ele: pick.ele + (Number(elEle.value) || 0),
       aff: pick.aff + (Number(elAff.value) || 0),
+      skills: pick.skills || {},      // the weapon's own skills count too
     };
     var isStatus = E.STATUS.indexOf(W.element) >= 0;
 
@@ -111,9 +112,11 @@
       });
       var secs = ((Date.now() - t0) / 1000).toFixed(1);
 
+      var brings = Object.keys(W.skills).map(function (n) { return n + ' ' + W.skills[n]; });
       elStatus.textContent = W.name + ' — ' + W.category + ' — ' + W.element +
         '  ·  attack ' + W.atk + ', ' + (isStatus ? 'buildup ' : 'element ') + W.ele +
         (isStatus ? ' (status, excluded from damage)' : '') + ', affinity ' + W.aff + '%' +
+        (brings.length ? '  ·  weapon brings ' + brings.join(', ') : '') +
         '  ·  ' + out.space.toLocaleString() + ' sets searched in ' + secs + 's';
 
       render(out, W, isStatus);

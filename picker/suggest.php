@@ -56,8 +56,11 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
 }
 
 // --- weapons at 10-5 -------------------------------------------------------
+// A weapon carries skills of its own, and every one of the 748 has at least
+// one. They count towards the set, so they travel with the weapon.
 $weapons = array();
-$sql = 'SELECT name, category_label, element_label, attack, element_attack, affinity, series_name
+$byId = array();
+$sql = 'SELECT id, name, category_label, element_label, attack, element_attack, affinity, series_name
         FROM v_weapon_10_5 ORDER BY category_label, name';
 foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $weapons[] = array(
@@ -68,7 +71,18 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
         'ele'      => (int) $r['element_attack'],
         'aff'      => (int) $r['affinity'],
         'series'   => $r['series_name'],
+        'skills'   => new stdClass(),
     );
+    $byId[(int) $r['id']] = count($weapons) - 1;
+}
+$sql = 'SELECT wg.weapon_id, k.name, wgs.level
+        FROM weapon_grade wg
+        JOIN weapon w               ON w.id = wg.weapon_id AND wg.grade = w.max_grade
+        JOIN weapon_grade_skill wgs ON wgs.weapon_grade_id = wg.id
+        JOIN skill k                ON k.id = wgs.skill_id';
+foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
+    $id = (int) $r['weapon_id'];
+    if (isset($byId[$id])) $weapons[$byId[$id]]['skills']->{$r['name']} = (int) $r['level'];
 }
 
 // --- which skills a driftgem can grant -------------------------------------
