@@ -104,16 +104,41 @@ const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
 
 /** Every skill this engine understands, so the rest can be reported as ignored. */
+/**
+ * The skills worth considering for ONE weapon.
+ *
+ * Keeping this tight is not just tidiness: every skill dropped makes more
+ * armour pieces collapse into the same bundle, which shrinks the search.
+ *
+ *   * Resistances and the other defensive skills never enter — they do not
+ *     touch damage.
+ *   * Only the weapon's OWN element is included. Dragon Attack is worthless on
+ *     an ice weapon, so it is not a dimension worth searching.
+ *   * A status weapon (Blast/Poison/Paralysis/Sleep) or a no-element weapon has
+ *     no damaging element at all, so Critical Element, Elemental Release and the
+ *     Vital family are dropped with it. They would otherwise be searched and
+ *     scored at zero on every single candidate.
+ *   * Lock On is close-range only, by its own description, so it is dropped
+ *     entirely for bow and bowguns rather than carried at zero weight.
+ */
 function knownSkills(weapon) {
   const s = new Set(['Attack Boost', 'Advanced Attack Boost', 'Critical Eye', 'Weakness Exploit',
-    'Critical Boost', 'Critical Element', 'Critical Ferocity', 'Health Boost', 'Valor',
-    'Peak Performance', 'Elemental Release', 'Burst', 'Advanced Burst', 'Latent Power',
-    'Offensive Guard', 'Heroics']);
-  Object.keys(UTILITY).forEach((k) => s.add(k));
+    'Critical Boost', 'Critical Ferocity', 'Valor', 'Peak Performance', 'Burst',
+    'Advanced Burst', 'Latent Power', 'Offensive Guard', 'Heroics']);
+
+  Object.keys(UTILITY).forEach((k) => {
+    const scope = UTILITY_SCOPE[k];
+    if (scope && scope.indexOf(weapon.category) < 0) return;
+    s.add(k);
+  });
+
   if (ELEMENTS.indexOf(weapon.element) >= 0) {
     s.add(weapon.element + ' Attack');
     s.add('Advanced ' + weapon.element + ' Attack');
     s.add('Vital ' + weapon.element);
+    s.add('Critical Element');
+    s.add('Elemental Release');
+    s.add('Health Boost');          // only matters through Vital
   }
   return s;
 }
@@ -191,5 +216,98 @@ function scoreTotal(totals, w) {
   return s.total;
 }
 
-module.exports = { ASSUME, UTILITY, UTILITY_SCOPE, score, scoreTotal, knownSkills,
-  ELEMENTS, STATUS, d };
+/**
+ * A scorer bound to one weapon and one fixed skill ordering.
+ *
+ * The search evaluates millions of candidates, and the object-keyed score()
+ * rebuilds a name-keyed map for every one of them. This resolves each skill to
+ * an array index once, so the hot loop reads integers out of a typed array and
+ * allocates nothing.
+ *
+ * Returns { names, scoreVec } where scoreVec takes an Int16Array of levels in
+ * `names` order.
+ */
+function makeScorer(w, damageOnly) {
+  const names = Array.from(knownSkills(w)).sort();
+  const at = {};
+  names.forEach((n, i) => { at[n] = i; });
+  const I = (n) => (at[n] === undefined ? -1 : at[n]);
+
+  const elemental = ELEMENTS.indexOf(w.element) >= 0;
+  const iAB = I('Attack Boost'), iAAB = I('Advanced Attack Boost');
+  const iValor = I('Valor'), iPeak = I('Peak Performance'), iHero = I('Heroics');
+  const iEA = elemental ? I(w.element + ' Attack') : -1;
+  const iAEA = elemental ? I('Advanced ' + w.element + ' Attack') : -1;
+  const iVital = elemental ? I('Vital ' + w.element) : -1;
+  const iHealth = I('Health Boost'), iER = I('Elemental Release');
+  const iCEye = I('Critical Eye'), iWEx = I('Weakness Exploit'), iLat = I('Latent Power');
+  const iCF = I('Critical Ferocity'), iCB = I('Critical Boost'), iCE = I('Critical Element');
+  const iBurst = I('Burst'), iAB2 = I('Advanced Burst'), iOG = I('Offensive Guard');
+
+  // Utility skills that apply to this weapon, resolved up front.
+  const util = [];
+  Object.keys(UTILITY).forEach((n) => {
+    const scope = UTILITY_SCOPE[n];
+    if (scope && scope.indexOf(w.category) < 0) return;
+    if (I(n) < 0) return;
+    util.push({ i: I(n), table: UTILITY[n] });
+  });
+
+  const g = (v, i) => (i < 0 ? 0 : v[i]);
+
+  function scoreVec(v) {
+    let atk = w.atk;
+    let ele = elemental ? w.ele : 0;
+    let aff = w.aff;
+
+    atk += ATTACK_BOOST[g(v, iAB)] || 0;
+    if (g(v, iAB) >= 5) atk += ADV_ATTACK[g(v, iAAB)] || 0;
+    atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
+    atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
+
+    if (elemental) {
+      ele += ELEM_ATTACK[g(v, iEA)] || 0;
+      if (g(v, iEA) >= 5) ele += ADV_ELEM[g(v, iAEA)] || 0;
+      const hp = (ASSUME.baseHp + (HEALTH[g(v, iHealth)] || 0)) * ASSUME.hpFraction;
+      ele += (VITAL[g(v, iVital)] || 0) * hp;
+      ele *= 1 + (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
+    }
+
+    aff += CEYE[g(v, iCEye)] || 0;
+    aff += (WEX[g(v, iWEx)] || 0) * ASSUME.weakPointUptime;
+    aff += (LATENT[g(v, iLat)] || 0) * ASSUME.latentPowerUptime;
+    aff -= CFERO_AFF[g(v, iCF)] || 0;
+
+    const c = (aff > 100 ? 100 : aff < -100 ? -100 : aff) / 100;
+    const m = CBOOST[Math.min(5, g(v, iCB))];
+    const ce = CELEM[Math.min(5, g(v, iCE))];
+
+    let dmg;
+    if (c >= 0) {
+      dmg = atk * (1 + c * (m - 1)) + ele * (c * m * ce + (1 - c));
+    } else {
+      const n = -c;
+      const cf = g(v, iCF);
+      const neg = cf ? 0.30 * CFERO_MULT[cf] + 0.70 * 0.75 : 0.75;
+      dmg = (atk + ele) * ((1 - n) + n * neg);
+    }
+
+    dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
+    if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
+    dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
+    dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
+
+    if (damageOnly) return dmg;
+    let u = 0;
+    for (let k = 0; k < util.length; k++) {
+      const lvl = v[util[k].i];
+      if (lvl) u += util[k].table[lvl > 3 ? 3 : lvl] || 0;
+    }
+    return dmg * (1 + u);
+  }
+
+  return { names: names, at: at, scoreVec: scoreVec };
+}
+
+module.exports = { ASSUME, UTILITY, UTILITY_SCOPE, score, scoreTotal, makeScorer,
+  knownSkills, ELEMENTS, STATUS, d };

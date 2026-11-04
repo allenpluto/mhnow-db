@@ -126,37 +126,113 @@ function offer(rec) {
   worst = results[results.length - 1].score;
 }
 
-// With --gems, every driftsmelt slot is assumed to carry one level of whichever
-// known skill helps this set most. Tried one skill at a time rather than mixed,
-// which is the honest reading of "suitable skills" and keeps the search exact.
-const gemCandidates = GEMS
-  ? Array.from(known).filter((n) => !E.UTILITY[n])
-  : [null];
+// Skill levels live in one Int16Array indexed by the scorer's ordering. The
+// nested loops add a slot's levels on the way in and take them off on the way
+// out, so nothing is rebuilt or allocated per combination.
+const SC = E.makeScorer(W, DAMAGE_ONLY);
+const NS = SC.names.length;
+const totals = new Int16Array(NS);
 
-for (const h of H) for (const c of C) for (const a of A) for (const t of T) for (const l of L) {
-  const picks = [h, c, a, t, l];
-  const totals = {};
-  let slots = 0;
-  for (let i = 0; i < 5; i++) {
-    const p = picks[i];
-    slots += p.slots;
-    for (const n in p.v) totals[n] = (totals[n] || 0) + p.v[n];
+SLOTS.forEach((slot) => {
+  bundles[slot].forEach((b) => {
+    b.idx = [];
+    Object.keys(b.v).forEach((n) => {
+      if (SC.at[n] !== undefined) b.idx.push([SC.at[n], b.v[n]]);
+    });
+  });
+});
+const addB = (b, sign) => { for (let i = 0; i < b.idx.length; i++) totals[b.idx[i][0]] += sign * b.idx[i][1]; };
+
+// Driftgems: each slot is independent, so five slots can hold five DIFFERENT
+// skills. An earlier version applied one skill to every slot, which could not
+// express "4 x Dragon Attack + 1 x Critical Eye" — a build this tool had itself
+// recommended. Allocation is greedy: take the single gem with the best marginal
+// gain, repeat for each slot. Greedy is exact whenever the gains are diminishing
+// and in practice finds the threshold plays (reaching Lv5 to switch on an
+// Advanced skill) because that step shows the largest gain of all.
+//
+// Only skills a driftgem can actually grant are candidates. An earlier version
+// offered any skill the scorer knew, and duly recommended three Critical Element
+// gems — a skill no driftstone grants at all. The DB has the real list, so it is
+// read rather than assumed.
+const GEMMABLE = new Set();
+d.driftstoneSkills.forEach((x) => { GEMMABLE.add(skillById[x.skill_id].name); });
+const gemIdx = GEMS
+  ? SC.names.filter((n) => !E.UTILITY[n] && GEMMABLE.has(n)).map((n) => SC.at[n])
+  : [];
+if (GEMS) {
+  console.log('  gem candidates: ' + gemIdx.map((i) => SC.names[i]).join(', '));
+  const refused = SC.names.filter((n) => !E.UTILITY[n] && !GEMMABLE.has(n));
+  if (refused.length) console.log('  no driftgem exists for: ' + refused.join(', '));
+}
+
+function allocateGems(slots) {
+  if (!slots || !gemIdx.length) return null;
+  const taken = [];
+  for (let s = 0; s < slots; s++) {
+    let bestI = -1, bestV = -Infinity;
+    for (let k = 0; k < gemIdx.length; k++) {
+      const i = gemIdx[k];
+      if (totals[i] >= 5) continue;        // a level above the cap buys nothing
+      totals[i]++;
+      const v = SC.scoreVec(totals);
+      totals[i]--;
+      if (v > bestV) { bestV = v; bestI = i; }
+    }
+    if (bestI < 0) break;
+    totals[bestI]++;
+    taken.push(bestI);
   }
-  let bestScore = -Infinity, bestGem = null;
-  for (const gem of gemCandidates) {
-    let before;
-    if (gem && slots) { before = totals[gem] || 0; totals[gem] = before + slots; }
-    const v = DAMAGE_ONLY ? E.score(totals, W).dmg : E.scoreTotal(totals, W);
-    if (gem && slots) { if (before) totals[gem] = before; else delete totals[gem]; }
-    if (v > bestScore) { bestScore = v; bestGem = gem; }
+  const score = SC.scoreVec(totals);
+  taken.forEach((i) => { totals[i]--; });
+  return { score: score, taken: taken };
+}
+
+for (const h of H) {
+  addB(h, 1);
+  for (const c of C) {
+    addB(c, 1);
+    for (const a of A) {
+      addB(a, 1);
+      for (const t of T) {
+        addB(t, 1);
+        for (const l of L) {
+          addB(l, 1);
+          const slots = h.slots + c.slots + a.slots + t.slots + l.slots;
+          let sc, gems = null;
+          if (GEMS) {
+            const g = allocateGems(slots);
+            sc = g ? g.score : SC.scoreVec(totals);
+            gems = g ? g.taken : null;
+          } else {
+            sc = SC.scoreVec(totals);
+          }
+          if (results.length < TOP || sc > worst) {
+            offer({ score: sc, picks: [h, c, a, t, l], slots: slots, gems: gems });
+          }
+          addB(l, -1);
+        }
+        addB(t, -1);
+      }
+      addB(a, -1);
+    }
+    addB(c, -1);
   }
-  offer({ score: bestScore, picks: picks.slice(), slots: slots, gem: bestGem, totals: totals });
+  addB(h, -1);
 }
 
 // Re-derive the breakdown for the finalists only.
 results.forEach((r) => {
-  if (r.gem && r.slots) r.totals[r.gem] = (r.totals[r.gem] || 0) + r.slots;
-  r.s = E.score(r.totals, W);
+  const tot = {};
+  r.picks.forEach((b) => { Object.keys(b.v).forEach((n) => { tot[n] = (tot[n] || 0) + b.v[n]; }); });
+  if (r.gems) {
+    const count = {};
+    r.gems.forEach((i) => { count[SC.names[i]] = (count[SC.names[i]] || 0) + 1; });
+    r.gemText = Object.keys(count).map((n) => count[n] + ' x ' + n).join(', ');
+    Object.keys(count).forEach((n) => { tot[n] = (tot[n] || 0) + count[n]; });
+  }
+  r.totals = tot;
+  r.s = E.score(tot, W);
 });
 
 // ---------------------------------------------------------------- report
@@ -171,7 +247,7 @@ results.slice(0, TOP).forEach((r, i) => {
     console.log('     ' + SLOT_LABEL[slot].padEnd(6) + shown.padEnd(44) +
       Object.keys(b.v).map((n) => n + ' ' + b.v[n]).join(', '));
   });
-  if (r.gem) console.log('     gems   ' + r.slots + ' x ' + r.gem);
+  if (r.gemText) console.log('     gems   ' + r.gemText + '   (' + r.slots + ' slot(s))');
   console.log('     totals ' + Object.keys(r.totals).sort().map((n) => n + ' ' + r.totals[n]).join(', '));
 });
 
