@@ -215,6 +215,23 @@
         g.className = 'gems';
         g.textContent = 'Driftgems: ' + r.gemText + '  (' + r.slots + ' slot' + (r.slots === 1 ? '' : 's') + ')';
         box.appendChild(g);
+      } else if (r.gemPotential) {
+        // Gems did not influence the ranking, so this is what the set's slots
+        // are worth if you can roll them — stated as a gain, not folded in.
+        var gp = document.createElement('p');
+        gp.className = 'gems potential';
+        var gain = Math.round(r.gemPotential.detail.dmg - r.detail.dmg);
+        gp.textContent = r.slots + ' driftsmelt slot' + (r.slots === 1 ? '' : 's') +
+          ' — best filled with ' + r.gemPotential.text +
+          ', for damage ' + Math.round(r.gemPotential.detail.dmg).toLocaleString() +
+          ' (+' + gain.toLocaleString() + '). Not counted in the ranking.';
+        box.appendChild(gp);
+      } else if (r.slots) {
+        var gn = document.createElement('p');
+        gn.className = 'gems potential';
+        gn.textContent = r.slots + ' driftsmelt slot' + (r.slots === 1 ? '' : 's') +
+          ', but nothing useful to put in them.';
+        box.appendChild(gn);
       }
 
       var tot = document.createElement('p');

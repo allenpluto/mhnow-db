@@ -125,12 +125,15 @@
     // skills. Allocation is greedy: repeatedly take the gem with the best
     // marginal gain. That finds the threshold plays — reaching Lv5 to switch on
     // an Advanced skill shows up as the largest single gain there is.
+    // Built whether or not gems are being assumed: with them off the ranking
+    // ignores gems, but the finalists are still told what their slots could
+    // hold. Choosing the set on its own merit and then learning what to aim for
+    // is more useful than either hiding the slots or letting them bias the
+    // search towards slot-heavy pieces.
     var gemIdx = [];
-    if (opts.gems) {
-      SC.names.forEach(function (n) {
-        if (!E.UTILITY[n] && (!opts.gemmable || opts.gemmable[n])) gemIdx.push(SC.at[n]);
-      });
-    }
+    SC.names.forEach(function (n) {
+      if (!E.UTILITY[n] && (!opts.gemmable || opts.gemmable[n])) gemIdx.push(SC.at[n]);
+    });
     function allocateGems(slots) {
       if (!slots || !gemIdx.length) return null;
       var taken = [];
@@ -214,6 +217,26 @@
       }
       r.totals = tot;
       r.detail = E.score(tot, weapon);
+
+      // Gems were not part of the ranking, so work out what the slots could
+      // hold and what it would be worth. Only the finalists, so the cost is
+      // nothing next to the search itself.
+      if (!opts.gems && r.slots && gemIdx.length) {
+        r.picks.forEach(function (b) { addB(b, 1); });
+        var g = allocateGems(r.slots);
+        r.picks.forEach(function (b) { addB(b, -1); });
+        if (g && g.taken.length) {
+          var c2 = {};
+          g.taken.forEach(function (i) { c2[SC.names[i]] = (c2[SC.names[i]] || 0) + 1; });
+          var withGems = {};
+          Object.keys(tot).forEach(function (n) { withGems[n] = tot[n]; });
+          Object.keys(c2).forEach(function (n) { withGems[n] = (withGems[n] || 0) + c2[n]; });
+          r.gemPotential = {
+            text: Object.keys(c2).map(function (n) { return c2[n] + ' x ' + n; }).join(', '),
+            detail: E.score(withGems, weapon),
+          };
+        }
+      }
     });
 
     return { results: results, space: space, bundles: bundles, names: SC.names,

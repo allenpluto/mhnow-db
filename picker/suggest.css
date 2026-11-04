@@ -66,6 +66,8 @@ table.setparts td.sk { opacity: .85; }
 
 .gems, .totals { margin: .5rem 0 0; font-size: .9rem; }
 .gems { color: var(--accent, #7fd1ae); }
+/* Slot potential is advice, not part of the score, so it reads quieter. */
+.gems.potential { color: inherit; opacity: .6; }
 .totals { opacity: .7; }
 
 /* The assumptions behind the numbers. Deliberately not hidden away: several of
