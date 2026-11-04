@@ -52,9 +52,14 @@ const ASSUME = {
   hpFraction: 0.60,
   baseHp: 100,             // before Health Boost
   valorUptime: 0.60,       // Valor only fires after a roar, once per hunt
-  weakPointUptime: 1.00,   // Weakness Exploit only applies on a weak point
-  elementalReleaseUptime: 0.50,
-  burstUptime: 0.50,
+
+  // Set by the user rather than measured — none of these can be read off
+  // anything, and the earlier figures were my guesses. They were deliberately
+  // lowered: a weak point is not always available, and a buff with a short
+  // window is not up as often as it feels.
+  weakPointUptime: 0.70,   // Weakness Exploit only applies on a weak point
+  elementalReleaseUptime: 0.35,
+  burstUptime: 0.35,
   offensiveGuardUptime: 0.00,   // zero unless you actually guard
 
   // Threshold skills. An average of 60% health means full health and sub-29%
