@@ -102,6 +102,9 @@ const ADV_BURST = { 1: 0.05, 2: 0.10 };
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
+// Raw Power: flat attack bought with affinity.
+const RAW_ATK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };
+const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
 
 /** Every skill this engine understands, so the rest can be reported as ignored. */
 /**
@@ -124,7 +127,11 @@ const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
 function knownSkills(weapon) {
   const s = new Set(['Attack Boost', 'Advanced Attack Boost', 'Critical Eye', 'Weakness Exploit',
     'Critical Boost', 'Critical Ferocity', 'Valor', 'Peak Performance', 'Burst',
-    'Advanced Burst', 'Latent Power', 'Offensive Guard', 'Heroics']);
+    'Advanced Burst', 'Latent Power', 'Offensive Guard', 'Heroics',
+    // Trades affinity for flat attack, which makes it a real option on a
+    // negative-affinity weapon and a partner for Critical Ferocity. Omitting it
+    // meant the optimiser scored it zero and never considered that build.
+    'Raw Power']);
 
   Object.keys(UTILITY).forEach((k) => {
     const scope = UTILITY_SCOPE[k];
@@ -154,6 +161,7 @@ function score(totals, w) {
 
   atk += ATTACK_BOOST[lv('Attack Boost')] || 0;
   if (lv('Attack Boost') >= 5) atk += ADV_ATTACK[lv('Advanced Attack Boost')] || 0;
+  atk += RAW_ATK[lv('Raw Power')] || 0;
   atk += (VALOR[lv('Valor')] || 0) * ASSUME.valorUptime;
   atk += (PEAK[lv('Peak Performance')] || 0) * ASSUME.peakPerformanceUptime;
 
@@ -169,6 +177,7 @@ function score(totals, w) {
   aff += (WEX[lv('Weakness Exploit')] || 0) * ASSUME.weakPointUptime;
   aff += (LATENT[lv('Latent Power')] || 0) * ASSUME.latentPowerUptime;
   aff -= (CFERO_AFF[lv('Critical Ferocity')] || 0);
+  aff -= (RAW_AFF[lv('Raw Power')] || 0);
 
   const c = Math.max(-100, Math.min(100, aff)) / 100;
   const m = CBOOST[Math.min(5, lv('Critical Boost'))];
@@ -243,6 +252,7 @@ function makeScorer(w, damageOnly) {
   const iCEye = I('Critical Eye'), iWEx = I('Weakness Exploit'), iLat = I('Latent Power');
   const iCF = I('Critical Ferocity'), iCB = I('Critical Boost'), iCE = I('Critical Element');
   const iBurst = I('Burst'), iAB2 = I('Advanced Burst'), iOG = I('Offensive Guard');
+  const iRaw = I('Raw Power');
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
@@ -262,6 +272,7 @@ function makeScorer(w, damageOnly) {
 
     atk += ATTACK_BOOST[g(v, iAB)] || 0;
     if (g(v, iAB) >= 5) atk += ADV_ATTACK[g(v, iAAB)] || 0;
+    atk += RAW_ATK[g(v, iRaw)] || 0;
     atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
     atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
 
@@ -277,6 +288,7 @@ function makeScorer(w, damageOnly) {
     aff += (WEX[g(v, iWEx)] || 0) * ASSUME.weakPointUptime;
     aff += (LATENT[g(v, iLat)] || 0) * ASSUME.latentPowerUptime;
     aff -= CFERO_AFF[g(v, iCF)] || 0;
+    aff -= RAW_AFF[g(v, iRaw)] || 0;
 
     const c = (aff > 100 ? 100 : aff < -100 ? -100 : aff) / 100;
     const m = CBOOST[Math.min(5, g(v, iCB))];

@@ -94,13 +94,41 @@ const relevant = (sk) => {
 };
 // Critical Ferocity lowers affinity, so "more is better" does not hold for it
 // and it must never be pruned away.
-const NON_MONOTONIC = new Set(['Critical Ferocity']);
+// Raw Power buys attack with affinity, so like Critical Ferocity it can be
+// actively harmful and "more is better" does not hold for it either.
+const NON_MONOTONIC = new Set(['Critical Ferocity', 'Raw Power']);
+
+// Driftstone skills you already have, named per piece:
+//   --own "Barioth Vambraces=Ice Attack, Lunagaron Mail=Ice Attack"
+// These are added to the piece BEFORE pieces are grouped, because two pieces
+// with the same printed skills are no longer interchangeable once one of them
+// carries a gem the other does not.
+const OWN = {};
+(val('--own', '') || '').split(',').map((s) => s.trim()).filter(Boolean).forEach((part) => {
+  const m = part.match(/^(.*?)=(.*?)(?:\s+(\d+))?$/);
+  if (!m) { console.error('cannot read --own entry "' + part + '"'); process.exit(2); }
+  const piece = m[1].trim(), skill = m[2].trim(), lv = Number(m[3] || 1);
+  OWN[piece] = OWN[piece] || {};
+  OWN[piece][skill] = (OWN[piece][skill] || 0) + lv;
+});
+if (Object.keys(OWN).length) {
+  console.log('  your driftstone skills:');
+  Object.keys(OWN).forEach((p) => {
+    const known = d.armor.some((a) => a.name === p);
+    console.log('     ' + p.padEnd(22) + Object.keys(OWN[p]).map((s) => s + ' ' + OWN[p][s]).join(', ') +
+      (known ? '' : '   <-- NO SUCH PIECE, ignored'));
+  });
+}
 
 const bundles = {};
 SLOTS.forEach((slot) => {
   const seen = {};
   d.armor.filter((a) => a.slot === slot).forEach((a) => {
-    const v = relevant(pieceSkills[a.id]);
+    const base = Object.assign({}, pieceSkills[a.id]);
+    if (OWN[a.name]) {
+      Object.keys(OWN[a.name]).forEach((s) => { base[s] = (base[s] || 0) + OWN[a.name][s]; });
+    }
+    const v = relevant(base);
     const k = Object.keys(v).sort().map((n) => n + v[n]).join(',');
     if (!seen[k]) seen[k] = { v: v, slots: pieceSlots[a.id] || 0, pieces: [] };
     seen[k].pieces.push(a);
@@ -258,8 +286,14 @@ results.forEach((r) => {
 // ---------------------------------------------------------------- report
 console.log('\nBest ' + TOP + ' sets:');
 results.slice(0, TOP).forEach((r, i) => {
-  console.log('\n  #' + (i + 1) + '  score ' + r.s.total.toFixed(0) +
-    '   (damage ' + r.s.dmg.toFixed(0) + (r.s.util ? ' x ' + (1 + r.s.util).toFixed(2) + ' utility' : '') + ')');
+  // In damage-only mode the ranking ignores utility, so the printed score must
+  // too — showing the utility-inclusive total made a lower-ranked set look
+  // higher than the winner.
+  console.log('\n  #' + (i + 1) + '  ' + (DAMAGE_ONLY
+    ? 'damage ' + r.s.dmg.toFixed(0) +
+      (r.s.util ? '   (utility ignored; it would add x' + (1 + r.s.util).toFixed(2) + ')' : '')
+    : 'score ' + r.s.total.toFixed(0) + '   (damage ' + r.s.dmg.toFixed(0) +
+      (r.s.util ? ' x ' + (1 + r.s.util).toFixed(2) + ' utility' : '') + ')'));
   SLOTS.forEach((slot, j) => {
     const b = r.picks[j];
     const names = b.pieces.map((p) => p.name);
