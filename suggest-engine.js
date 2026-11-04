@@ -65,12 +65,13 @@ const ASSUME = {
   latentPowerUptime: 0.00,      // "certain conditions" — not stated anywhere
 };
 
-// Utility worth, as a fraction of the set's damage. Your figure for Power
-// Prolonger 3 was "worth 15% of overall damage", which is exactly this form.
+// Worth as a fraction of the set's damage, for skills damage cannot price.
+// These are the user's own exchange rates — Power Prolonger and Quick Work at
+// 15% for their max level, Lock On a flat 10% — not anything derived from data.
 const UTILITY = {
   'Power Prolonger': { 1: 0.05, 2: 0.10, 3: 0.15 },
-  'Quick Work': { 1: 0.02, 2: 0.05, 3: 0.08 },
-  'Lock On': { 1: 0.05 },
+  'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
+  'Lock On': { 1: 0.10 },
 };
 // Which weapons each utility skill is worth anything on.
 const UTILITY_SCOPE = {
