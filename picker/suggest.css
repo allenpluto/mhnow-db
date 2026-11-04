@@ -13,6 +13,16 @@
   font: inherit;
 }
 
+#s-find {
+  min-width: 16rem;
+  padding: .35rem .5rem;
+  border: 1px solid var(--line, #3a3a42);
+  border-radius: 4px;
+  background: var(--panel, #22222a);
+  color: inherit;
+  font: inherit;
+}
+
 .filters.own { padding-top: 0; }
 .filters .fgroup.grow { flex: 1 1 100%; min-width: 0; }
 #s-own {

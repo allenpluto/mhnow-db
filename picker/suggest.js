@@ -18,24 +18,65 @@
   var elOut = document.getElementById('s-out');
   var elNotes = document.getElementById('s-notes');
 
-  // --- weapon list, grouped by type ---------------------------------------
-  var byCat = {};
-  DATA.weapons.forEach(function (w) { (byCat[w.category] = byCat[w.category] || []).push(w); });
-  var blank = document.createElement('option');
-  blank.value = ''; blank.textContent = 'choose a weapon';
-  elWeapon.appendChild(blank);
-  Object.keys(byCat).forEach(function (cat) {
-    var g = document.createElement('optgroup');
-    g.label = cat;
-    byCat[cat].forEach(function (w) {
-      var o = document.createElement('option');
-      o.value = w.name;
-      o.textContent = w.name + '  —  ' + w.element + ' ' +
-        (w.ele ? w.ele + ' ' : '') + 'atk ' + w.atk + ' aff ' + w.aff + '%';
-      g.appendChild(o);
+  // --- weapon list, grouped by type, narrowed by keywords ------------------
+  //
+  // 748 weapons is far too many to scroll. Keywords are comma separated and
+  // every one must match, each against the name, the weapon type or the
+  // element — so "bloom, charge blade, ice" narrows on all three at once.
+  // Keywords are AND rather than OR because the point is to get to one weapon.
+  var elFind = document.getElementById('s-find');
+  var elFindMsg = document.getElementById('s-find-msg');
+
+  function haystack(w) {
+    return (w.name + ' ' + w.category + ' ' + w.element).toLowerCase();
+  }
+
+  function buildWeaponList() {
+    var terms = (elFind.value || '').split(',')
+      .map(function (s) { return s.trim().toLowerCase(); })
+      .filter(Boolean);
+
+    var list = DATA.weapons.filter(function (w) {
+      var h = haystack(w);
+      return terms.every(function (t) { return h.indexOf(t) > -1; });
     });
-    elWeapon.appendChild(g);
-  });
+
+    var was = elWeapon.value;
+    elWeapon.innerHTML = '';
+    var blank = document.createElement('option');
+    blank.value = '';
+    blank.textContent = list.length ? 'choose a weapon' : 'nothing matches';
+    elWeapon.appendChild(blank);
+
+    var byCat = {};
+    list.forEach(function (w) { (byCat[w.category] = byCat[w.category] || []).push(w); });
+    Object.keys(byCat).forEach(function (cat) {
+      var g = document.createElement('optgroup');
+      g.label = cat;
+      byCat[cat].forEach(function (w) {
+        var o = document.createElement('option');
+        o.value = w.name;
+        o.textContent = w.name + '  —  ' + w.element + ' ' +
+          (w.ele ? w.ele + ' ' : '') + 'atk ' + w.atk + ' aff ' + w.aff + '%';
+        g.appendChild(o);
+      });
+      elWeapon.appendChild(g);
+    });
+
+    // Keep the chosen weapon if it survived the narrowing.
+    var kept = list.some(function (w) { return w.name === was; });
+    elWeapon.value = kept ? was : '';
+
+    elFindMsg.textContent = !terms.length
+      ? DATA.weapons.length + ' weapons'
+      : list.length + ' of ' + DATA.weapons.length + ' match' +
+        (was && !kept ? ' — your choice was cleared' : '');
+    elFindMsg.className = list.length ? 'hint' : 'hint warn';
+    return list;
+  }
+
+  elFind.addEventListener('input', buildWeaponList);
+  buildWeaponList();
 
   var opts = { gems: false, damageOnly: true };
   [['damageOnly', 'Damage only (ignore utility weights)'],

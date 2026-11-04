@@ -128,6 +128,13 @@ function parentAsset($f) {
 
 <section class="filters">
   <div class="fgroup">
+    <label class="flabel" for="s-find">Find weapon</label>
+    <input id="s-find" type="text" autocomplete="off" spellcheck="false"
+           placeholder="bloom, charge blade, ice"
+           title="Comma-separated keywords. Every keyword must match somewhere in the weapon's name, type or element. Partial matches count.">
+    <p class="hint" id="s-find-msg"></p>
+  </div>
+  <div class="fgroup">
     <label class="flabel" for="s-weapon">Weapon</label>
     <select id="s-weapon"></select>
   </div>
