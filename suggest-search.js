@@ -221,9 +221,13 @@
       // Gems were not part of the ranking, so work out what the slots could
       // hold and what it would be worth. Only the finalists, so the cost is
       // nothing next to the search itself.
-      if (!opts.gems && r.slots && gemIdx.length) {
+      // Capped, because the allocation optimises for damage with no notion of
+      // how hard a roll is. Filling all five slots is a target you may never
+      // reach; the first couple of rolls are the ones worth chasing.
+      var preview = Math.min(r.slots, opts.gemPreview === undefined ? 2 : opts.gemPreview);
+      if (!opts.gems && preview > 0 && gemIdx.length) {
         r.picks.forEach(function (b) { addB(b, 1); });
-        var g = allocateGems(r.slots);
+        var g = allocateGems(preview);
         r.picks.forEach(function (b) { addB(b, -1); });
         if (g && g.taken.length) {
           var c2 = {};
@@ -234,6 +238,7 @@
           r.gemPotential = {
             text: Object.keys(c2).map(function (n) { return c2[n] + ' x ' + n; }).join(', '),
             detail: E.score(withGems, weapon),
+            used: g.taken.length,
           };
         }
       }

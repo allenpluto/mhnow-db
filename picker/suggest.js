@@ -222,7 +222,8 @@
         gp.className = 'gems potential';
         var gain = Math.round(r.gemPotential.detail.dmg - r.detail.dmg);
         gp.textContent = r.slots + ' driftsmelt slot' + (r.slots === 1 ? '' : 's') +
-          ' — best filled with ' + r.gemPotential.text +
+          ' — your best ' + r.gemPotential.used + ' roll' + (r.gemPotential.used === 1 ? '' : 's') +
+          ' would be ' + r.gemPotential.text +
           ', for damage ' + Math.round(r.gemPotential.detail.dmg).toLocaleString() +
           ' (+' + gain.toLocaleString() + '). Not counted in the ranking.';
         box.appendChild(gp);

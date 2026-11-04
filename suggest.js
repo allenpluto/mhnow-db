@@ -168,8 +168,8 @@ out.results.forEach((r, i) => {
   if (r.gemText) console.log('     gems   ' + r.gemText + '   (' + r.slots + ' slot(s))');
   else if (r.gemPotential) {
     const gain = r.gemPotential.detail.dmg - r.detail.dmg;
-    console.log('     slots  ' + r.slots + ', best filled with ' + r.gemPotential.text +
-      '  ->  damage ' + r.gemPotential.detail.dmg.toFixed(0) +
+    console.log('     slots  ' + r.slots + ' — best ' + r.gemPotential.used + ' gem(s): ' +
+      r.gemPotential.text + '  ->  damage ' + r.gemPotential.detail.dmg.toFixed(0) +
       ' (+' + gain.toFixed(0) + ', not counted in the ranking)');
   } else if (r.slots) console.log('     slots  ' + r.slots + ', nothing useful to put in them');
   console.log('     totals ' + Object.keys(r.totals).sort().map((n) => n + ' ' + r.totals[n]).join(', '));
