@@ -213,6 +213,15 @@ const BUILDUP_BOOST = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
 const SNEAK = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.30 };
 const BLAST_EXPLOIT_ATK = { 1: 30, 2: 60, 3: 90, 4: 120, 5: 150 };
 const BLAST_EXPLOIT_CAP = 10;
+
+// Blast Exploit also raises the chance of inflicting buildup, which the attack
+// bonus alone missed. Measured: Blast Exploit 5 with Teostra Blastpowder 1
+// procced 38 of 50 hits, so 76% against a 33% base — the two together add 43
+// points. Splitting that between them is an assumption: Blast Exploit's text
+// says "massively" and Blastpowder's says "slightly", so 38 and 5. A reading
+// of either skill on its own would separate them properly.
+const BLAST_EXPLOIT_PROC = { 1: 0.08, 2: 0.15, 3: 0.23, 4: 0.30, 5: 0.38 };
+const BLASTPOWDER_PROC = { 1: 0.05, 2: 0.10, 3: 0.15 };
 const STATUS_BUILDUP = { 1: 50, 2: 75, 3: 100, 4: 125, 5: 150 };
 
 /**
@@ -273,9 +282,17 @@ function paralysisUptime() {
   return up > 1 ? 1 : up;
 }
 
-function procChance(ssaLevel) {
-  const base = ASSUME.statusProcBase;
+function procChance(ssaLevel, blastExploitLevel, blastpowderLevel) {
+  let base = ASSUME.statusProcBase
+    + (BLAST_EXPLOIT_PROC[blastExploitLevel] || 0)
+    + (BLASTPOWDER_PROC[blastpowderLevel] || 0);
+  if (base > 1) base = 1;
   if (!ssaLevel) return base;
+
+  // Status Sneak Attack closes the REMAINING gap to a guaranteed proc, rather
+  // than adding a flat amount — Lv5 is "guaranteed" from behind whatever the
+  // starting point. So the more the other sources already give, the less it is
+  // worth: against a 76% base it can only buy the last 24 points.
   const behind = base + (1 - base) * (ssaLevel / 5);
   return ASSUME.behindRate * behind + (1 - ASSUME.behindRate) * base;
 }
@@ -345,7 +362,10 @@ function knownSkills(weapon) {
     s.add('Buildup Boost');
     s.add('Status Sneak Attack');
     if (STATUS_EXPLOIT[weapon.element]) s.add(weapon.element + ' Exploit');
-    if (weapon.element === 'Blast') s.add('Blast Exploit');
+    if (weapon.element === 'Blast') {
+      s.add('Blast Exploit');
+      s.add('Teostra Blastpowder');   // also raises the proc chance
+    }
   }
   return s;
 }
@@ -405,7 +425,9 @@ function score(totals, w) {
 
   // --- the status path --------------------------------------------------
   if (STATUS.indexOf(w.element) >= 0) {
-    const proc = procChance(lv('Status Sneak Attack'));
+    const proc = procChance(lv('Status Sneak Attack'),
+      w.element === 'Blast' ? lv('Blast Exploit') : 0,
+      w.element === 'Blast' ? lv('Teostra Blastpowder') : 0);
     // Buildup Boost pays on the hit that procs, so it is the skill's value
     // times how often that happens.
     dmg *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
@@ -489,6 +511,7 @@ function makeScorer(w, damageOnly) {
   const exUptime = w.element === 'Poison' ? poisonUptime() : paralysisUptime();
   const exBase = w.element === 'Paralysis' ? ASSUME.paralysisBaseBonus : 0;
   const iBlastEx = w.element === 'Blast' ? I('Blast Exploit') : -1;
+  const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder') : -1;
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
@@ -550,7 +573,8 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
 
     if (isStatusW) {
-      const proc = procChance(g(v, iSSA));
+      const proc = procChance(g(v, iSSA), iBlastEx >= 0 ? g(v, iBlastEx) : 0,
+        iPowder >= 0 ? g(v, iPowder) : 0);
       dmg *= 1 + (BUILDUP_BOOST[g(v, iBuildup)] || 0) * proc;
       if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
       if (iBlastEx >= 0 && g(v, iBlastEx)) {
