@@ -78,9 +78,10 @@
   elFind.addEventListener('input', buildWeaponList);
   buildWeaponList();
 
-  var opts = { gems: false, damageOnly: true };
+  var opts = { gems: false, damageOnly: true, multiplayer: false };
   [['damageOnly', 'Damage only (ignore utility weights)'],
-   ['gems', 'Assume ideal driftgems']].forEach(function (pair) {
+   ['gems', 'Assume ideal driftgems'],
+   ['multiplayer', 'Group hunt (blast stacks from other players)']].forEach(function (pair) {
     var lab = document.createElement('label');
     var cb = document.createElement('input');
     cb.type = 'checkbox';
@@ -145,6 +146,7 @@
     // Hunt length drives Latent Power's uptime and Rising Tide's ramp, so it
     // must be set before the scorer is built.
     E.ASSUME.huntSeconds = Number(document.getElementById('s-hunt').value) || 75;
+    E.ASSUME.multiplayer = opts.multiplayer;
 
     elStatus.textContent = 'Searching…';
     elOut.innerHTML = '';
@@ -276,8 +278,18 @@
         ' attack per level. Latent Power raises affinity, so it helps a crit build and ' +
         'hurts a Critical Ferocity one.',
       isStatus
-        ? W.element + ' is a status, so its value is buildup and contributes no damage — ' +
-          'Critical Element, Elemental Release and the Vital skills are excluded with it.'
+        ? W.element + ' buildup is not damage itself, but it drives the skills that are: ' +
+          'proc chance ' + Math.round(a.statusProcBase * 100) + '% base, rising with Status ' +
+          'Sneak Attack from behind (' + Math.round(a.behindRate * 100) + '% of hits). ' +
+          (W.element === 'Poison' ? 'Poison is up ' +
+            Math.round(a.poisonProcsPer75s * a.poisonTickSeconds / 75 * 100) + '% of the hunt. ' : '') +
+          (W.element === 'Paralysis' ? 'Paralysis is up ' +
+            Math.round(a.paralysisProcsPer75s * a.paralysisTickSeconds / 75 * 100) +
+            '% of the hunt, plus a flat 10% while it lasts. ' : '') +
+          (W.element === 'Blast' ? 'Blast Exploit holds about ' +
+            (opts.multiplayer ? '9' : '2.5') + ' stacks on average ' +
+            (opts.multiplayer ? 'in a group' : 'solo, since each threshold is 30% harder') + '. ' : '') +
+          'Critical Element, Elemental Release and the Vital skills are excluded.'
         : 'Only ' + W.element + ' skills are considered; other elements cannot help this weapon.',
     ]);
     if (Object.keys(ignored).length) {

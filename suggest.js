@@ -92,6 +92,9 @@ const GEMS = flag('--gems');
 // 75s is a standard hunt, a base defence runs about 150.
 E.ASSUME.huntSeconds = Number(val('--hunt', E.ASSUME.huntSeconds));
 
+// Blast stacking depends enormously on whether other players are also procing.
+E.ASSUME.multiplayer = flag('--group');
+
 console.log(W.name + '  ' + W.category + '  ' + W.element);
 console.log('  attack ' + W.atk + '   ' + (isStatus ? 'buildup ' : 'element ') + W.ele +
   (isStatus ? ' (status: excluded from damage)' : '') + '   affinity ' + W.aff + '%');
@@ -137,7 +140,8 @@ if (Object.keys(own).length) {
       (exists ? '' : '   <-- NO SUCH PIECE, ignored'));
   });
 }
-console.log('  hunt ' + E.ASSUME.huntSeconds + 's — Latent Power up for ' +
+console.log('  hunt ' + E.ASSUME.huntSeconds + 's, ' + (E.ASSUME.multiplayer ? 'group' : 'solo') +
+  ' — Latent Power up for ' +
   Math.round(Math.max(0, (E.ASSUME.huntSeconds - E.ASSUME.latentPowerStart) / E.ASSUME.huntSeconds) * 100) + '%');
 console.log('  driftsmelt: ' + (GEMS ? 'assumed to hold the set\'s most useful skill' : 'ignored'));
 if (DAMAGE_ONLY) console.log('  ranking: damage only, utility weights ignored');

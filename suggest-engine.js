@@ -108,9 +108,22 @@ const ASSUME = {
   // applies to every paralysis weapon, not only ones carrying the Exploit.
   paralysisBaseBonus: 0.10,
 
-  // STILL GUESSES. Correct them rather than trusting them.
-  behindRate: 0.30,          // share of hits landed from behind
-  blastProcsPerHunt: 3,      // Blast Exploit stacks, capped at 10 by the skill
+  // Share of hits landed from behind. Deliberately NOT tied to the weak-point
+  // figure: a weak point can be at the back, so the two overlap rather than
+  // competing, and binding them would wrongly make Weakness Exploit look wasted
+  // on a player who fights from behind.
+  behindRate: 0.80,
+
+  // Blast stacks do not arrive evenly. Each threshold is about 30% harder than
+  // the last, so solo procs come progressively later and the final one lands so
+  // near the end that it barely contributes. In a group the picture inverts:
+  // other players' procs land stacks almost immediately and the cap is held for
+  // most of the fight.
+  blastSoloProcs: 5,
+  blastThresholdGrowth: 1.3,
+  blastGroupEarlyStacks: 4,     // from other players, almost at once
+  blastGroupCapShare: 0.75,     // share of a long fight spent at the 10 cap
+  multiplayer: false,
 };
 
 // Worth as a fraction of the set's damage, for skills damage cannot price.
@@ -222,6 +235,36 @@ const STATUS_BUILDUP = { 1: 50, 2: 75, 3: 100, 4: 125, 5: 150 };
 function poisonUptime() {
   const up = ASSUME.poisonProcsPer75s * ASSUME.poisonTickSeconds / 75;
   return up > 1 ? 1 : up;
+}
+
+/**
+ * Average number of Blast Exploit stacks held across a hunt.
+ *
+ * A stack is worth only the part of the fight it is held for, so what matters
+ * is not how many procs land but when.
+ *
+ * Solo, each threshold is ~30% harder than the last, so the gaps grow
+ * geometrically and the last proc lands near the end contributing almost
+ * nothing — five procs average about 2.5 stacks, not 5.
+ *
+ * In a group, other players' procs land several stacks almost immediately and
+ * the 10 cap is reached early, so the average is close to the cap.
+ */
+function blastAverageStacks() {
+  if (ASSUME.multiplayer) {
+    const ramp = (ASSUME.blastGroupEarlyStacks + BLAST_EXPLOIT_CAP) / 2;
+    return BLAST_EXPLOIT_CAP * ASSUME.blastGroupCapShare +
+           ramp * (1 - ASSUME.blastGroupCapShare);
+  }
+  const n = Math.min(ASSUME.blastSoloProcs, BLAST_EXPLOIT_CAP);
+  let total = 0;
+  for (let i = 0; i < n; i++) total += Math.pow(ASSUME.blastThresholdGrowth, i);
+  let elapsed = 0, held = 0;
+  for (let i = 0; i < n; i++) {
+    elapsed += Math.pow(ASSUME.blastThresholdGrowth, i) / total;
+    held += 1 - elapsed;          // this stack is held for the rest of the hunt
+  }
+  return held;
 }
 
 /** Share of the hunt a monster spends paralysed — applications x 4 seconds. */
@@ -378,7 +421,7 @@ function score(totals, w) {
     // Blast Exploit is flat attack per proc, stacking. Stacks accumulate
     // through the hunt, so the average held is about half the final count.
     if (w.element === 'Blast' && lv('Blast Exploit')) {
-      const stacks = Math.min(ASSUME.blastProcsPerHunt, BLAST_EXPLOIT_CAP) / 2;
+      const stacks = blastAverageStacks();
       const bonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) * stacks;
       dmg *= (atk + bonus) / atk;
     }
@@ -511,7 +554,7 @@ function makeScorer(w, damageOnly) {
       dmg *= 1 + (BUILDUP_BOOST[g(v, iBuildup)] || 0) * proc;
       if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
       if (iBlastEx >= 0 && g(v, iBlastEx)) {
-        const stacks = Math.min(ASSUME.blastProcsPerHunt, BLAST_EXPLOIT_CAP) / 2;
+        const stacks = blastAverageStacks();
         dmg *= (atk + (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * stacks) / atk;
       }
     }
