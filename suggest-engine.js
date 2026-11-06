@@ -92,6 +92,21 @@ const UTILITY = {
   'Power Prolonger': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
+
+  // Rude Awakener multiplies the FIRST attack on a sleeping monster by 1.3,
+  // 1.6 or 2.0, on top of the 2.0 that waking a monster already gives — so up
+  // to 4.0 on one hit. Averaging a single hit across a whole hunt would be
+  // dishonest arithmetic, so it is scored as utility instead.
+  //
+  // THE RATE BELOW IS A GUESS. The multipliers are measured; what one boosted
+  // hit is worth as a fraction of a hunt's damage is not.
+  'Rude Awakener': { 1: 0.05, 2: 0.10, 3: 0.15 },
+};
+
+// Utility skills that only apply to a weapon of a given element. Rude Awakener
+// does nothing without a monster to put to sleep.
+const UTILITY_ELEMENT = {
+  'Rude Awakener': ['Sleep'],
 };
 // Which weapons each utility skill is worth anything on.
 const UTILITY_SCOPE = {
@@ -189,6 +204,8 @@ function knownSkills(weapon) {
   Object.keys(UTILITY).forEach((k) => {
     const scope = UTILITY_SCOPE[k];
     if (scope && scope.indexOf(weapon.category) < 0) return;
+    const el = UTILITY_ELEMENT[k];
+    if (el && el.indexOf(weapon.element) < 0) return;
     s.add(k);
   });
 
@@ -261,6 +278,8 @@ function score(totals, w) {
     if (!lv(n)) return;
     const scope = UTILITY_SCOPE[n];
     if (scope && scope.indexOf(w.category) < 0) return;
+    const el = UTILITY_ELEMENT[n];
+    if (el && el.indexOf(w.element) < 0) return;
     util += UTILITY[n][Math.min(lv(n), 3)] || 0;
   });
 
@@ -313,6 +332,8 @@ function makeScorer(w, damageOnly) {
   Object.keys(UTILITY).forEach((n) => {
     const scope = UTILITY_SCOPE[n];
     if (scope && scope.indexOf(w.category) < 0) return;
+    const el = UTILITY_ELEMENT[n];
+    if (el && el.indexOf(w.element) < 0) return;
     if (I(n) < 0) return;
     util.push({ i: I(n), table: UTILITY[n] });
   });
