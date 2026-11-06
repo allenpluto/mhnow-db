@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Armour set suggester.
  *
  *   node suggest-engine.js "Squawkscythe"
@@ -12,7 +12,7 @@
  * TOTALS, never on which piece supplied them. Collapsing each slot to its
  * distinct skill bundles gives 24-28 per slot, and dropping bundles that
  * another bundle beats on every skill leaves 17-21. That is about 2.1 million
- * combinations — small enough to evaluate every one, so the result is the
+ * combinations â€” small enough to evaluate every one, so the result is the
  * optimum rather than a good guess.
  *
  * Pareto pruning assumes more of a skill is never worse. Critical Ferocity
@@ -21,8 +21,8 @@
  *
  * WHAT IT CANNOT KNOW
  * Of the 126 skills that appear on armour, about 20 carry a number this can use
- * directly. The rest are conditional — uptime after a roar, health thresholds,
- * consecutive hits — so they are priced by the rules in RULES below, which are
+ * directly. The rest are conditional â€” uptime after a roar, health thresholds,
+ * consecutive hits â€” so they are priced by the rules in RULES below, which are
  * assumptions, not data. Anything absent from RULES scores zero and is reported
  * as ignored, so a set is never recommended on the strength of a skill that was
  * silently guessed at.
@@ -30,8 +30,8 @@
 
 /*
  * Loads both in Node (require) and in the browser (<script>). The damage model
- * has had several subtle faults already — uniform gems, unobtainable gems, a
- * missing Raw Power — so the website runs this exact file rather than a second
+ * has had several subtle faults already â€” uniform gems, unobtainable gems, a
+ * missing Raw Power â€” so the website runs this exact file rather than a second
  * copy of the same arithmetic.
  *
  * No file or network access here: callers supply the data.
@@ -57,7 +57,7 @@ const ASSUME = {
   // this understates Valor rather than flattering it.
   valorUptime: 0.60,
 
-  // Set by the user rather than measured — none of these can be read off
+  // Set by the user rather than measured â€” none of these can be read off
   // anything, and the earlier figures were my guesses. They were deliberately
   // lowered: a weak point is not always available, and a buff with a short
   // window is not up as often as it feels.
@@ -83,18 +83,46 @@ const ASSUME = {
   // so its uptime follows from the hunt length rather than being guessed.
   // Attacking hard brings it forward, so this is a floor.
   latentPowerStart: 47,
+
+  // --- the status path ----------------------------------------------------
+  // A status weapon's buildup is not damage, but it drives skills that are.
+  //
+  // Base chance that a hit inflicts buildup, with no Status Sneak Attack or
+  // hitting from the front. Measured.
+  statusProcBase: 0.33,
+
+  // Poison runs for a 10-second window per application, and players average
+  // 1 to 2 applications in a 75-second hunt â€” thresholds rise after each proc,
+  // so uptime cannot approach 100%. 1.5 x 10 / 75 is 20%, not the 50% first
+  // assumed here. Both the proc count and the hunt length scale together, so
+  // the share stays roughly constant on a longer fight.
+  poisonTickSeconds: 10,
+  poisonProcsPer75s: 1.5,
+
+  // Paralysis is far shorter than poison: about 4 seconds, or up to 7 on some
+  // elders. Thresholds rise after each proc the same way, so the same 1.5
+  // applications per hunt is assumed. 1.5 x 4 / 75 is 8%.
+  paralysisTickSeconds: 4,
+  paralysisProcsPer75s: 1.5,
+  // A paralysed monster takes 10% more damage regardless of any skill, so this
+  // applies to every paralysis weapon, not only ones carrying the Exploit.
+  paralysisBaseBonus: 0.10,
+
+  // STILL GUESSES. Correct them rather than trusting them.
+  behindRate: 0.30,          // share of hits landed from behind
+  blastProcsPerHunt: 3,      // Blast Exploit stacks, capped at 10 by the skill
 };
 
 // Worth as a fraction of the set's damage, for skills damage cannot price.
-// These are the user's own exchange rates — Power Prolonger and Quick Work at
-// 15% for their max level, Lock On a flat 10% — not anything derived from data.
+// These are the user's own exchange rates â€” Power Prolonger and Quick Work at
+// 15% for their max level, Lock On a flat 10% â€” not anything derived from data.
 const UTILITY = {
   'Power Prolonger': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
 
   // Rude Awakener multiplies the FIRST attack on a sleeping monster by 1.3,
-  // 1.6 or 2.0, on top of the 2.0 that waking a monster already gives — so up
+  // 1.6 or 2.0, on top of the 2.0 that waking a monster already gives â€” so up
   // to 4.0 on one hit. Averaging a single hit across a whole hunt would be
   // dishonest arithmetic, so it is scored as utility instead.
   //
@@ -114,7 +142,7 @@ const UTILITY_SCOPE = {
   // the other three are here at the same weight pending your call.
   'Power Prolonger': ['Dual Blades', 'Long Sword', 'Switch Axe', 'Charge Blade',
     'Hunting Horn', 'Gunlance', 'Insect Glaive'],
-  // "sheathing or transforming" — Long Sword is your priority, the transforming
+  // "sheathing or transforming" â€” Long Sword is your priority, the transforming
   // weapons are included at the same weight pending your call.
   'Quick Work': ['Long Sword', 'Switch Axe', 'Charge Blade'],
   // The skill text itself says "close-range weapon", so this is data, not taste.
@@ -163,6 +191,52 @@ function tideAttack(level, huntSeconds) {
   return total;
 }
 
+// --- the status path ---------------------------------------------------
+const STATUS_EXPLOIT = {
+  Poison: { 1: 0.30, 2: 0.45, 3: 0.60, 4: 0.80, 5: 1.00 },
+  Paralysis: { 1: 0.50, 2: 0.75, 3: 1.00, 4: 1.30, 5: 1.60 },
+};
+const BUILDUP_BOOST = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
+const SNEAK = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.30 };
+const BLAST_EXPLOIT_ATK = { 1: 30, 2: 60, 3: 90, 4: 120, 5: 150 };
+const BLAST_EXPLOIT_CAP = 10;
+const STATUS_BUILDUP = { 1: 50, 2: 75, 3: 100, 4: 125, 5: 150 };
+
+/**
+ * Chance that a hit inflicts buildup.
+ *
+ * 33% by default. Status Sneak Attack raises that to a guaranteed 100% at Lv5
+ * and is treated as linear in between, but only on hits landed from behind â€”
+ * so the average over a hunt is the two cases weighted by how often you get
+ * behind the monster.
+ */
+/**
+ * Share of the hunt a monster spends poisoned.
+ *
+ * Derived rather than assumed: applications times the tick window, over a
+ * standard hunt. Note this prices only Poison Exploit's damage multiplier â€”
+ * the poison's own damage over time (7-18% of the monster's max HP, depending
+ * on its weakness) is damage to the MONSTER'S health pool, not to your hit, so
+ * it cannot be folded into a per-hit figure and is not counted here.
+ */
+function poisonUptime() {
+  const up = ASSUME.poisonProcsPer75s * ASSUME.poisonTickSeconds / 75;
+  return up > 1 ? 1 : up;
+}
+
+/** Share of the hunt a monster spends paralysed — applications x 4 seconds. */
+function paralysisUptime() {
+  const up = ASSUME.paralysisProcsPer75s * ASSUME.paralysisTickSeconds / 75;
+  return up > 1 ? 1 : up;
+}
+
+function procChance(ssaLevel) {
+  const base = ASSUME.statusProcBase;
+  if (!ssaLevel) return base;
+  const behind = base + (1 - base) * (ssaLevel / 5);
+  return ASSUME.behindRate * behind + (1 - ASSUME.behindRate) * base;
+}
+
 // Latent Power's share of the hunt, from when it starts to the end.
 function latentUptime() {
   var up = (ASSUME.huntSeconds - ASSUME.latentPowerStart) / ASSUME.huntSeconds;
@@ -179,7 +253,7 @@ const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
  * Keeping this tight is not just tidiness: every skill dropped makes more
  * armour pieces collapse into the same bundle, which shrinks the search.
  *
- *   * Resistances and the other defensive skills never enter — they do not
+ *   * Resistances and the other defensive skills never enter â€” they do not
  *     touch damage.
  *   * Only the weapon's OWN element is included. Dragon Attack is worthless on
  *     an ice weapon, so it is not a dimension worth searching.
@@ -209,6 +283,8 @@ function knownSkills(weapon) {
     s.add(k);
   });
 
+  s.add('Sneak Attack');            // damage from behind, any weapon
+
   if (ELEMENTS.indexOf(weapon.element) >= 0) {
     s.add(weapon.element + ' Attack');
     s.add('Advanced ' + weapon.element + ' Attack');
@@ -216,6 +292,17 @@ function knownSkills(weapon) {
     s.add('Critical Element');
     s.add('Elemental Release');
     s.add('Health Boost');          // only matters through Vital
+  }
+
+  // A status weapon's buildup deals no damage itself, but it drives a separate
+  // family of skills that do. Only the matching status counts: Poison Exploit
+  // is worthless on a blast weapon.
+  if (STATUS.indexOf(weapon.element) >= 0) {
+    s.add(weapon.element + ' Attack');     // raises buildup, so raises proc rate
+    s.add('Buildup Boost');
+    s.add('Status Sneak Attack');
+    if (STATUS_EXPLOIT[weapon.element]) s.add(weapon.element + ' Exploit');
+    if (weapon.element === 'Blast') s.add('Blast Exploit');
   }
   return s;
 }
@@ -271,6 +358,31 @@ function score(totals, w) {
   if (lv('Burst') >= 5) dmg *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   dmg *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   dmg *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
+  dmg *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
+
+  // --- the status path --------------------------------------------------
+  if (STATUS.indexOf(w.element) >= 0) {
+    const proc = procChance(lv('Status Sneak Attack'));
+    // Buildup Boost pays on the hit that procs, so it is the skill's value
+    // times how often that happens.
+    dmg *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
+
+    const ex = STATUS_EXPLOIT[w.element];
+    if (ex) {
+      const poison = w.element === 'Poison';
+      const uptime = poison ? poisonUptime() : paralysisUptime();
+      // Paralysis carries a flat 10% on top, with or without the Exploit.
+      const base = poison ? 0 : ASSUME.paralysisBaseBonus;
+      dmg *= 1 + (base + (ex[lv(w.element + ' Exploit')] || 0)) * uptime;
+    }
+    // Blast Exploit is flat attack per proc, stacking. Stacks accumulate
+    // through the hunt, so the average held is about half the final count.
+    if (w.element === 'Blast' && lv('Blast Exploit')) {
+      const stacks = Math.min(ASSUME.blastProcsPerHunt, BLAST_EXPLOIT_CAP) / 2;
+      const bonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) * stacks;
+      dmg *= (atk + bonus) / atk;
+    }
+  }
 
   // Utility, priced as a fraction of damage.
   let util = 0;
@@ -326,6 +438,14 @@ function makeScorer(w, damageOnly) {
   const iCF = I('Critical Ferocity'), iCB = I('Critical Boost'), iCE = I('Critical Element');
   const iBurst = I('Burst'), iAB2 = I('Advanced Burst'), iOG = I('Offensive Guard');
   const iRaw = I('Raw Power'), iTide = I('Rising Tide');
+  const isStatusW = STATUS.indexOf(w.element) >= 0;
+  const iSneak = I('Sneak Attack'), iSSA = I('Status Sneak Attack');
+  const iBuildup = I('Buildup Boost');
+  const iExploit = isStatusW ? I(w.element + ' Exploit') : -1;
+  const exTable = STATUS_EXPLOIT[w.element] || null;
+  const exUptime = w.element === 'Poison' ? poisonUptime() : paralysisUptime();
+  const exBase = w.element === 'Paralysis' ? ASSUME.paralysisBaseBonus : 0;
+  const iBlastEx = w.element === 'Blast' ? I('Blast Exploit') : -1;
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
@@ -384,6 +504,17 @@ function makeScorer(w, damageOnly) {
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
+    dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
+
+    if (isStatusW) {
+      const proc = procChance(g(v, iSSA));
+      dmg *= 1 + (BUILDUP_BOOST[g(v, iBuildup)] || 0) * proc;
+      if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
+      if (iBlastEx >= 0 && g(v, iBlastEx)) {
+        const stacks = Math.min(ASSUME.blastProcsPerHunt, BLAST_EXPLOIT_CAP) / 2;
+        dmg *= (atk + (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * stacks) / atk;
+      }
+    }
 
     if (damageOnly) return dmg;
     let u = 0;
