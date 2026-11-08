@@ -60,8 +60,10 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
 // one. They count towards the set, so they travel with the weapon.
 $weapons = array();
 $byId = array();
-$sql = 'SELECT id, name, category_label, element_label, attack, element_attack, affinity, series_name
-        FROM v_weapon_10_5 ORDER BY category_label, name';
+$sql = 'SELECT v.id, v.name, v.category_label, v.element_label, v.attack, v.element_attack,
+               v.affinity, v.series_name, w.style_selectable
+        FROM v_weapon_10_5 v JOIN weapon w ON w.id = v.id
+        ORDER BY v.category_label, v.name';
 foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $weapons[] = array(
         'name'     => $r['name'],
@@ -71,6 +73,8 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
         'ele'      => (int) $r['element_attack'],
         'aff'      => (int) $r['affinity'],
         'series'   => $r['series_name'],
+        // Style selection changed which skills a ranged weapon wants.
+        'styleSelectable' => ((int) $r['style_selectable']) === 1,
         'skills'   => new stdClass(),
     );
     $byId[(int) $r['id']] = count($weapons) - 1;
@@ -83,6 +87,16 @@ $sql = 'SELECT wg.weapon_id, k.name, wgs.level
 foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $id = (int) $r['weapon_id'];
     if (isset($byId[$id])) $weapons[$byId[$id]]['skills']->{$r['name']} = (int) $r['level'];
+}
+
+// Ammo types each bowgun carries, so an ammo boost is only offered where there
+// is ammo for it to boost.
+$sql = 'SELECT DISTINCT weapon_id, ammo_type FROM weapon_ammo';
+foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
+    $id = (int) $r['weapon_id'];
+    if (!isset($byId[$id])) continue;
+    if (!isset($weapons[$byId[$id]]['ammo'])) $weapons[$byId[$id]]['ammo'] = array();
+    $weapons[$byId[$id]]['ammo'][] = $r['ammo_type'];
 }
 
 // --- which skills a driftgem can grant -------------------------------------

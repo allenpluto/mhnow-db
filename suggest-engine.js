@@ -108,6 +108,12 @@ const ASSUME = {
   // applies to every paralysis weapon, not only ones carrying the Exploit.
   paralysisBaseBonus: 0.10,
 
+  // Share of a bowgun's shots that use the ammo a boost applies to. This single
+  // number decides whether the ammo boosts are the strongest skills in the
+  // model or a footnote: at 1.0, Normal/Element Ammo Boost Lv3 triples the
+  // damage of every shot. A GUESS, and the most consequential one here.
+  ammoShare: 0.50,
+
   // Share of hits landed from behind. Deliberately NOT tied to the weak-point
   // figure: a weak point can be at the back, so the two overlap rather than
   // competing, and binding them would wrongly make Weakness Exploit look wasted
@@ -142,6 +148,15 @@ const UTILITY = {
   // THE RATE BELOW IS A GUESS. The multipliers are measured; what one boosted
   // hit is worth as a fraction of a hunt's damage is not.
   'Rude Awakener': { 1: 0.05, 2: 0.10, 3: 0.15 },
+
+  // Ranged handling. The anchors are the user's — Focus 20% at Lv5, the rest
+  // 15% at Lv3 — and Focus keeps the shape of its own in-game ladder
+  // (5/10/15/20/30% charge time) scaled to that anchor, rather than being
+  // flattened to a straight line.
+  Focus: { 1: 0.033, 2: 0.067, 3: 0.100, 4: 0.133, 5: 0.200 },
+  Ballistics: { 1: 0.05, 2: 0.10, 3: 0.15 },
+  'Recoil Down': { 1: 0.05, 2: 0.10, 3: 0.15 },
+  'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
 };
 
 // Utility skills that only apply to a weapon of a given element. Rude Awakener
@@ -149,6 +164,38 @@ const UTILITY = {
 const UTILITY_ELEMENT = {
   'Rude Awakener': ['Sleep'],
 };
+
+/**
+ * Conditions too involved for the type and element tables above.
+ *
+ * Ranged weapons changed with style selection, so which skills matter depends
+ * on the weapon's style as well as what it is. A style-selectable status bow is
+ * played with dodgebolt rather than charged shots, so the charging skills stop
+ * earning their slot and it wants the status build instead.
+ */
+const UTILITY_WHEN = {
+  // Charging skills: every bow shot is charged, EXCEPT on a style-selectable
+  // status bow, which is not played that way.
+  Focus: (w) => w.category === 'Bow' && !(w.styleSelectable && isStatus(w)),
+  // Firing distance still matters however the bow is played.
+  Ballistics: (w) => w.category === 'Bow',
+  // Bowgun handling. Style-selectable bowguns are left out pending their rules.
+  'Recoil Down': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
+  'Reload Speed': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
+};
+const RANGED_GUNS = ['Light Bowgun', 'Heavy Bowgun'];
+function isStatus(w) { return STATUS.indexOf(w.element) >= 0; }
+
+/** Does this utility skill apply to this weapon at all? */
+function utilityApplies(name, w) {
+  const scope = UTILITY_SCOPE[name];
+  if (scope && scope.indexOf(w.category) < 0) return false;
+  const el = UTILITY_ELEMENT[name];
+  if (el && el.indexOf(w.element) < 0) return false;
+  const when = UTILITY_WHEN[name];
+  if (when && !when(w)) return false;
+  return true;
+}
 // Which weapons each utility skill is worth anything on.
 const UTILITY_SCOPE = {
   // The game's own text names seven types for Power Prolonger. You listed four;
@@ -241,6 +288,37 @@ const ELEMENT_SKILLS = {
   Water: [['Namielle Electrowave', { 1: 0.10, 2: 0.15, 3: 0.25 }]],
   Dragon: [['Malzeno Crimsonblood', { 1: 0.10, 2: 0.15, 3: 0.25 }]],
 };
+
+/**
+ * Charge Master multiplies element on charged attacks. Every bow shot is
+ * charged, so on a bow it is a straight element multiplier — and a large one,
+ * 70% at Lv5. It is a damage skill, not a handling one.
+ *
+ * Other weapons charge only some attacks, and this model has no notion of an
+ * attack mix, so they are left out rather than guessed at.
+ */
+const CHARGE_MASTER = { 1: 0.10, 2: 0.25, 3: 0.40, 4: 0.55, 5: 0.70 };
+
+/**
+ * Ammo boosts. These are the largest multipliers in the game — Normal/Element
+ * Ammo Boost Lv3 is +200% — but each applies to ONE family of ammo, so a
+ * bowgun carrying four kinds does not get it on every shot.
+ *
+ * A skill is only offered when the weapon actually carries matching ammo, which
+ * is read from the database. The share of shots that use it cannot be read from
+ * anywhere and is the assumption below.
+ */
+const AMMO_BOOSTS = [
+  { skill: 'Normal/Element Ammo Boost', types: ['NORMAL'], levels: { 1: 0.60, 2: 1.20, 3: 2.00 } },
+  { skill: 'Slicing Ammo Boost', types: ['SLICING'], levels: { 1: 0.30, 2: 0.60, 3: 1.00 } },
+  { skill: 'Artillery', types: ['STICKY', 'WYVERN'],
+    levels: { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 } },
+];
+
+function ammoBoostApplies(boost, w) {
+  if (!w.ammo || !w.ammo.length) return false;
+  return boost.types.some((t) => w.ammo.indexOf(t) >= 0);
+}
 
 // Flat damage on any weapon, at the cost of never filling the Special Gauge by
 // attacking. The gain is priced; the cost is not, because Special Skills are
@@ -360,16 +438,14 @@ function knownSkills(weapon) {
     // Ramps on the clock, so it is worth most on a long base defence.
     'Rising Tide']);
 
-  Object.keys(UTILITY).forEach((k) => {
-    const scope = UTILITY_SCOPE[k];
-    if (scope && scope.indexOf(weapon.category) < 0) return;
-    const el = UTILITY_ELEMENT[k];
-    if (el && el.indexOf(weapon.element) < 0) return;
-    s.add(k);
-  });
+  Object.keys(UTILITY).forEach((k) => { if (utilityApplies(k, weapon)) s.add(k); });
 
   s.add('Sneak Attack');            // damage from behind, any weapon
   s.add('Nergigante Avidity');      // flat damage, any weapon
+
+  // An ammo boost is only worth searching for when the weapon carries ammo it
+  // applies to, which the database knows per weapon.
+  AMMO_BOOSTS.forEach((b) => { if (ammoBoostApplies(b, weapon)) s.add(b.skill); });
 
   if (ELEMENTS.indexOf(weapon.element) >= 0) {
     s.add(weapon.element + ' Attack');
@@ -379,6 +455,11 @@ function knownSkills(weapon) {
     s.add('Elemental Release');
     s.add('Health Boost');          // only matters through Vital
     (ELEMENT_SKILLS[weapon.element] || []).forEach((p) => s.add(p[0]));
+    // Every bow shot is charged, so Charge Master is a flat element multiplier
+    // there — except on a style-selectable status bow, played with dodgebolt.
+    if (weapon.category === 'Bow' && !(weapon.styleSelectable && isStatus(weapon))) {
+      s.add('Charge Master');
+    }
   }
 
   // A status weapon's buildup deals no damage itself, but it drives a separate
@@ -421,6 +502,9 @@ function score(totals, w) {
     ele += (VITAL[lv('Vital ' + w.element)] || 0) * hp;
     let elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
     (ELEMENT_SKILLS[w.element] || []).forEach((p) => { elePct += p[1][lv(p[0])] || 0; });
+    if (w.category === 'Bow' && !(w.styleSelectable && isStatus(w))) {
+      elePct += CHARGE_MASTER[lv('Charge Master')] || 0;
+    }
     ele *= 1 + elePct;
   }
 
@@ -453,6 +537,10 @@ function score(totals, w) {
   dmg *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
   dmg *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
   dmg *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
+  AMMO_BOOSTS.forEach((b) => {
+    if (!ammoBoostApplies(b, w)) return;
+    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ASSUME.ammoShare;
+  });
 
   // --- the status path --------------------------------------------------
   if (STATUS.indexOf(w.element) >= 0) {
@@ -484,11 +572,10 @@ function score(totals, w) {
   let util = 0;
   Object.keys(UTILITY).forEach((n) => {
     if (!lv(n)) return;
-    const scope = UTILITY_SCOPE[n];
-    if (scope && scope.indexOf(w.category) < 0) return;
-    const el = UTILITY_ELEMENT[n];
-    if (el && el.indexOf(w.element) < 0) return;
-    util += UTILITY[n][Math.min(lv(n), 3)] || 0;
+    if (!utilityApplies(n, w)) return;
+    const table = UTILITY[n];
+    const max = Math.max.apply(null, Object.keys(table).map(Number));
+    util += table[Math.min(lv(n), max)] || 0;
   });
 
   return { dmg: dmg, util: util, total: dmg * (1 + util) };
@@ -545,19 +632,21 @@ function makeScorer(w, damageOnly) {
   const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder')
     : w.element === 'Poison' ? I('Chameleos Venomist') : -1;
   const iAvidity = I('Nergigante Avidity');
+  const ammoBoosts = AMMO_BOOSTS.filter((b) => ammoBoostApplies(b, w) && I(b.skill) >= 0)
+    .map((b) => ({ i: I(b.skill), levels: b.levels }));
   // Element-multiplying monster skills for this weapon's element, resolved up front.
   const elemSkills = (ELEMENT_SKILLS[w.element] || [])
     .map((p) => ({ i: I(p[0]), table: p[1] })).filter((x) => x.i >= 0);
+  const iCharge = (w.category === 'Bow' && !(w.styleSelectable && STATUS.indexOf(w.element) >= 0))
+    ? I('Charge Master') : -1;
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
   Object.keys(UTILITY).forEach((n) => {
-    const scope = UTILITY_SCOPE[n];
-    if (scope && scope.indexOf(w.category) < 0) return;
-    const el = UTILITY_ELEMENT[n];
-    if (el && el.indexOf(w.element) < 0) return;
+    if (!utilityApplies(n, w)) return;
     if (I(n) < 0) return;
-    util.push({ i: I(n), table: UTILITY[n] });
+    util.push({ i: I(n), table: UTILITY[n],
+      max: Math.max.apply(null, Object.keys(UTILITY[n]).map(Number)) });
   });
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
@@ -583,6 +672,7 @@ function makeScorer(w, damageOnly) {
       for (let k = 0; k < elemSkills.length; k++) {
         elePct += elemSkills[k].table[v[elemSkills[k].i]] || 0;
       }
+      if (iCharge >= 0) elePct += CHARGE_MASTER[g(v, iCharge)] || 0;
       ele *= 1 + elePct;
     }
 
@@ -612,6 +702,9 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
+    for (let k = 0; k < ammoBoosts.length; k++) {
+      dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ASSUME.ammoShare;
+    }
 
     if (isStatusW) {
       const proc = procChance(g(v, iSSA), iBlastEx >= 0 ? g(v, iBlastEx) : 0,
@@ -628,7 +721,8 @@ function makeScorer(w, damageOnly) {
     let u = 0;
     for (let k = 0; k < util.length; k++) {
       const lvl = v[util[k].i];
-      if (lvl) u += util[k].table[lvl > 3 ? 3 : lvl] || 0;
+      // Capped at each skill's own max, not a blanket 3 — Focus runs to 5.
+      if (lvl) u += util[k].table[lvl > util[k].max ? util[k].max : lvl] || 0;
     }
     return dmg * (1 + u);
   }

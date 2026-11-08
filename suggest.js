@@ -83,6 +83,13 @@ const W = {
   ele: st.element_attack + Number(val('--ele', 0)),
   aff: st.affinity + Number(val('--aff', 0)),
   skills: weaponSkills,
+  // Style selection changed which skills a ranged weapon wants.
+  styleSelectable: wRow.style_selectable === 1,
+  // Ammo types this weapon carries, so the ammo boosts are only offered when
+  // there is ammo for them to boost.
+  ammo: (d.weaponAmmo || []).filter((a) => a.weapon_id === wRow.id)
+    .map((a) => a.ammo_type)
+    .filter((t, i, arr) => arr.indexOf(t) === i),
 };
 const isStatus = E.STATUS.indexOf(W.element) >= 0;
 const DAMAGE_ONLY = flag('--damage-only');

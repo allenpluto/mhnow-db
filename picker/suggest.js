@@ -140,6 +140,8 @@
       ele: pick.ele + (Number(elEle.value) || 0),
       aff: pick.aff + (Number(elAff.value) || 0),
       skills: pick.skills || {},      // the weapon's own skills count too
+      styleSelectable: !!pick.styleSelectable,
+      ammo: pick.ammo || [],
     };
     var isStatus = E.STATUS.indexOf(W.element) >= 0;
 
