@@ -182,6 +182,10 @@ out.results.forEach((r, i) => {
     console.log('     ' + SLOT_LABEL[slot].padEnd(6) + shown.padEnd(44) +
       Object.keys(b.v).map((n) => n + ' ' + b.v[n]).join(', '));
   });
+  if (r.style) {
+    console.log('     style  ' + r.style +
+      (r.styleFree ? '   (either style reaches this set — the handling skill did not make it)' : ''));
+  }
   if (r.gemText) console.log('     gems   ' + r.gemText + '   (' + r.slots + ' slot(s))');
   else if (r.gemPotential) {
     const gain = r.gemPotential.detail.dmg - r.detail.dmg;

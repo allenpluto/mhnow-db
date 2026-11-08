@@ -86,7 +86,45 @@
    *   gems      assume every driftsmelt slot carries the set's best skill
    *   gemmable  map of skill name -> true, the skills a driftgem can grant
    */
+  /**
+   * A bowgun fits more than one style, and each is a different build. Search
+   * each separately and merge, so the leaders can come from different styles
+   * and the best one wins on its merits rather than on a style chosen up front.
+   */
   function run(armour, weapon, opts) {
+    opts = opts || {};
+    var variants = E.styleVariants(weapon);
+    if (variants.length < 2) return runOne(armour, variants[0].weapon, opts);
+
+    var merged = [], first = null;
+    variants.forEach(function (v) {
+      var out = runOne(armour, v.weapon, opts);
+      if (!first) first = out;
+      out.results.forEach(function (r) { r.style = v.label; });
+      merged = merged.concat(out.results);
+    });
+    merged.sort(function (x, y) { return y.score - x.score; });
+
+    // Two styles reaching the same skill totals is the same build twice: the
+    // style only mattered through Recoil Down or Reload Speed, and neither made
+    // the set. Listing it once, noting the style is free, beats presenting a
+    // choice that is not one.
+    var seen = {}, unique = [];
+    merged.forEach(function (r) {
+      var key = Object.keys(r.totals).sort().map(function (n) {
+        return n + r.totals[n];
+      }).join(',');
+      if (seen[key]) { seen[key].styleFree = true; return; }
+      seen[key] = r;
+      unique.push(r);
+    });
+
+    first.results = unique.slice(0, opts.top || 5);
+    first.variants = variants.map(function (v) { return v.label; });
+    return first;
+  }
+
+  function runOne(armour, weapon, opts) {
     opts = opts || {};
     var top = opts.top || 5;
     var knownSet = E.knownSkills(weapon);

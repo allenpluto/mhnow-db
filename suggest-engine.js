@@ -177,16 +177,28 @@ const UTILITY_WHEN = {
   // Charging skills: every bow shot is charged, EXCEPT on a style-selectable
   // status bow, which is not played that way.
   Focus: (w) => w.category === 'Bow' && !(w.styleSelectable && isStatus(w)),
-  // Firing distance still matters however the bow is played.
-  Ballistics: (w) => w.category === 'Bow',
+  // Optimal firing distance. On a bow it always matters, however it is played.
+  // On a bowgun only normal, piercing and spread ammo benefit, so it is worth a
+  // slot only when the weapon actually carries one of those.
+  Ballistics: (w) => w.category === 'Bow' ||
+    (RANGED_GUNS.indexOf(w.category) >= 0 &&
+     BALLISTICS_AMMO.some((t) => (w.ammo || []).indexOf(t) >= 0)),
   // Bowgun handling. Style-selectable bowguns are left out pending their rules.
-  'Recoil Down': (w) => gunHandling(w).recoil,
+  // Wyvern ammo gains nothing from reduced recoil, so a bowgun whose only ammo
+  // is wyvern has no use for the skill even when its style leaves recoil as the
+  // remaining job. It still takes Artillery, which does cover wyvern.
+  'Recoil Down': (w) => gunHandling(w).recoil &&
+    (w.ammo || []).some((t) => RECOIL_EXEMPT_AMMO.indexOf(t) < 0),
   'Reload Speed': (w) => gunHandling(w).reload,
   // The skill names gunlance and charge blade too, and it survives style
   // selection, so it is offered on every weapon that can use it.
   'Evading Reload': (w) => EVADE_RELOAD_TYPES.indexOf(w.category) >= 0,
 };
 const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge Blade'];
+// Only these ammo families gain from a longer optimal firing distance.
+const BALLISTICS_AMMO = ['NORMAL', 'PIERCING', 'SPREAD'];
+// Ammo that gains nothing from reduced recoil.
+const RECOIL_EXEMPT_AMMO = ['WYVERN'];
 
 /**
  * Which handling skill a bowgun still needs, given its style.
@@ -204,6 +216,7 @@ const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge 
  * so Reload Speed is what remains.
  */
 function gunHandling(w) {
+  if (w.style) return w.style;          // a variant has already decided
   const none = { recoil: false, reload: false };
   if (RANGED_GUNS.indexOf(w.category) < 0) return none;
   if (!w.styleSelectable) return { recoil: true, reload: true };
@@ -215,6 +228,47 @@ function gunHandling(w) {
   return (has('SPREAD') || has('WYVERN'))
     ? { recoil: true, reload: false }
     : { recoil: false, reload: true };
+}
+
+/**
+ * The distinct builds a weapon can be played as.
+ *
+ * A bowgun usually carries two or three magazines, so a style-selectable one
+ * genuinely fits more than one style and they are different builds, not one
+ * build scored differently: an LBG with normal and slicing can be played on
+ * sliding reload around its normal ammo, or on stepping shot around the
+ * slicing. Each wants a different handling skill, a different ammo boost and a
+ * different share of shots, so each is searched separately and the best wins.
+ *
+ * Everything else has exactly one variant.
+ */
+function styleVariants(weapon) {
+  const one = [{ label: null, weapon: weapon }];
+  if (RANGED_GUNS.indexOf(weapon.category) < 0 || !weapon.styleSelectable) return one;
+
+  const has = (t) => (weapon.ammo || []).indexOf(t) >= 0;
+  const make = (label, style) => ({
+    label: label,
+    weapon: Object.assign({}, weapon, { style: style }),
+  });
+
+  const out = [];
+  if (weapon.category === 'Light Bowgun') {
+    // Sliding reload is only worth considering when there is normal ammo to
+    // build around; it is the style that makes normal ammo dominate the hunt.
+    if (has('NORMAL')) {
+      out.push(make('sliding reload, around normal ammo',
+        { recoil: true, reload: false, primary: 'NORMAL' }));
+    }
+    out.push(make('stepping shot, even magazine use',
+      { recoil: false, reload: true, primary: null }));
+  } else {
+    if (has('SPREAD') || has('WYVERN')) {
+      out.push(make('guard reload', { recoil: true, reload: false, primary: null }));
+    }
+    out.push(make('crouching shot', { recoil: false, reload: true, primary: null }));
+  }
+  return out.length ? out : one;
 }
 const RANGED_GUNS = ['Light Bowgun', 'Heavy Bowgun'];
 function isStatus(w) { return STATUS.indexOf(w.element) >= 0; }
@@ -366,15 +420,16 @@ function ammoShare(w, boost) {
   if (!w.ammo || !w.ammo.length) return 0;
   const n = w.ammo.length;
 
-  // A style-selectable LBG on sliding reload does not fire evenly: it empties
-  // the normal magazine and the others get a shot each before it slides to
-  // reload.
-  // So normal ammo takes 90% of the time with two magazines, 80% with three,
-  // and the rest share what is left — rather than every magazine taking 1/n.
-  if (w.category === 'Light Bowgun' && w.styleSelectable && w.ammo.indexOf('NORMAL') >= 0) {
+  // Sliding reload does not fire evenly: it empties the normal magazine and the
+  // others get a shot each before it slides to reload. So normal ammo takes 90%
+  // of the time with two magazines and 80% with three, and the rest share what
+  // is left — rather than every magazine taking 1/n. Every other style, and
+  // every unstyled bowgun, fires evenly.
+  const primaryType = w.style && w.style.primary;
+  if (primaryType && w.ammo.indexOf(primaryType) >= 0) {
     const primary = n <= 2 ? 0.90 : 0.80;
     if (!boost) return primary;
-    const onPrimary = boost.types.indexOf('NORMAL') >= 0;
+    const onPrimary = boost.types.indexOf(primaryType) >= 0;
     if (onPrimary) return primary;
     return n > 1 ? (1 - primary) / (n - 1) : 0;
   }
@@ -796,5 +851,6 @@ function makeScorer(w, damageOnly) {
 
 return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
-  knownSkills: knownSkills, ELEMENTS: ELEMENTS, STATUS: STATUS };
+  knownSkills: knownSkills, styleVariants: styleVariants,
+  ELEMENTS: ELEMENTS, STATUS: STATUS };
 }));
