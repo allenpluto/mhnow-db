@@ -108,12 +108,6 @@ const ASSUME = {
   // applies to every paralysis weapon, not only ones carrying the Exploit.
   paralysisBaseBonus: 0.10,
 
-  // Share of a bowgun's shots that use the ammo a boost applies to. This single
-  // number decides whether the ammo boosts are the strongest skills in the
-  // model or a footnote: at 1.0, Normal/Element Ammo Boost Lv3 triples the
-  // damage of every shot. A GUESS, and the most consequential one here.
-  ammoShare: 0.50,
-
   // Share of hits landed from behind. Deliberately NOT tied to the weak-point
   // figure: a weak point can be at the back, so the two overlap rather than
   // competing, and binding them would wrongly make Weakness Exploit look wasted
@@ -157,6 +151,12 @@ const UTILITY = {
   Ballistics: { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Recoil Down': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
+
+  // Refills ammo on an evade, which covers much of what Reload Speed does —
+  // so unlike Reload Speed it stays useful on a style-selectable bowgun, where
+  // sliding and guard reload have already taken that job. Anchored to the same
+  // 15% as Reload Speed at its own max of 5; that anchor is assumed.
+  'Evading Reload': { 1: 0.04, 2: 0.07, 3: 0.10, 4: 0.13, 5: 0.15 },
 };
 
 // Utility skills that only apply to a weapon of a given element. Rude Awakener
@@ -182,7 +182,11 @@ const UTILITY_WHEN = {
   // Bowgun handling. Style-selectable bowguns are left out pending their rules.
   'Recoil Down': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
   'Reload Speed': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
+  // The skill names gunlance and charge blade too, and it survives style
+  // selection, so it is offered on every weapon that can use it.
+  'Evading Reload': (w) => EVADE_RELOAD_TYPES.indexOf(w.category) >= 0,
 };
+const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge Blade'];
 const RANGED_GUNS = ['Light Bowgun', 'Heavy Bowgun'];
 function isStatus(w) { return STATUS.indexOf(w.element) >= 0; }
 
@@ -318,6 +322,20 @@ const AMMO_BOOSTS = [
 function ammoBoostApplies(boost, w) {
   if (!w.ammo || !w.ammo.length) return false;
   return boost.types.some((t) => w.ammo.indexOf(t) >= 0);
+}
+
+/**
+ * How much of a boost a weapon actually realises.
+ *
+ * A boost lifts one family of ammo, and a bowgun firing three kinds spends only
+ * about a third of its shots on any one of them — so the effectiveness is one
+ * over the number of ammo types it carries, 50% for two and 33% for three.
+ * Derived from the weapon rather than assumed, which also means a focused
+ * two-ammo bowgun correctly values its boost higher than a versatile one.
+ */
+function ammoShare(w) {
+  if (!w.ammo || !w.ammo.length) return 0;
+  return 1 / w.ammo.length;
 }
 
 // Flat damage on any weapon, at the cost of never filling the Special Gauge by
@@ -539,7 +557,7 @@ function score(totals, w) {
   dmg *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
   AMMO_BOOSTS.forEach((b) => {
     if (!ammoBoostApplies(b, w)) return;
-    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ASSUME.ammoShare;
+    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w);
   });
 
   // --- the status path --------------------------------------------------
@@ -703,7 +721,7 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
     for (let k = 0; k < ammoBoosts.length; k++) {
-      dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ASSUME.ammoShare;
+      dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoShare(w);
     }
 
     if (isStatusW) {
