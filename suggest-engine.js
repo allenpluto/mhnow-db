@@ -180,13 +180,43 @@ const UTILITY_WHEN = {
   // Firing distance still matters however the bow is played.
   Ballistics: (w) => w.category === 'Bow',
   // Bowgun handling. Style-selectable bowguns are left out pending their rules.
-  'Recoil Down': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
-  'Reload Speed': (w) => RANGED_GUNS.indexOf(w.category) >= 0 && !w.styleSelectable,
+  'Recoil Down': (w) => gunHandling(w).recoil,
+  'Reload Speed': (w) => gunHandling(w).reload,
   // The skill names gunlance and charge blade too, and it survives style
   // selection, so it is offered on every weapon that can use it.
   'Evading Reload': (w) => EVADE_RELOAD_TYPES.indexOf(w.category) >= 0,
 };
 const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge Blade'];
+
+/**
+ * Which handling skill a bowgun still needs, given its style.
+ *
+ * Before style selection a bowgun wants both. With a style, the style does one
+ * job and leaves the other, and which style you pick follows from the ammo:
+ *
+ *   LBG carrying normal ammo   -> keeps Recoil Down, drops Reload Speed
+ *   LBG otherwise              -> keeps Reload Speed, drops Recoil Down
+ *   HBG with spread or wyvern  -> guard reload, so keeps Recoil Down
+ *   HBG otherwise              -> crouching shot, so keeps Reload Speed
+ *
+ * NOTE a conflict worth resolving: an earlier description had stepping shot
+ * negating recoil, which would mean the normal-ammo LBG needs Reload Speed
+ * rather than Recoil Down. The mapping below follows the later, more specific
+ * account. Flip the two lines if the earlier one was right.
+ */
+function gunHandling(w) {
+  const none = { recoil: false, reload: false };
+  if (RANGED_GUNS.indexOf(w.category) < 0) return none;
+  if (!w.styleSelectable) return { recoil: true, reload: true };
+
+  const has = (t) => (w.ammo || []).indexOf(t) >= 0;
+  if (w.category === 'Light Bowgun') {
+    return has('NORMAL') ? { recoil: true, reload: false } : { recoil: false, reload: true };
+  }
+  return (has('SPREAD') || has('WYVERN'))
+    ? { recoil: true, reload: false }
+    : { recoil: false, reload: true };
+}
 const RANGED_GUNS = ['Light Bowgun', 'Heavy Bowgun'];
 function isStatus(w) { return STATUS.indexOf(w.element) >= 0; }
 
@@ -333,9 +363,23 @@ function ammoBoostApplies(boost, w) {
  * Derived from the weapon rather than assumed, which also means a focused
  * two-ammo bowgun correctly values its boost higher than a versatile one.
  */
-function ammoShare(w) {
+function ammoShare(w, boost) {
   if (!w.ammo || !w.ammo.length) return 0;
-  return 1 / w.ammo.length;
+  const n = w.ammo.length;
+
+  // A style-selectable LBG on normal ammo does not fire evenly: it empties the
+  // normal magazine and the others get a shot each before sliding to reload.
+  // So normal ammo takes 90% of the time with two magazines, 80% with three,
+  // and the rest share what is left — rather than every magazine taking 1/n.
+  if (w.category === 'Light Bowgun' && w.styleSelectable && w.ammo.indexOf('NORMAL') >= 0) {
+    const primary = n <= 2 ? 0.90 : 0.80;
+    if (!boost) return primary;
+    const onPrimary = boost.types.indexOf('NORMAL') >= 0;
+    if (onPrimary) return primary;
+    return n > 1 ? (1 - primary) / (n - 1) : 0;
+  }
+
+  return 1 / n;
 }
 
 // Flat damage on any weapon, at the cost of never filling the Special Gauge by
@@ -557,7 +601,7 @@ function score(totals, w) {
   dmg *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
   AMMO_BOOSTS.forEach((b) => {
     if (!ammoBoostApplies(b, w)) return;
-    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w);
+    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w, b);
   });
 
   // --- the status path --------------------------------------------------
@@ -650,8 +694,10 @@ function makeScorer(w, damageOnly) {
   const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder')
     : w.element === 'Poison' ? I('Chameleos Venomist') : -1;
   const iAvidity = I('Nergigante Avidity');
+  // The share depends only on the weapon, not on any skill level, so it is
+  // resolved once here rather than recomputed per candidate.
   const ammoBoosts = AMMO_BOOSTS.filter((b) => ammoBoostApplies(b, w) && I(b.skill) >= 0)
-    .map((b) => ({ i: I(b.skill), levels: b.levels }));
+    .map((b) => ({ i: I(b.skill), levels: b.levels, share: ammoShare(w, b) }));
   // Element-multiplying monster skills for this weapon's element, resolved up front.
   const elemSkills = (ELEMENT_SKILLS[w.element] || [])
     .map((p) => ({ i: I(p[0]), table: p[1] })).filter((x) => x.i >= 0);
@@ -721,7 +767,7 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
     for (let k = 0; k < ammoBoosts.length; k++) {
-      dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoShare(w);
+      dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoBoosts[k].share;
     }
 
     if (isStatusW) {
