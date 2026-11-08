@@ -222,6 +222,31 @@ const BLAST_EXPLOIT_CAP = 10;
 // of either skill on its own would separate them properly.
 const BLAST_EXPLOIT_PROC = { 1: 0.08, 2: 0.15, 3: 0.23, 4: 0.30, 5: 0.38 };
 const BLASTPOWDER_PROC = { 1: 0.05, 2: 0.10, 3: 0.15 };
+// Same wording as Blastpowder — slightly / moderately / significantly — so the
+// same ladder, for poison instead of blast.
+const VENOMIST_PROC = { 1: 0.05, 2: 0.10, 3: 0.15 };
+
+/**
+ * Monster skills that multiply a weapon's element value.
+ *
+ * Fully specified in the data, so no uptime to guess — unlike most of this
+ * file. Two apply to ice and stack; the rest are one per element. Their
+ * percentages are summed with Elemental Release rather than compounded, which
+ * is the conservative reading.
+ */
+const ELEMENT_SKILLS = {
+  Ice: [['Kushala Frostwind', { 1: 0.10, 2: 0.15, 3: 0.25 }],
+        ['Velkhana Aegis', { 1: 0.10, 2: 0.15, 3: 0.20 }]],
+  Thunder: [['Kirin Flashstorm', { 1: 0.10, 2: 0.15, 3: 0.25 }]],
+  Water: [['Namielle Electrowave', { 1: 0.10, 2: 0.15, 3: 0.25 }]],
+  Dragon: [['Malzeno Crimsonblood', { 1: 0.10, 2: 0.15, 3: 0.25 }]],
+};
+
+// Flat damage on any weapon, at the cost of never filling the Special Gauge by
+// attacking. The gain is priced; the cost is not, because Special Skills are
+// outside this model entirely. On a build that leans on its Special, this skill
+// is worth less than the number here suggests.
+const AVIDITY = { 1: 0.10, 2: 0.15, 3: 0.20 };
 const STATUS_BUILDUP = { 1: 50, 2: 75, 3: 100, 4: 125, 5: 150 };
 
 /**
@@ -282,10 +307,10 @@ function paralysisUptime() {
   return up > 1 ? 1 : up;
 }
 
-function procChance(ssaLevel, blastExploitLevel, blastpowderLevel) {
+function procChance(ssaLevel, blastExploitLevel, powderOrVenomistLevel) {
   let base = ASSUME.statusProcBase
     + (BLAST_EXPLOIT_PROC[blastExploitLevel] || 0)
-    + (BLASTPOWDER_PROC[blastpowderLevel] || 0);
+    + (BLASTPOWDER_PROC[powderOrVenomistLevel] || 0);   // same ladder as Venomist
   if (base > 1) base = 1;
   if (!ssaLevel) return base;
 
@@ -344,6 +369,7 @@ function knownSkills(weapon) {
   });
 
   s.add('Sneak Attack');            // damage from behind, any weapon
+  s.add('Nergigante Avidity');      // flat damage, any weapon
 
   if (ELEMENTS.indexOf(weapon.element) >= 0) {
     s.add(weapon.element + ' Attack');
@@ -352,6 +378,7 @@ function knownSkills(weapon) {
     s.add('Critical Element');
     s.add('Elemental Release');
     s.add('Health Boost');          // only matters through Vital
+    (ELEMENT_SKILLS[weapon.element] || []).forEach((p) => s.add(p[0]));
   }
 
   // A status weapon's buildup deals no damage itself, but it drives a separate
@@ -366,6 +393,7 @@ function knownSkills(weapon) {
       s.add('Blast Exploit');
       s.add('Teostra Blastpowder');   // also raises the proc chance
     }
+    if (weapon.element === 'Poison') s.add('Chameleos Venomist');
   }
   return s;
 }
@@ -391,7 +419,9 @@ function score(totals, w) {
     if (lv(w.element + ' Attack') >= 5) ele += ADV_ELEM[lv('Advanced ' + w.element + ' Attack')] || 0;
     const hp = (ASSUME.baseHp + (HEALTH[lv('Health Boost')] || 0)) * ASSUME.hpFraction;
     ele += (VITAL[lv('Vital ' + w.element)] || 0) * hp;
-    ele *= 1 + (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
+    let elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
+    (ELEMENT_SKILLS[w.element] || []).forEach((p) => { elePct += p[1][lv(p[0])] || 0; });
+    ele *= 1 + elePct;
   }
 
   aff += (CEYE[lv('Critical Eye')] || 0);
@@ -422,12 +452,13 @@ function score(totals, w) {
   dmg *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   dmg *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
   dmg *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
+  dmg *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
 
   // --- the status path --------------------------------------------------
   if (STATUS.indexOf(w.element) >= 0) {
     const proc = procChance(lv('Status Sneak Attack'),
       w.element === 'Blast' ? lv('Blast Exploit') : 0,
-      w.element === 'Blast' ? lv('Teostra Blastpowder') : 0);
+      w.element === 'Blast' ? lv('Teostra Blastpowder') : lv('Chameleos Venomist'));
     // Buildup Boost pays on the hit that procs, so it is the skill's value
     // times how often that happens.
     dmg *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
@@ -511,7 +542,12 @@ function makeScorer(w, damageOnly) {
   const exUptime = w.element === 'Poison' ? poisonUptime() : paralysisUptime();
   const exBase = w.element === 'Paralysis' ? ASSUME.paralysisBaseBonus : 0;
   const iBlastEx = w.element === 'Blast' ? I('Blast Exploit') : -1;
-  const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder') : -1;
+  const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder')
+    : w.element === 'Poison' ? I('Chameleos Venomist') : -1;
+  const iAvidity = I('Nergigante Avidity');
+  // Element-multiplying monster skills for this weapon's element, resolved up front.
+  const elemSkills = (ELEMENT_SKILLS[w.element] || [])
+    .map((p) => ({ i: I(p[0]), table: p[1] })).filter((x) => x.i >= 0);
 
   // Utility skills that apply to this weapon, resolved up front.
   const util = [];
@@ -543,7 +579,11 @@ function makeScorer(w, damageOnly) {
       if (g(v, iEA) >= 5) ele += ADV_ELEM[g(v, iAEA)] || 0;
       const hp = (ASSUME.baseHp + (HEALTH[g(v, iHealth)] || 0)) * ASSUME.hpFraction;
       ele += (VITAL[g(v, iVital)] || 0) * hp;
-      ele *= 1 + (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
+      let elePct = (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
+      for (let k = 0; k < elemSkills.length; k++) {
+        elePct += elemSkills[k].table[v[elemSkills[k].i]] || 0;
+      }
+      ele *= 1 + elePct;
     }
 
     aff += CEYE[g(v, iCEye)] || 0;
@@ -571,6 +611,7 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
+    dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
 
     if (isStatusW) {
       const proc = procChance(g(v, iSSA), iBlastEx >= 0 ? g(v, iBlastEx) : 0,
