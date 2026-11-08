@@ -191,18 +191,17 @@ const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge 
 /**
  * Which handling skill a bowgun still needs, given its style.
  *
- * Before style selection a bowgun wants both. With a style, the style does one
- * job and leaves the other, and which style you pick follows from the ammo:
+ * Before style selection a bowgun wants both. A style does one of the two jobs
+ * and leaves the other, and which style you take follows from the ammo:
  *
- *   LBG carrying normal ammo   -> keeps Recoil Down, drops Reload Speed
- *   LBG otherwise              -> keeps Reload Speed, drops Recoil Down
- *   HBG with spread or wyvern  -> guard reload, so keeps Recoil Down
- *   HBG otherwise              -> crouching shot, so keeps Reload Speed
+ *   LBG, normal ammo      sliding reload   -> keeps Recoil Down
+ *   LBG, otherwise        stepping shot    -> keeps Reload Speed
+ *   HBG, spread/wyvern    guard reload     -> keeps Recoil Down
+ *   HBG, otherwise        crouching shot   -> keeps Reload Speed
  *
- * NOTE a conflict worth resolving: an earlier description had stepping shot
- * negating recoil, which would mean the normal-ammo LBG needs Reload Speed
- * rather than Recoil Down. The mapping below follows the later, more specific
- * account. Flip the two lines if the earlier one was right.
+ * Consistent throughout: sliding reload and guard reload cover reloading, so
+ * Recoil Down is what remains; stepping shot and crouching shot cover recoil,
+ * so Reload Speed is what remains.
  */
 function gunHandling(w) {
   const none = { recoil: false, reload: false };
@@ -367,8 +366,9 @@ function ammoShare(w, boost) {
   if (!w.ammo || !w.ammo.length) return 0;
   const n = w.ammo.length;
 
-  // A style-selectable LBG on normal ammo does not fire evenly: it empties the
-  // normal magazine and the others get a shot each before sliding to reload.
+  // A style-selectable LBG on sliding reload does not fire evenly: it empties
+  // the normal magazine and the others get a shot each before it slides to
+  // reload.
   // So normal ammo takes 90% of the time with two magazines, 80% with three,
   // and the rest share what is left — rather than every magazine taking 1/n.
   if (w.category === 'Light Bowgun' && w.styleSelectable && w.ammo.indexOf('NORMAL') >= 0) {
