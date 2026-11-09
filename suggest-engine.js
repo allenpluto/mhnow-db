@@ -323,6 +323,89 @@ function bandAfter(tier, levels) {
   return BAND_OF_STEP[Math.max(0, step - (levels || 0))];
 }
 
+/* --------------------------------------------------------------- styles ----
+ * A style does not merely decide which handling skill is still wanted. It
+ * changes the firing itself, and by much more than any skill does.
+ *
+ * STEPPING SHOT replaces the shot with a dodge, and the cadence is the dodge's,
+ * not the ammo's. Anja Buster on stepping shot, one recording: its sticky
+ * rounds are natively Very high, 2.056s, and fired at 0.975s; its flaming
+ * rounds are natively Average, 0.862s, and fired at about 1.00s. Two magazines
+ * three tiers apart landing within 0.03s of each other is the whole finding -
+ * the interval is FIXED, so the style is an enormous gain on bad recoil and a
+ * real loss on good recoil, and Recoil Down is worth nothing under it.
+ *
+ * CROUCHING SHOT accelerates while you keep firing, and lengthens the
+ * magazine. One recording, a heavy bowgun on normal rounds that are natively
+ * Low: a burst of twelve went 0.60 0.55 0.55 0.45 0.35 0.35 0.30 0.30 0.35
+ * 0.35 0.35, and a later burst of eight ran a flat 0.30 throughout. So it
+ * starts at the ammo's own interval, falls to about 0.32 over roughly five
+ * shots, and stays wound up across the reload if firing continues. The
+ * magazine ran well past the four rounds the data lists, which is not
+ * modelled below because one burst cannot say by how much - so the figures
+ * here are if anything conservative.
+ *
+ * SLIDING RELOAD and GUARD RELOAD are NOT measured. Both appear in the
+ * recordings, but only while the player was switching styles rather than
+ * firing, so there is nothing to time. They are left at the ammo's own
+ * timings, which is certainly wrong for a style whose whole point is the
+ * reload, and makes the suggester understate them.
+ */
+const DODGE_SECONDS = 0.975;      // measured; also what an evade costs
+const CROUCH_FLOOR = 0.32;        // measured
+const CROUCH_RAMP = 5;            // shots taken to get there, measured once
+
+/** The average interval between shots over one magazine, under a style. */
+function shotSeconds(round, style, recoilLevels) {
+  const native = SHOT_SECONDS[bandAfter(round.recoil, recoilLevels)];
+  const name = style && style.name;
+  if (name === 'stepping shot') return DODGE_SECONDS;
+  if (name === 'crouching shot') {
+    // Ramps from the ammo's own interval down to the floor; average it over
+    // the gaps a magazine actually has.
+    const gaps = Math.max(1, (round.capacity || 1) - 1);
+    let sum = 0;
+    for (let i = 0; i < gaps; i++) {
+      const f = Math.min(1, i / CROUCH_RAMP);
+      sum += native + (CROUCH_FLOOR - native) * f;
+    }
+    return sum / gaps;
+  }
+  return native;
+}
+
+/**
+ * How much faster or slower a style fires than no style at all, as a ratio of
+ * damage per second.
+ *
+ * This is what decides which style a bowgun should be played on, and until now
+ * the suggester had nothing to decide it with — it only knew which handling
+ * skill each style left wanted. A magazine cycle is (capacity - 1) intervals
+ * plus a reload; only the firing part is known to change, since neither
+ * reload-shortening style could be timed.
+ */
+function styleRate(w) {
+  if (!w.style || !w.rounds || !w.rounds.length) return 1;
+  const seen = {};
+  const rounds = w.rounds.filter((r) => {
+    if (seen[r.type] || STEP[r.recoil] === undefined || STEP[r.reload] === undefined) return false;
+    seen[r.type] = 1;
+    return true;
+  });
+  if (!rounds.length) return 1;
+  let num = 0, den = 0;
+  rounds.forEach((r) => {
+    const share = ammoShare(w, { types: [r.type] }) || 1 / rounds.length;
+    const cap = r.capacity || 1;
+    const load = RELOAD_SECONDS[bandAfter(r.reload, 0)];
+    const plain = (cap - 1) * shotSeconds(r, null, 0) + load;
+    const styled = (cap - 1) * shotSeconds(r, w.style, 0) + load;
+    num += share * (cap / styled);
+    den += share * (cap / plain);
+  });
+  return den ? num / den : 1;
+}
+
 /**
  * What a handling skill is worth on one weapon, as a fraction of its damage.
  *
@@ -351,7 +434,7 @@ function handlingTable(w, which) {
     let sum = 0;
     rounds.forEach((r, i) => {
       const cap = r.capacity || 1;
-      const shot0 = SHOT_SECONDS[bandAfter(r.recoil, 0)];
+      const shot0 = shotSeconds(r, w.style, 0);
       const load0 = RELOAD_SECONDS[bandAfter(r.reload, 0)];
       const before = (cap - 1) * shot0 + load0;
 
@@ -362,7 +445,7 @@ function handlingTable(w, which) {
         shots = cap / (1 - SPARE_SHOT_CHANCE[lv]);
         after = (shots - 1) * shot0 + load0;
       } else {
-        const shot1 = which === 'recoil' ? SHOT_SECONDS[bandAfter(r.recoil, lv)] : shot0;
+        const shot1 = which === 'recoil' ? shotSeconds(r, w.style, lv) : shot0;
         const load1 = which === 'reload' ? RELOAD_SECONDS[bandAfter(r.reload, lv)] : load0;
         after = (cap - 1) * shot1 + load1;
       }
@@ -449,15 +532,17 @@ function styleVariants(weapon) {
     // build around; it is the style that makes normal ammo dominate the hunt.
     if (has('NORMAL')) {
       out.push(make('sliding reload, around normal ammo',
-        { recoil: true, reload: false, primary: 'NORMAL' }));
+        { name: 'sliding reload', recoil: true, reload: false, primary: 'NORMAL' }));
     }
     out.push(make('stepping shot, even magazine use',
-      { recoil: false, reload: true, primary: null }));
+      { name: 'stepping shot', recoil: false, reload: true, primary: null }));
   } else {
     if (has('SPREAD') || has('WYVERN')) {
-      out.push(make('guard reload', { recoil: true, reload: false, primary: null }));
+      out.push(make('guard reload',
+        { name: 'guard reload', recoil: true, reload: false, primary: null }));
     }
-    out.push(make('crouching shot', { recoil: false, reload: true, primary: null }));
+    out.push(make('crouching shot',
+      { name: 'crouching shot', recoil: false, reload: true, primary: null }));
   }
   return out.length ? out : one;
 }
@@ -886,6 +971,7 @@ function score(totals, w) {
     util += table[Math.min(lv(n), max)] || 0;
   });
 
+  dmg *= styleRate(w);
   return { dmg: dmg, util: util, total: dmg * (1 + util) };
 }
 
@@ -961,6 +1047,8 @@ function makeScorer(w, damageOnly) {
   });
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
+  // Constant for the whole search: the style's own firing rate.
+  const sRate = styleRate(w);
 
   function scoreVec(v) {
     let atk = w.atk;
@@ -1028,6 +1116,7 @@ function makeScorer(w, damageOnly) {
       }
     }
 
+    dmg *= sRate;
     if (damageOnly) return dmg;
     let u = 0;
     for (let k = 0; k < util.length; k++) {
@@ -1045,6 +1134,7 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
   knownSkills: knownSkills, styleVariants: styleVariants,
   utilityTable: utilityTable, handlingTable: handlingTable,
+  styleRate: styleRate, shotSeconds: shotSeconds,
   SHOT_SECONDS: SHOT_SECONDS, RELOAD_SECONDS: RELOAD_SECONDS,
   bandAfter: bandAfter,
   ELEMENTS: ELEMENTS, STATUS: STATUS };

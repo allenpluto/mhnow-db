@@ -131,6 +131,42 @@ those weapons carry. Both skills jump sharply at Lv3 wherever a Very high or
 Very slow magazine finally drops a band. The old flat 10/20/28 and 5/10/15
 ladders could express none of this.
 
+Styles
+------
+Two more recordings, one light bowgun and one heavy, each switching style
+partway through via the dropdown at the top of the screen. A style changes the
+firing itself, by far more than any skill does.
+
+STEPPING SHOT replaces the shot with a dodge, so the cadence is the dodge's
+rather than the ammo's. Anja Buster, one recording:
+
+   sticky fire  natively Very high  2.056s   fired at 0.975s
+   flaming      natively Average    0.862s   fired at about 1.00s
+
+Two magazines three tiers apart landing within 0.03s of each other. The
+interval is fixed, which makes the style an enormous gain on bad recoil, a
+real loss on good recoil, and makes Recoil Down worth nothing under it. The
+game's own tooltip for the style says "fixed-speed reloads", and the one
+reload seen under it ran about 2.0s against a native Normal of 2.85 - one
+reading, so not used.
+
+CROUCHING SHOT accelerates while firing continues, and lengthens the magazine.
+One recording, a heavy bowgun on natively Low normal rounds:
+
+   burst of twelve   0.60 0.55 0.55 0.45 0.35 0.35 0.30 0.30 0.35 0.35 0.35
+   burst of eight    0.30 throughout
+
+So it starts at the ammo's own interval, falls to about 0.32 over roughly five
+shots, and stays wound up across the reload if firing continues. Twelve shots
+came out of a magazine the data lists as four, so the magazine grows too, by
+an amount one burst cannot pin down. The engine models the ramp but not the
+larger magazine, so it understates the style.
+
+SLIDING RELOAD and GUARD RELOAD are NOT measured. Both appear in the
+recordings, but only while the player was switching styles rather than firing.
+They are left at the ammo's own timings, which is certainly wrong for a style
+whose whole point is the reload.
+
 Still open
 ----------
    - The LARGE_2 row above is derived. One recording of a weapon carrying a
@@ -142,3 +178,12 @@ Still open
      this does not matter unless a skill reaches level 4 or more.
    - The reload figures carry a per-weapon offset of a few tenths. Only the
      differences between tiers are solid.
+   - Sliding reload and guard reload have never been timed.
+   - Crouching shot's magazine size is unknown; only its cadence is modelled.
+   - Evading Reload is still a guess. The dodge is now measured at 0.975s,
+     which is what an evade costs, so a reload replaced by an evade saves
+     between 1.5s and 3.9s depending on the tier. If the skill replaced every
+     reload outright it would be worth about 35% on a six-round magazine
+     behind a Normal reload - far above the 15% assumed for it. What is not
+     known is how much of a magazine one evade refills, and how often an evade
+     is available, so no number is taken from this yet.
