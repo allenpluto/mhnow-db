@@ -210,6 +210,19 @@ ladder does, since each cycle needs a deliberate slide and re-aim rather than
 firing straight on, which is most of the 2.05 to 3.00 spread. The fastest of
 the six is the floor.
 
+Do not try to tighten this by firing a magazine empty and then sliding. Under
+this style an empty magazine is a trap: keep the press held and the hunter
+plays a standing reload animation, long and wide open, and loads nothing. The
+style is meant to be slid out of BEFORE the magazine runs dry, so a run that
+empties it would be timing a mistake rather than the style.
+
+That also means the model flatters the style less than real play would. A
+magazine slid out of early carries fewer rounds per cycle, which would lower
+the figure further - but the whole point of the style is that a dodge is safe
+where a reload is not, and this engine ranks damage with no notion of being
+hit. Sliding reload will therefore always read low here. That is a limit of
+what is being calculated, not an error in the number.
+
 GUARD RELOAD swaps the magazine without firing and loads only HALF the rounds
 - visible directly, a hold-and-slide putting 4 of 8 pierce rounds up, and the
 four shots that followed ran 0.80 0.90 0.85, the Average tier, and then
@@ -230,9 +243,20 @@ the differences between tiers are solid.
 
 Still open
 ----------
-   - The LARGE_2 row above is derived. One recording of a weapon carrying a
-     LARGE_2 magazine at Recoil Down 1 would confirm or break it; Quickcaster
-     is the obvious candidate, its sticky rounds being LARGE_2 recoil.
+   - The LARGE_2 row above is derived. No recording is needed to settle it,
+     only a weapon screen at skill level 1 on a weapon carrying BOTH values
+     on one stat, where the model says the two part while reading the same
+     word at base:
+        Bishaten's Grace, reload: two normal magazines, one LARGE_2 and one
+          LARGE, both reading Slow. At Reload Speed 1 the first should read
+          Normal and the second stay Slow.
+        Chalice of Desire, recoil: sticky is LARGE_2 and slicing is LARGE,
+          both reading High. At Recoil Down 1 sticky should read Average and
+          slicing stay High.
+     Earth Eater and Frostmoon Howlitzer+ do the same job for reload. Failing
+     any of those, a base-and-Lv1 pair on any single LARGE_2 carrier works:
+     Arzuros Fishergun, Tigrex Howl+, Rajang Destroyer or Jagras Cannon are
+     the easiest non-elder ones.
    - Steps 4 and 5 are unoccupied in the data, so EXTRA_LARGE sitting exactly
      at step 6 is the simplest fit rather than a proven one. Any value that
      takes three levels to leave the Very high band behaves identically, so

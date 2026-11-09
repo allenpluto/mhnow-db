@@ -376,6 +376,13 @@ function bandAfter(tier, levels) {
  * deliberate slide and re-aim rather than firing straight on; the fastest of
  * the six, 2.05s, is the least contaminated and is the floor.
  *
+ * This style will always read low here, and that is the model's limit rather
+ * than the number's. Its point is that a dodge is safe where a reload is not,
+ * and nothing in this engine knows what being hit costs. An empty magazine is
+ * also a trap under it — hold the press through empty and the hunter plays a
+ * long standing reload that loads nothing — so it is meant to be slid out of
+ * early, carrying fewer rounds per cycle than modelled here.
+ *
  * GUARD RELOAD changes magazine without firing, and loads only HALF the
  * rounds — seen directly, a hold-and-slide putting 4 of 8 pierce rounds up.
  * On an empty magazine it reloads on a single press, and Dual Threat did that
