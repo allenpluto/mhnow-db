@@ -335,25 +335,49 @@ function bandAfter(tier, levels) {
  * the interval is FIXED, so the style is an enormous gain on bad recoil and a
  * real loss on good recoil, and Recoil Down is worth nothing under it.
  *
- * CROUCHING SHOT accelerates while you keep firing, and lengthens the
- * magazine. One recording, a heavy bowgun on normal rounds that are natively
- * Low: a burst of twelve went 0.60 0.55 0.55 0.45 0.35 0.35 0.30 0.30 0.35
- * 0.35 0.35, and a later burst of eight ran a flat 0.30 throughout. So it
- * starts at the ammo's own interval, falls to about 0.32 over roughly five
- * shots, and stays wound up across the reload if firing continues. The
- * magazine ran well past the four rounds the data lists, which is not
- * modelled below because one burst cannot say by how much - so the figures
- * here are if anything conservative.
+ * CROUCHING SHOT accelerates while firing and carries extra rounds. The
+ * recording shows a burst of twelve at 0.60 0.55 0.55 0.45 0.35 0.35 0.30
+ * 0.30 0.35 0.35 0.35 and a later burst of eight at a flat 0.30. Those are
+ * the pierce magazine, 8 rounds plus 4, and the normal magazine, 4 plus 4 —
+ * not one magazine firing past its capacity, as first read here. The extra
+ * rounds per ammo family are the game's own published rule, not a measurement.
  *
- * SLIDING RELOAD and GUARD RELOAD are NOT measured. Both appear in the
- * recordings, but only while the player was switching styles rather than
- * firing, so there is nothing to time. They are left at the ammo's own
- * timings, which is certainly wrong for a style whose whole point is the
- * reload, and makes the suggester understate them.
+ * The cadence does not start from the ammo's own interval: pierce is natively
+ * Average at 0.862s and opened at 0.60s. It opens near 0.60 whatever the
+ * rounds and falls to about 0.30, and the second burst running flat at 0.30
+ * says the acceleration survives a magazine change while firing continues.
+ * The ramp below is taken from the twelve-shot burst, which is the one that
+ * clearly started cold, so it understates continuous fire.
+ *
+ * SLIDING RELOAD changes magazine on a dodge, and will do it on a magazine
+ * that is not empty. GUARD RELOAD changes magazine on a hold-and-slide with
+ * no shot needed, but loads only HALF the rounds — seen directly in the
+ * recording, where a hold-and-slide put 4 of 8 pierce rounds up. Both of
+ * those are the user's account of the controls plus what the magazine
+ * indicator shows; neither slide has been TIMED, so both are priced at the
+ * dodge, which is the only movement in these recordings with a number on it.
  */
 const DODGE_SECONDS = 0.975;      // measured; also what an evade costs
-const CROUCH_FLOOR = 0.32;        // measured
-const CROUCH_RAMP = 5;            // shots taken to get there, measured once
+const CROUCH_OPEN = 0.60;         // measured, whatever the ammo
+const CROUCH_FLOOR = 0.30;        // measured
+const CROUCH_RAMP = 6;            // shots to get there, from one cold burst
+// Rounds crouching shot adds to a magazine, by ammo family. The game's rule.
+const CROUCH_BONUS = {
+  NORMAL: 4, PIERCING: 4, SPREAD: 4, SLICING: 2, STICKY: 2, CLUSTER: 1, WYVERN: 0,
+};
+
+/** How many rounds a magazine actually holds under a style. */
+function magazineSize(round, style) {
+  const cap = round.capacity || 1;
+  const name = style && style.name;
+  if (name === 'crouching shot') {
+    const bonus = CROUCH_BONUS[round.type];
+    return cap + (bonus === undefined ? 4 : bonus);
+  }
+  // Guard reload trades capacity for a reload it can take at any time.
+  if (name === 'guard reload') return Math.max(1, Math.round(cap / 2));
+  return cap;
+}
 
 /** The average interval between shots over one magazine, under a style. */
 function shotSeconds(round, style, recoilLevels) {
@@ -361,17 +385,25 @@ function shotSeconds(round, style, recoilLevels) {
   const name = style && style.name;
   if (name === 'stepping shot') return DODGE_SECONDS;
   if (name === 'crouching shot') {
-    // Ramps from the ammo's own interval down to the floor; average it over
-    // the gaps a magazine actually has.
-    const gaps = Math.max(1, (round.capacity || 1) - 1);
+    const gaps = Math.max(1, magazineSize(round, style) - 1);
     let sum = 0;
     for (let i = 0; i < gaps; i++) {
       const f = Math.min(1, i / CROUCH_RAMP);
-      sum += native + (CROUCH_FLOOR - native) * f;
+      sum += CROUCH_OPEN + (CROUCH_FLOOR - CROUCH_OPEN) * f;
     }
     return sum / gaps;
   }
   return native;
+}
+
+/** What it costs to get the next magazine up, under a style. */
+function reloadSeconds(round, style, reloadLevels) {
+  const name = style && style.name;
+  // Both of these swap the magazine on a movement rather than a reload, so
+  // the reload tier stops mattering — which is why neither style wants
+  // Reload Speed. The dodge is the only movement with a measured length.
+  if (name === 'sliding reload' || name === 'guard reload') return DODGE_SECONDS;
+  return RELOAD_SECONDS[bandAfter(round.reload, reloadLevels)];
 }
 
 /**
@@ -380,9 +412,7 @@ function shotSeconds(round, style, recoilLevels) {
  *
  * This is what decides which style a bowgun should be played on, and until now
  * the suggester had nothing to decide it with — it only knew which handling
- * skill each style left wanted. A magazine cycle is (capacity - 1) intervals
- * plus a reload; only the firing part is known to change, since neither
- * reload-shortening style could be timed.
+ * skill each style left wanted.
  */
 function styleRate(w) {
   if (!w.style || !w.rounds || !w.rounds.length) return 1;
@@ -397,10 +427,11 @@ function styleRate(w) {
   rounds.forEach((r) => {
     const share = ammoShare(w, { types: [r.type] }) || 1 / rounds.length;
     const cap = r.capacity || 1;
-    const load = RELOAD_SECONDS[bandAfter(r.reload, 0)];
-    const plain = (cap - 1) * shotSeconds(r, null, 0) + load;
-    const styled = (cap - 1) * shotSeconds(r, w.style, 0) + load;
-    num += share * (cap / styled);
+    const styledCap = magazineSize(r, w.style);
+    const plain = (cap - 1) * shotSeconds(r, null, 0) + reloadSeconds(r, null, 0);
+    const styled = (styledCap - 1) * shotSeconds(r, w.style, 0) +
+      reloadSeconds(r, w.style, 0);
+    num += share * (styledCap / styled);
     den += share * (cap / plain);
   });
   return den ? num / den : 1;
@@ -433,9 +464,9 @@ function handlingTable(w, which) {
   for (let lv = 1; lv <= 3; lv++) {
     let sum = 0;
     rounds.forEach((r, i) => {
-      const cap = r.capacity || 1;
+      const cap = magazineSize(r, w.style);
       const shot0 = shotSeconds(r, w.style, 0);
-      const load0 = RELOAD_SECONDS[bandAfter(r.reload, 0)];
+      const load0 = reloadSeconds(r, w.style, 0);
       const before = (cap - 1) * shot0 + load0;
 
       let after, shots = cap;
@@ -446,7 +477,7 @@ function handlingTable(w, which) {
         after = (shots - 1) * shot0 + load0;
       } else {
         const shot1 = which === 'recoil' ? shotSeconds(r, w.style, lv) : shot0;
-        const load1 = which === 'reload' ? RELOAD_SECONDS[bandAfter(r.reload, lv)] : load0;
+        const load1 = which === 'reload' ? reloadSeconds(r, w.style, lv) : load0;
         after = (cap - 1) * shot1 + load1;
       }
       sum += weight[i] * ((shots / after) / (cap / before) - 1);

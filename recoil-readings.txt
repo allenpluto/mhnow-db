@@ -150,22 +150,45 @@ game's own tooltip for the style says "fixed-speed reloads", and the one
 reload seen under it ran about 2.0s against a native Normal of 2.85 - one
 reading, so not used.
 
-CROUCHING SHOT accelerates while firing continues, and lengthens the magazine.
-One recording, a heavy bowgun on natively Low normal rounds:
+CROUCHING SHOT accelerates while firing and carries extra rounds:
 
    burst of twelve   0.60 0.55 0.55 0.45 0.35 0.35 0.30 0.30 0.35 0.35 0.35
    burst of eight    0.30 throughout
 
-So it starts at the ammo's own interval, falls to about 0.32 over roughly five
-shots, and stays wound up across the reload if firing continues. Twelve shots
-came out of a magazine the data lists as four, so the magazine grows too, by
-an amount one burst cannot pin down. The engine models the ramp but not the
-larger magazine, so it understates the style.
+Those are two magazines, not one firing past its capacity - pierce at 8 plus
+4, and normal at 4 plus 4. The extra rounds are the game's own published rule:
 
-SLIDING RELOAD and GUARD RELOAD are NOT measured. Both appear in the
-recordings, but only while the player was switching styles rather than firing.
-They are left at the ammo's own timings, which is certainly wrong for a style
-whose whole point is the reload.
+   normal, piercing, spread   +4
+   slicing, sticky            +2
+   cluster                    +1
+   wyvern                     +0
+
+The cadence does NOT start from the ammo's own interval. Pierce is natively
+Average at 0.862s and opened at 0.60s. It opens near 0.60 whatever the rounds
+and falls to about 0.30, and the second burst running flat at 0.30 says the
+acceleration survives a magazine change as long as firing continues. The ramp
+in the engine comes from the twelve-shot burst, which is the one that clearly
+started cold, so it understates continuous fire.
+
+SLIDING RELOAD swaps the magazine on a dodge, and will do it on a magazine
+that is not empty - which is what the sparse, single-shot-then-slide pattern
+at the start of the light bowgun recording is.
+
+GUARD RELOAD swaps the magazine on a hold-and-slide with no shot needed, and
+loads only HALF the rounds. Visible directly in the heavy bowgun recording: at
+t=9 a hold-and-slide put 4 of 8 pierce rounds up.
+
+Neither slide has been TIMED. Both are priced at the dodge's 0.975s, that
+being the only movement in these recordings with a number on it. Both also
+explain, mechanically rather than by assertion, why neither style wants Reload
+Speed: the reload tier stops being on the critical path at all.
+
+A CAUTION on everything timed here. Shots are read off the damage counter, so
+a shot's time is when its damage lands. For intervals within a magazine that
+is exact, because the offset cancels. For a magazine switch it does not: the
+gap also holds whatever the player did between the two shots. The reload
+figures above are therefore an upper bound on the game's own reload, and only
+the differences between tiers are solid.
 
 Still open
 ----------
