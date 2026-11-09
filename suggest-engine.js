@@ -349,15 +349,31 @@ function bandAfter(tier, levels) {
  * The ramp below is taken from the twelve-shot burst, which is the one that
  * clearly started cold, so it understates continuous fire.
  *
+ * The cadence is also untouched by Recoil Down, which was worth checking
+ * rather than assuming. The same weapon and the same twelve-round pierce
+ * magazine, with Recoil Down 3, went 0.60 0.55 0.55 0.40 0.40 0.35 0.30 0.35
+ * 0.35 0.30 0.35 against 0.60 0.55 0.55 0.45 0.35 0.35 0.30 0.30 0.35 0.35
+ * 0.35 without it — 4.50s both times, to the hundredth. The skill was
+ * certainly doing something, since the weapon screen had moved that magazine
+ * from Average to Low; crouching shot simply does not care.
+ *
  * SLIDING RELOAD changes magazine on a dodge, and will do it on a magazine
- * that is not empty. GUARD RELOAD changes magazine on a hold-and-slide with
- * no shot needed, but loads only HALF the rounds — seen directly in the
- * recording, where a hold-and-slide put 4 of 8 pierce rounds up. Both of
- * those are the user's account of the controls plus what the magazine
- * indicator shows; neither slide has been TIMED, so both are priced at the
- * dodge, which is the only movement in these recordings with a number on it.
+ * that is not empty. Anja Buster, one shot then one slide, repeated: the gaps
+ * between consecutive shots ran 2.05 2.50 2.90 2.50 3.00 2.35, mean 2.52s,
+ * and did NOT depend on which magazine was fired — the slide cancels the
+ * shot's own recovery, so flaming at Average and sticky at Very high cost the
+ * same. Taking one shot out of that leaves about 1.65s for the slide itself.
+ *
+ * GUARD RELOAD changes magazine without firing, and loads only HALF the
+ * rounds — seen directly, a hold-and-slide putting 4 of 8 pierce rounds up.
+ * On an empty magazine it reloads on a single press, and Dual Threat did that
+ * in 2.05s from its last shot to the next, against the 4.83s its pierce
+ * magazine costs unaided. So it is a Fast reload on a Very slow magazine, at
+ * the price of half the capacity.
  */
-const DODGE_SECONDS = 0.975;      // measured; also what an evade costs
+const DODGE_SECONDS = 0.975;      // measured; what an evade costs
+const SLIDE_RELOAD_SECONDS = 1.65;   // measured, less one shot
+const GUARD_RELOAD_SECONDS = 2.05;   // measured directly
 const CROUCH_OPEN = 0.60;         // measured, whatever the ammo
 const CROUCH_FLOOR = 0.30;        // measured
 const CROUCH_RAMP = 6;            // shots to get there, from one cold burst
@@ -399,10 +415,11 @@ function shotSeconds(round, style, recoilLevels) {
 /** What it costs to get the next magazine up, under a style. */
 function reloadSeconds(round, style, reloadLevels) {
   const name = style && style.name;
-  // Both of these swap the magazine on a movement rather than a reload, so
-  // the reload tier stops mattering — which is why neither style wants
-  // Reload Speed. The dodge is the only movement with a measured length.
-  if (name === 'sliding reload' || name === 'guard reload') return DODGE_SECONDS;
+  // Both of these swap the magazine on a movement rather than a reload, so the
+  // reload tier stops mattering whatever it was — which is why neither style
+  // wants Reload Speed. Both figures are measured.
+  if (name === 'sliding reload') return SLIDE_RELOAD_SECONDS;
+  if (name === 'guard reload') return GUARD_RELOAD_SECONDS;
   return RELOAD_SECONDS[bandAfter(round.reload, reloadLevels)];
 }
 

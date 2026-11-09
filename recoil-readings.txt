@@ -106,6 +106,13 @@ despite the name. That is forced: Laguna's High magazine is LARGE and still
 read High after one level, so there must be another step below it inside the
 same band. Steps 4 and 5 are empty because no ammo in the data sits there.
 
+PREDICTED AND CONFIRMED on a weapon the ladder was never fitted to. Dual
+Threat at Recoil Down 3 and Reload Speed 3 should read Low on its normal
+magazine, which is already at the floor, and on its pierce magazine should
+fall from Average to Low on recoil - step 1 less 3, floored at 0 - and from
+Very slow to Slow on reload, step 6 less 3 landing on step 3. The weapon
+screen reads Low/Fast and Low/Slow. Both right.
+
 The LARGE_2 row is the one part of this that is derived rather than watched -
 no recording has ever had a LARGE_2 magazine with a handling skill on. It
 predicts LARGE_2 falls to Average at Lv1 and Low at Lv2.
@@ -170,18 +177,38 @@ acceleration survives a magazine change as long as firing continues. The ramp
 in the engine comes from the twelve-shot burst, which is the one that clearly
 started cold, so it understates continuous fire.
 
+Recoil Down does NOT touch the crouching shot cadence. Worth checking rather
+than assuming, and checked: the same weapon and the same twelve-round pierce
+magazine with Recoil Down 3 went
+
+   0.60 0.55 0.55 0.40 0.40 0.35 0.30 0.35 0.35 0.30 0.35
+
+against 4.50s without the skill, and 4.50s with it - identical to the
+hundredth. The skill was certainly working, since the weapon screen had moved
+that magazine from Average to Low. Crouching shot simply does not care.
+
 SLIDING RELOAD swaps the magazine on a dodge, and will do it on a magazine
-that is not empty - which is what the sparse, single-shot-then-slide pattern
-at the start of the light bowgun recording is.
+that is not empty. Anja Buster, one shot then one slide, repeated - gaps
+between consecutive shots:
 
-GUARD RELOAD swaps the magazine on a hold-and-slide with no shot needed, and
-loads only HALF the rounds. Visible directly in the heavy bowgun recording: at
-t=9 a hold-and-slide put 4 of 8 pierce rounds up.
+   2.05  2.50  2.90  2.50  3.00  2.35     mean 2.52s
 
-Neither slide has been TIMED. Both are priced at the dodge's 0.975s, that
-being the only movement in these recordings with a number on it. Both also
-explain, mechanically rather than by assertion, why neither style wants Reload
-Speed: the reload tier stops being on the critical path at all.
+and, read against the magazine indicator, which magazine was fired makes no
+difference: flaming at Average leads to 2.05 2.90 3.00 and sticky at Very
+high to 2.50 2.50 2.35. The slide cancels the shot's own recovery. Taking one
+shot out of the mean leaves about 1.65s for the slide itself, which is what
+the engine uses.
+
+GUARD RELOAD swaps the magazine without firing and loads only HALF the rounds
+- visible directly, a hold-and-slide putting 4 of 8 pierce rounds up, and the
+four shots that followed ran 0.80 0.90 0.85, the Average tier, and then
+stopped. On an empty magazine it reloads on a single press, and Dual Threat
+did that in 2.05s from last shot to next, against the 4.83s its pierce
+magazine costs unaided. So guard reload is a Fast reload on a Very slow
+magazine, bought with half the capacity.
+
+Both styles explain mechanically, rather than by assertion, why neither wants
+Reload Speed: the reload tier stops being on the critical path at all.
 
 A CAUTION on everything timed here. Shots are read off the damage counter, so
 a shot's time is when its damage lands. For intervals within a magazine that
