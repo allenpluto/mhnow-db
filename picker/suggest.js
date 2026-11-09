@@ -297,6 +297,105 @@
     // Say plainly what the numbers rest on. Several of these are assumptions
     // rather than data, and the winning set often turns on one of them.
     var ignored = {};
+    var RECOIL_WORD = ['Low', 'Average', 'High', 'Very high'];
+    var RELOAD_WORD = ['Fast', 'Normal', 'Slow', 'Very slow'];
+
+    /**
+     * What this particular bowgun's firing looks like, in the measured numbers.
+     *
+     * The handling skills and the styles are the only part of this model that
+     * rests on measurement rather than assumption, and they are also the part
+     * whose value swings most from weapon to weapon — the same skill is worth
+     * nothing on one gun and a third of its damage on another. So the figures
+     * are shown for the weapon in hand, not as a general table.
+     */
+    function rangedNotes(weapon, winningStyle) {
+      var rounds = weapon.rounds || [];
+      if (!rounds.length) return [];
+      var out = [];
+      // Price the handling skills under the style the winning set is played
+      // on, not unstyled — a style can take one of them to nothing.
+      var variants = E.styleVariants(weapon);
+      var played = weapon;
+      variants.forEach(function (v) { if (v.label && v.label === winningStyle) played = v.weapon; });
+
+      out.push('MEASURED, not assumed. Timed off gameplay video by decoding the ' +
+        'on-screen hit counter frame by frame: a shot lands every 0.60s at Low ' +
+        'recoil, 0.86s Average, 1.06s High and 2.06s Very high. Swapping magazine ' +
+        'takes 1.90s into a Fast one, 2.85s Normal, 3.30s Slow and 4.83s Very slow. ' +
+        'The tier on the weapon screen is the whole story — a magazine that Recoil ' +
+        'Down has moved to Average fires exactly like one that is natively Average.');
+
+      var seen = {};
+      var mags = rounds.filter(function (r) {
+        if (seen[r.type]) return false;
+        seen[r.type] = 1;
+        return true;
+      });
+      out.push('This weapon carries ' + mags.map(function (r) {
+        return r.type.toLowerCase() + ' x' + r.capacity + ', ' +
+          RECOIL_WORD[E.bandAfter(r.recoil, 0)] + ' recoil and ' +
+          RELOAD_WORD[E.bandAfter(r.reload, 0)] + ' reload';
+      }).join('; ') + '.');
+
+      // Recoil Down and Reload Speed do not shave a percentage: they step down
+      // a finer ladder, so a level can move one magazine a whole band and
+      // another none at all. Spelling that out per magazine is the only way the
+      // odd-looking skill values make sense.
+      [['Recoil Down', 'recoil', RECOIL_WORD], ['Reload Speed', 'reload', RELOAD_WORD]]
+        .forEach(function (pair) {
+          var moves = mags.map(function (r) {
+            var steps = [0, 1, 2, 3].map(function (lv) {
+              return pair[2][E.bandAfter(r[pair[1]], lv)];
+            });
+            var same = steps.every(function (s) { return s === steps[0]; });
+            return r.type.toLowerCase() + ' ' +
+              (same ? 'stays ' + steps[0] + ' at every level'
+                : steps[0] + ' then ' + steps.slice(1).join(', '));
+          });
+          var tbl = E.utilityTable(pair[0], played);
+          var dead = [1, 2, 3].every(function (lv) { return !tbl[lv]; });
+          var why = '';
+          if (dead && played !== weapon) {
+            why = pair[0] === 'Reload Speed'
+              ? ' Nothing at all here: ' + winningStyle.split(',')[0] + ' swaps the magazine ' +
+                'on a movement, so the reload tier never reaches the cycle.'
+              : ' Nothing at all here: ' + winningStyle.split(',')[0] + ' fixes the cadence, ' +
+                'so the recoil tier never reaches the firing.';
+          }
+          out.push(pair[0] + ', by magazine, at none then Lv1, Lv2, Lv3: ' +
+            moves.join('; ') + '. Worth ' +
+            [1, 2, 3].map(function (lv) {
+              return Math.round((tbl[lv] || 0) * 100) + '%';
+            }).join(' / ') + ' of this weapon\'s damage at Lv1 / Lv2 / Lv3' +
+            (played !== weapon ? ' on ' + winningStyle.split(',')[0] : '') +
+            ', worked out from how much of a magazine cycle it actually removes.' +
+            why + ' The tiers above are what the weapon screen shows either way.');
+        });
+
+      var styled = variants.filter(function (v) { return v.label; });
+      if (styled.length) {
+        out.push('Styles change the firing by more than any skill does. Stepping shot ' +
+          'replaces the shot with a dodge and fires at a fixed 0.975s whatever the ' +
+          'recoil, so Recoil Down is worth nothing under it. Crouching shot opens near ' +
+          '0.60s, accelerates to 0.30s while firing continues, and adds 4 rounds to ' +
+          'normal, piercing and spread, 2 to slicing and sticky, 1 to cluster. Sliding ' +
+          'reload swaps magazine on a dodge in 2.52s; guard reload swaps in 2.05s but ' +
+          'loads only half the rounds.');
+        out.push('On this weapon, against no style at all: ' + styled.map(function (v) {
+          return v.label.split(',')[0] + ' x' + E.styleRate(v.weapon).toFixed(2);
+        }).join(', ') + '. Each style is searched as its own build, because it wants a ' +
+          'different handling skill and a different ammo boost.');
+      }
+
+      out.push('Still soft here: sliding reload was timed one shot at a time, so some of ' +
+        'its 2.52s is the player rather than the game; the reload figures carry a ' +
+        'per-weapon offset of a few tenths, and only the gaps between tiers are firm; ' +
+        'and Evading Reload is still a guess, since no recording has caught an evade ' +
+        'refilling a magazine.');
+      return out;
+    }
+
     out.results[0].picks.forEach(function (b) {
       Object.keys(b.pieces[0].skills || {}).forEach(function (n) { if (!out.known[n]) ignored[n] = true; });
     });
@@ -354,12 +453,31 @@
       var no = out.names.filter(function (n) { return !E.UTILITY[n] && !DATA.gemmable[n]; });
       if (no.length) lines.push('No driftgem exists for: ' + no.join(', ') + ' — equipment only.');
     }
+    lines = lines.concat(rangedNotes(W, out.results[0] && out.results[0].style));
+
+    // The first line is always on show, because it says what the ranking means
+    // and reading the table without it invites comparing a score with a damage.
+    // The rest folds away: it has grown past what anyone reads every time.
     elNotes.innerHTML = '';
-    lines.forEach(function (t) {
+    var para = function (t) {
       var p = document.createElement('p');
       p.textContent = t;
-      elNotes.appendChild(p);
-    });
+      return p;
+    };
+    elNotes.appendChild(para(lines[0]));
+    if (lines.length > 1) {
+      var det = document.createElement('details');
+      var sum = document.createElement('summary');
+      sum.textContent = 'Show the details behind these numbers (' + (lines.length - 1) + ' more)';
+      det.appendChild(sum);
+      lines.slice(1).forEach(function (t) { det.appendChild(para(t)); });
+      det.addEventListener('toggle', function () {
+        sum.textContent = det.open
+          ? 'Hide the details'
+          : 'Show the details behind these numbers (' + (lines.length - 1) + ' more)';
+      });
+      elNotes.appendChild(det);
+    }
   }
 
   function currentWeapon() {

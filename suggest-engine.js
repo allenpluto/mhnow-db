@@ -1286,6 +1286,8 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   knownSkills: knownSkills, styleVariants: styleVariants,
   utilityTable: utilityTable, handlingTable: handlingTable,
   styleRate: styleRate, shotSeconds: shotSeconds,
+  reloadSeconds: reloadSeconds, magazineSize: magazineSize,
+  statSlotChoices: statSlotChoices,
   SHOT_SECONDS: SHOT_SECONDS, RELOAD_SECONDS: RELOAD_SECONDS,
   bandAfter: bandAfter,
   ELEMENTS: ELEMENTS, STATUS: STATUS };

@@ -70,8 +70,9 @@ table.setparts td.sk { opacity: .85; }
 .gems.potential { color: inherit; opacity: .6; }
 .totals { opacity: .7; }
 
-/* The assumptions behind the numbers. Deliberately not hidden away: several of
-   them are guesses, and the winning set often turns on one. */
+/* The assumptions behind the numbers. The first line stays on show, because
+   it says what the ranking means and the table is misread without it; the rest
+   folds away, having grown past what anyone reads every time. */
 .notes {
   margin: 1.5rem 0 3rem;
   font-size: .85rem;
@@ -79,6 +80,22 @@ table.setparts td.sk { opacity: .85; }
   max-width: 70ch;
 }
 .notes p { margin: .4rem 0; }
+.notes details { margin-top: .6rem; }
+.notes summary {
+  cursor: pointer;
+  display: inline-block;
+  padding: .25rem .6rem;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: .3rem;
+  font-weight: 600;
+  opacity: .85;
+  list-style: none;
+}
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::after { content: ' \25BE'; }
+.notes details[open] summary::after { content: ' \25B4'; }
+.notes summary:hover { opacity: 1; border-color: rgba(255, 255, 255, .35); }
+.notes details[open] p:first-of-type { margin-top: .6rem; }
 
 @media (max-width: 640px) {
   #s-weapon { min-width: 0; width: 100%; }
