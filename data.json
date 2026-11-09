@@ -131568,8 +131568,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 728,
@@ -131680,8 +131680,8 @@
       "kinsect_stamina_level": null,
       "kinsect_bonus_kind": null,
       "horn_pattern": null,
-      "customizable": null,
-      "style_selectable": null
+      "customizable": 1,
+      "style_selectable": 1
     },
     {
       "id": 732,

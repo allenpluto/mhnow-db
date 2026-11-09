@@ -616,6 +616,81 @@ function styleVariants(weapon) {
 const RANGED_GUNS = ['Light Bowgun', 'Heavy Bowgun'];
 function isStatus(w) { return STATUS.indexOf(w.element) >= 0; }
 
+/* ------------------------------------------------- the three stat slots ----
+ * Style customisation gives a weapon three slots, each one of attack +100,
+ * element +100 or affinity +10%. They are off by default, because a weapon
+ * that has not been customised does not have them, and because the suggester
+ * is usually asked what armour to wear rather than how to spend them.
+ *
+ * Which is best is not a property of the weapon. Affinity is worth more the
+ * more Critical Boost and Critical Element the set carries, element is worth
+ * more behind a high affinity, and attack is steady — so the slots have to be
+ * chosen against the set, not before it. They are therefore searched with the
+ * set rather than fixed first, and the winning split is reported.
+ *
+ * TWO LIMITS. On a status weapon the element slot gives +50 to the buildup
+ * value rather than +100 element, and this engine prices status by how often
+ * it procs rather than by the buildup number, so it cannot put a figure on
+ * that slot. The option is left out there and the choice falls between attack
+ * and affinity. And maxing style customisation also grants a flat attack and
+ * element bonus on top of these three, which differs per weapon — Squawkscythe
+ * gets +80/+80 where Skullwhistle gets +100/+40 — so it is not derivable and
+ * stays with --atk and --ele.
+ */
+const STAT_SLOTS = 3;
+const STAT_SLOT_ATTACK = 100;
+const STAT_SLOT_ELEMENT = 100;
+const STAT_SLOT_AFFINITY = 10;
+const NO_SLOTS = [{ atk: 0, ele: 0, aff: 0, label: null }];
+
+/** Every way the three slots can be split, for this weapon. */
+function statSlotChoices(w) {
+  if (!w.statSlots || !w.styleSelectable) return null;
+  const kinds = [
+    ['attack', STAT_SLOT_ATTACK, 0, 0],
+    ['affinity', 0, 0, STAT_SLOT_AFFINITY],
+  ];
+  if (ELEMENTS.indexOf(w.element) >= 0) kinds.push(['element', 0, STAT_SLOT_ELEMENT, 0]);
+
+  const out = [];
+  const n = kinds.length;
+  // Combinations with repetition: the slots are interchangeable, so only the
+  // counts matter and i <= j <= k avoids scoring the same split six times.
+  for (let i = 0; i < n; i++) {
+    for (let j = i; j < n; j++) {
+      for (let k = j; k < n; k++) {
+        const pick = [kinds[i], kinds[j], kinds[k]];
+        const count = {};
+        let atk = 0, ele = 0, aff = 0;
+        pick.forEach((p) => {
+          atk += p[1]; ele += p[2]; aff += p[3];
+          count[p[0]] = (count[p[0]] || 0) + 1;
+        });
+        const label = ['attack', 'element', 'affinity']
+          .filter((kind) => count[kind])
+          .map((kind) => kind + ' +' +
+            (kind === 'attack' ? STAT_SLOT_ATTACK * count[kind]
+              : kind === 'element' ? STAT_SLOT_ELEMENT * count[kind]
+                : STAT_SLOT_AFFINITY * count[kind] + '%'))
+          .join(', ');
+        out.push({ atk: atk, ele: ele, aff: aff, label: label });
+      }
+    }
+  }
+  return out;
+}
+
+/** One hit's damage before the flat multipliers, for given stats. */
+function critDamage(atk, ele, aff, m, ce, cfLevel) {
+  const c = (aff > 100 ? 100 : aff < -100 ? -100 : aff) / 100;
+  if (c >= 0) return atk * (1 + c * (m - 1)) + ele * (c * m * ce + (1 - c));
+  // Negative final affinity: those hits land at 75%, or at the Critical
+  // Ferocity multiplier on the 30% of them that proc it.
+  const n = -c;
+  const neg = cfLevel ? 0.30 * CFERO_MULT[cfLevel] + 0.70 * 0.75 : 0.75;
+  return (atk + ele) * ((1 - n) + n * neg);
+}
+
 /** Does this utility skill apply to this weapon at all? */
 function utilityApplies(name, w) {
   const scope = UTILITY_SCOPE[name];
@@ -947,6 +1022,9 @@ function score(totals, w) {
   let atk = w.atk;
   let ele = elemental ? w.ele : 0;        // status buildup is not damage
   let aff = w.aff;
+  // Percentage lifts on element are kept apart from the flat ones, because a
+  // stat slot adds to the weapon's element value and is lifted along with it.
+  let elePct = 0;
 
   atk += ATTACK_BOOST[lv('Attack Boost')] || 0;
   if (lv('Attack Boost') >= 5) atk += ADV_ATTACK[lv('Advanced Attack Boost')] || 0;
@@ -960,12 +1038,11 @@ function score(totals, w) {
     if (lv(w.element + ' Attack') >= 5) ele += ADV_ELEM[lv('Advanced ' + w.element + ' Attack')] || 0;
     const hp = (ASSUME.baseHp + (HEALTH[lv('Health Boost')] || 0)) * ASSUME.hpFraction;
     ele += (VITAL[lv('Vital ' + w.element)] || 0) * hp;
-    let elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
+    elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
     (ELEMENT_SKILLS[w.element] || []).forEach((p) => { elePct += p[1][lv(p[0])] || 0; });
     if (w.category === 'Bow' && !(w.styleSelectable && isStatus(w))) {
       elePct += CHARGE_MASTER[lv('Charge Master')] || 0;
     }
-    ele *= 1 + elePct;
   }
 
   aff += (CEYE[lv('Critical Eye')] || 0);
@@ -974,42 +1051,33 @@ function score(totals, w) {
   aff -= (CFERO_AFF[lv('Critical Ferocity')] || 0);
   aff -= (RAW_AFF[lv('Raw Power')] || 0);
 
-  const c = Math.max(-100, Math.min(100, aff)) / 100;
   const m = CBOOST[Math.min(5, lv('Critical Boost'))];
   const ce = CELEM[Math.min(5, lv('Critical Element'))];
+  const cf = lv('Critical Ferocity');
 
-  let dmg;
-  if (c >= 0) {
-    dmg = atk * (1 + c * (m - 1)) + ele * (c * m * ce + (1 - c));
-  } else {
-    // Negative final affinity: those hits land at 75%, or at the Critical
-    // Ferocity multiplier on the 30% of them that proc it.
-    const n = Math.abs(c);
-    const cf = lv('Critical Ferocity');
-    const neg = cf ? 0.30 * CFERO_MULT[cf] + 0.70 * 0.75 : 0.75;
-    dmg = (atk + ele) * ((1 - n) + n * neg);
-  }
-
-  // Flat attack multipliers that apply to the whole hit.
-  dmg *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
-  if (lv('Burst') >= 5) dmg *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
-  dmg *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
-  dmg *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
-  dmg *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
-  dmg *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
+  // Flat multipliers on the whole hit. None of them depend on how the three
+  // stat slots are split, so they are worked out once and applied after.
+  let mult = 1;
+  mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
+  if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
+  mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
+  mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
+  mult *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
+  mult *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
   AMMO_BOOSTS.forEach((b) => {
     if (!ammoBoostApplies(b, w)) return;
-    dmg *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w, b);
+    mult *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w, b);
   });
 
   // --- the status path --------------------------------------------------
+  let blastBonus = 0;
   if (STATUS.indexOf(w.element) >= 0) {
     const proc = procChance(lv('Status Sneak Attack'),
       w.element === 'Blast' ? lv('Blast Exploit') : 0,
       w.element === 'Blast' ? lv('Teostra Blastpowder') : lv('Chameleos Venomist'));
     // Buildup Boost pays on the hit that procs, so it is the skill's value
     // times how often that happens.
-    dmg *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
+    mult *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
 
     const ex = STATUS_EXPLOIT[w.element];
     if (ex) {
@@ -1017,16 +1085,26 @@ function score(totals, w) {
       const uptime = poison ? poisonUptime() : paralysisUptime();
       // Paralysis carries a flat 10% on top, with or without the Exploit.
       const base = poison ? 0 : ASSUME.paralysisBaseBonus;
-      dmg *= 1 + (base + (ex[lv(w.element + ' Exploit')] || 0)) * uptime;
+      mult *= 1 + (base + (ex[lv(w.element + ' Exploit')] || 0)) * uptime;
     }
     // Blast Exploit is flat attack per proc, stacking. Stacks accumulate
     // through the hunt, so the average held is about half the final count.
     if (w.element === 'Blast' && lv('Blast Exploit')) {
-      const stacks = blastAverageStacks();
-      const bonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) * stacks;
-      dmg *= (atk + bonus) / atk;
+      blastBonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) * blastAverageStacks();
     }
   }
+  mult *= styleRate(w);
+
+  // The three stat slots are chosen against this set rather than before it.
+  const slots = statSlotChoices(w) || NO_SLOTS;
+  let dmg = -Infinity, pick = null;
+  slots.forEach((s) => {
+    const a = atk + s.atk;
+    const e = elemental ? (ele + s.ele) * (1 + elePct) : 0;
+    let d = critDamage(a, e, aff + s.aff, m, ce, cf) * mult;
+    if (blastBonus) d *= (a + blastBonus) / a;
+    if (d > dmg) { dmg = d; pick = s.label; }
+  });
 
   // Utility, priced as a fraction of damage.
   let util = 0;
@@ -1038,8 +1116,7 @@ function score(totals, w) {
     util += table[Math.min(lv(n), max)] || 0;
   });
 
-  dmg *= styleRate(w);
-  return { dmg: dmg, util: util, total: dmg * (1 + util) };
+  return { dmg: dmg, util: util, total: dmg * (1 + util), statSlots: pick };
 }
 
 /**
@@ -1114,13 +1191,16 @@ function makeScorer(w, damageOnly) {
   });
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
-  // Constant for the whole search: the style's own firing rate.
+  // Constant for the whole search: the style's own firing rate, and the ways
+  // the three stat slots can be split.
   const sRate = styleRate(w);
+  const slots = statSlotChoices(w) || NO_SLOTS;
 
   function scoreVec(v) {
     let atk = w.atk;
     let ele = elemental ? w.ele : 0;
     let aff = w.aff;
+    let elePct = 0;
 
     atk += ATTACK_BOOST[g(v, iAB)] || 0;
     if (g(v, iAB) >= 5) atk += ADV_ATTACK[g(v, iAAB)] || 0;
@@ -1134,12 +1214,11 @@ function makeScorer(w, damageOnly) {
       if (g(v, iEA) >= 5) ele += ADV_ELEM[g(v, iAEA)] || 0;
       const hp = (ASSUME.baseHp + (HEALTH[g(v, iHealth)] || 0)) * ASSUME.hpFraction;
       ele += (VITAL[g(v, iVital)] || 0) * hp;
-      let elePct = (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
+      elePct = (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
       for (let k = 0; k < elemSkills.length; k++) {
         elePct += elemSkills[k].table[v[elemSkills[k].i]] || 0;
       }
       if (iCharge >= 0) elePct += CHARGE_MASTER[g(v, iCharge)] || 0;
-      ele *= 1 + elePct;
     }
 
     aff += CEYE[g(v, iCEye)] || 0;
@@ -1148,20 +1227,12 @@ function makeScorer(w, damageOnly) {
     aff -= CFERO_AFF[g(v, iCF)] || 0;
     aff -= RAW_AFF[g(v, iRaw)] || 0;
 
-    const c = (aff > 100 ? 100 : aff < -100 ? -100 : aff) / 100;
     const m = CBOOST[Math.min(5, g(v, iCB))];
     const ce = CELEM[Math.min(5, g(v, iCE))];
+    const cf = g(v, iCF);
 
-    let dmg;
-    if (c >= 0) {
-      dmg = atk * (1 + c * (m - 1)) + ele * (c * m * ce + (1 - c));
-    } else {
-      const n = -c;
-      const cf = g(v, iCF);
-      const neg = cf ? 0.30 * CFERO_MULT[cf] + 0.70 * 0.75 : 0.75;
-      dmg = (atk + ele) * ((1 - n) + n * neg);
-    }
-
+    // Everything that does not depend on how the stat slots are split.
+    let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
@@ -1171,6 +1242,7 @@ function makeScorer(w, damageOnly) {
     for (let k = 0; k < ammoBoosts.length; k++) {
       dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoBoosts[k].share;
     }
+    let blastBonus = 0;
 
     if (isStatusW) {
       const proc = procChance(g(v, iSSA), iBlastEx >= 0 ? g(v, iBlastEx) : 0,
@@ -1178,12 +1250,24 @@ function makeScorer(w, damageOnly) {
       dmg *= 1 + (BUILDUP_BOOST[g(v, iBuildup)] || 0) * proc;
       if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
       if (iBlastEx >= 0 && g(v, iBlastEx)) {
-        const stacks = blastAverageStacks();
-        dmg *= (atk + (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * stacks) / atk;
+        blastBonus = (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * blastAverageStacks();
       }
     }
 
     dmg *= sRate;
+
+    // The three stat slots, chosen against this set. One entry when they are
+    // off, so the usual case costs one pass of the formula as before.
+    let best = -Infinity;
+    for (let s = 0; s < slots.length; s++) {
+      const a = atk + slots[s].atk;
+      const e = elemental ? (ele + slots[s].ele) * (1 + elePct) : 0;
+      let d = critDamage(a, e, aff + slots[s].aff, m, ce, cf) * dmg;
+      if (blastBonus) d *= (a + blastBonus) / a;
+      if (d > best) best = d;
+    }
+    dmg = best;
+
     if (damageOnly) return dmg;
     let u = 0;
     for (let k = 0; k < util.length; k++) {

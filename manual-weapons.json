@@ -304,7 +304,9 @@
       "category_label": "Long Sword",
       "element": "DRAGON",
       "element_label": "Dragon",
-      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "customizable": 1,
+      "style_selectable": 1,
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records; customisable per user 2026-11-09, who read its three stat slots off the weapon",
       "grades": [
         {
           "grade": 10,
@@ -432,7 +434,9 @@
       "category_label": "Hunting Horn",
       "element": "PARALYSIS",
       "element_label": "Paralysis",
-      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records",
+      "customizable": 1,
+      "style_selectable": 1,
+      "_source": "MHN.xlsx event weapon; 10-5 stats looked up from the 10-1 the sheet records; customisable per user 2026-11-09, who read its three stat slots off the weapon",
       "grades": [
         {
           "grade": 10,

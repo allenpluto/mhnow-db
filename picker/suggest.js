@@ -78,9 +78,11 @@
   elFind.addEventListener('input', buildWeaponList);
   buildWeaponList();
 
-  var opts = { gems: false, damageOnly: true, multiplayer: false };
+  var opts = { gems: false, damageOnly: true, multiplayer: false, statSlots: false };
+  var slotBox = null;
   [['damageOnly', 'Damage only (ignore utility weights)'],
    ['gems', 'Assume ideal driftgems'],
+   ['statSlots', 'Spend the 3 customisation stat slots'],
    ['multiplayer', 'Group hunt (blast stacks from other players)']].forEach(function (pair) {
     var lab = document.createElement('label');
     var cb = document.createElement('input');
@@ -94,7 +96,26 @@
     lab.appendChild(cb);
     lab.appendChild(document.createTextNode(pair[1]));
     elOpts.appendChild(lab);
+    if (pair[0] === 'statSlots') slotBox = { label: lab, input: cb };
   });
+
+  /**
+   * The stat slots only exist on a customised weapon, so the box turns itself
+   * off and greys out when the chosen weapon has none — rather than silently
+   * handing out three slots the weapon has not got.
+   */
+  function syncSlotBox(weapon) {
+    if (!slotBox) return;
+    var ok = !!(weapon && weapon.styleSelectable);
+    slotBox.input.disabled = !ok;
+    slotBox.label.title = ok ? '' : 'This weapon is not customisable, so it has no stat slots';
+    slotBox.label.style.opacity = ok ? '' : '0.45';
+    if (!ok && slotBox.input.checked) {
+      slotBox.input.checked = false;
+      opts.statSlots = false;
+      slotBox.label.className = '';
+    }
+  }
 
   /**
    * Parse the "Piece = Skill" box.
@@ -142,6 +163,11 @@
       skills: pick.skills || {},      // the weapon's own skills count too
       styleSelectable: !!pick.styleSelectable,
       ammo: pick.ammo || [],
+      // Magazine size and handling tier per round. Without these the handling
+      // skills fall back to their flat tables instead of being priced off the
+      // weapon's own cycle, which is most of what makes them worth anything.
+      rounds: pick.rounds || [],
+      statSlots: opts.statSlots && !!pick.styleSelectable,
     };
     var isStatus = E.STATUS.indexOf(W.element) >= 0;
 
@@ -218,6 +244,22 @@
       });
       box.appendChild(tbl);
 
+      // The bowgun style and the three stat slots are both chosen with the
+      // set rather than before it, so they belong on the card beside it.
+      if (r.style) {
+        var st = document.createElement('p');
+        st.className = 'gems';
+        st.textContent = 'Style: ' + r.style +
+          (r.styleFree ? '  (either style reaches this set — the handling skill did not make it)' : '');
+        box.appendChild(st);
+      }
+      if (r.detail.statSlots) {
+        var ss = document.createElement('p');
+        ss.className = 'gems';
+        ss.textContent = 'Stat slots: ' + r.detail.statSlots;
+        box.appendChild(ss);
+      }
+
       if (r.gemText) {
         var g = document.createElement('p');
         g.className = 'gems';
@@ -267,6 +309,16 @@
         'here will usually carry less damage than the one "damage only" finds. ' +
         'Those weights are assumptions, not data.');
     }
+    if (opts.statSlots) {
+      lines.push('The three customisation stat slots are being spent, and the split is ' +
+        'chosen against each set rather than fixed first — affinity is worth more behind ' +
+        'Critical Boost or Critical Element, element behind high affinity, attack is steady. ' +
+        'On a status weapon the element slot gives +50 buildup instead of +100 element, and ' +
+        'this model prices status by how often it procs rather than by the buildup number, ' +
+        'so that option is left out and the choice falls between attack and affinity. ' +
+        'The separate flat bonus for maxing customisation differs per weapon and is not ' +
+        'included — add it in the attack and element boxes above.');
+    }
     lines = lines.concat([
       'Assumptions: average health ' + (a.hpFraction * 100) + '% (the Vital skills), ' +
         'Valor ' + (a.valorUptime * 100) + '% uptime, Elemental Release ' +
@@ -310,6 +362,13 @@
     });
   }
 
+  function currentWeapon() {
+    return DATA.weapons.filter(function (w) { return w.name === elWeapon.value; })[0];
+  }
   elGo.addEventListener('click', run);
-  elWeapon.addEventListener('change', function () { if (elWeapon.value) run(); });
+  elWeapon.addEventListener('change', function () {
+    syncSlotBox(currentWeapon());
+    if (elWeapon.value) run();
+  });
+  syncSlotBox(currentWeapon());
 }());

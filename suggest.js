@@ -99,6 +99,13 @@ const W = {
 const isStatus = E.STATUS.indexOf(W.element) >= 0;
 const DAMAGE_ONLY = flag('--damage-only');
 const GEMS = flag('--gems');
+// Style customisation's three stat slots. Off unless asked for, since an
+// uncustomised weapon does not have them.
+W.statSlots = flag('--stat-slots');
+if (W.statSlots && !W.styleSelectable) {
+  console.error(W.name + ' is not customisable, so it has no stat slots');
+  process.exit(2);
+}
 
 // Hunt length drives Latent Power's uptime and how far Rising Tide ramps.
 // 75s is a standard hunt, a base defence runs about 150.
@@ -191,6 +198,7 @@ out.results.forEach((r, i) => {
     console.log('     style  ' + r.style +
       (r.styleFree ? '   (either style reaches this set — the handling skill did not make it)' : ''));
   }
+  if (r.detail.statSlots) console.log('     stats  ' + r.detail.statSlots);
   if (r.gemText) console.log('     gems   ' + r.gemText + '   (' + r.slots + ' slot(s))');
   else if (r.gemPotential) {
     const gain = r.gemPotential.detail.dmg - r.detail.dmg;
