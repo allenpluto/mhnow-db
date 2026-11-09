@@ -149,7 +149,23 @@ const UTILITY = {
   // flattened to a straight line.
   Focus: { 1: 0.033, 2: 0.067, 3: 0.100, 4: 0.133, 5: 0.200 },
   Ballistics: { 1: 0.05, 2: 0.10, 3: 0.15 },
-  'Recoil Down': { 1: 0.05, 2: 0.10, 3: 0.15 },
+  // MEASURED, not guessed. Anja Buster, Flaming Ammo, 6 rounds at medium
+  // recoil, timed first shot to last:
+  //   without the skill   8 shots (two free from Spare Shot) in 5.90s over 7
+  //                       gaps = 0.843s per shot
+  //   with Recoil Down 2  6 shots in 3.23s over 5 gaps = 0.646s per shot
+  // which is 23.4% faster.
+  //
+  // Firing faster also empties the magazine sooner, so damage per second gains
+  // less than the firing rate does once reloads are counted — between 18% and
+  // 24% for a reload of 1 to 2.5 seconds. 20% is taken for Lv2, against the 10%
+  // guessed before.
+  //
+  // Two caveats. The ladder below assumes the improvement is linear, which TWO
+  // measurements cannot show — a reading at Lv1 or Lv3 would settle it. And it
+  // was taken at medium recoil; the skill should be worth more on a worse
+  // recoil tier and less on a better one, which is not modelled.
+  'Recoil Down': { 1: 0.10, 2: 0.20, 3: 0.29 },
   'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
 
   // Refills ammo on an evade, which covers much of what Reload Speed does —
@@ -157,6 +173,15 @@ const UTILITY = {
   // sliding and guard reload have already taken that job. Anchored to the same
   // 15% as Reload Speed at its own max of 5; that anchor is assumed.
   'Evading Reload': { 1: 0.04, 2: 0.07, 3: 0.10, 4: 0.13, 5: 0.15 },
+
+  // A 10/20/30% chance a shot does not consume ammo, so a magazine of n yields
+  // n/(1-p) shots and you reload that much less often. Derived from the same
+  // Anja Buster timings: 6 rounds at 0.84s a shot with a reload of roughly
+  // 1.75s is a 6.8s cycle, and at 30% the magazine stretches to 8.6 shots for
+  // a 9.0s cycle — 8% more damage per second. Lower levels scale the same way.
+  //
+  // The reload figure is the soft part: it was not timed, only inferred.
+  'Spare Shot': { 1: 0.03, 2: 0.05, 3: 0.08 },
 };
 
 // Utility skills that only apply to a weapon of a given element. Rude Awakener
@@ -193,6 +218,9 @@ const UTILITY_WHEN = {
   // The skill names gunlance and charge blade too, and it survives style
   // selection, so it is offered on every weapon that can use it.
   'Evading Reload': (w) => EVADE_RELOAD_TYPES.indexOf(w.category) >= 0,
+  // Bowguns only, by its own text, and worthless on a one-round magazine where
+  // every shot reloads anyway.
+  'Spare Shot': (w) => RANGED_GUNS.indexOf(w.category) >= 0,
 };
 const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge Blade'];
 // Only these ammo families gain from a longer optimal firing distance.
