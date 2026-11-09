@@ -246,19 +246,38 @@ const RECOIL_SECONDS = {
   RECOIL_WYVERN: 1.057,        // exempt from the skill anyway
 };
 
-/*
- * Reload is ASSUMED, not measured. The videos never show a clean reload — the
- * player repositions between magazines — so these are a plausible ladder, used
- * only to decide how much of a magazine cycle is spent firing. The answer is
- * not very sensitive to them: halving every figure moves Recoil Down's value
- * by about three points.
+/* -------------------------------------------------------------- reload ----
+ * The SPACING is measured; the absolute level is softer.
+ *
+ * A bowgun reloads by switching to its next magazine, and the reload tier
+ * shown against a magazine is the cost of switching INTO it, not out of it.
+ * The same three recordings were each a full circle through every magazine,
+ * so the gap from the last shot of one to the first shot of the next is that
+ * switch. Within one recording the player's own overhead is constant, so
+ * differences between gaps are the tiers themselves:
+ *
+ *   Rex Fusillade   into slow 3.65s, into normal 3.20s
+ *                   -> 0.45s over one tier
+ *   Dual Threat     into very slow 4.00s, into fast 2.20s
+ *                   -> 1.80s over four tiers, 0.450s each
+ *
+ * Two readings, one spanning a single tier and one spanning four, agreeing on
+ * 0.450s to the millisecond. Dual Threat also settles the direction: the long
+ * gap is the one into its very-slow magazine, not out of it.
+ *
+ * The absolute is the weak part. The two recordings disagree by about half a
+ * second on where the ladder sits, which is the player rather than the game,
+ * so the base below is a least-squares fit across all four gaps. It may also
+ * carry a little hesitation, which would make every figure here slightly too
+ * long. A single recording covering three reload tiers at once would remove
+ * the disagreement entirely — see recoil-readings.txt.
  */
 const RELOAD_SECONDS = {
-  RELOAD_SMALL: 0.8,
-  RELOAD_MEDIUM: 1.2,
-  RELOAD_LARGE: 1.6,
-  RELOAD_LARGE_2: 1.9,
-  RELOAD_EXTRA_LARGE: 2.2,
+  RELOAD_SMALL: 2.48,
+  RELOAD_MEDIUM: 2.93,
+  RELOAD_LARGE: 3.38,
+  RELOAD_LARGE_2: 3.83,     // interpolated; never seen on a weapon screen
+  RELOAD_EXTRA_LARGE: 4.28,
 };
 
 /*
@@ -284,10 +303,11 @@ const RECOIL_DOWN_FACTOR = { 1: 0.856, 2: 0.732, 3: 0.626 };
 /**
  * Recoil Down's worth on one weapon, as a fraction of its damage.
  *
- * A magazine cycle is capacity x the interval between shots, plus a reload.
- * Recoil Down shrinks the firing part and leaves the reload alone, so a big
- * magazine of badly recoiling rounds gains most and a two-round magazine that
- * spends half its life reloading gains least.
+ * A magazine of n rounds has n-1 gaps between its shots and then one gap to
+ * the next magazine's first shot, so the cycle is (capacity - 1) x the shot
+ * interval plus the reload. Recoil Down shrinks the firing part and leaves the
+ * reload alone, so a big magazine of badly recoiling rounds gains most and a
+ * two-round magazine that spends most of its life reloading gains least.
  *
  * Rounds the skill does nothing for — wyvern — are left out of the average,
  * and the rest are weighted by how much of the hunt each is actually fired
@@ -310,9 +330,9 @@ function recoilDownTable(w) {
     rounds.forEach((r, i) => {
       const shot = RECOIL_SECONDS[r.recoil];
       const after = Math.max(floor, shot * RECOIL_DOWN_FACTOR[lv]);
-      const reload = RELOAD_SECONDS[r.reload] || 1.6;
-      const cap = r.capacity || 1;
-      sum += weight[i] * ((cap * shot + reload) / (cap * after + reload) - 1);
+      const reload = RELOAD_SECONDS[r.reload] || RELOAD_SECONDS.RELOAD_LARGE;
+      const gaps = Math.max(0, (r.capacity || 1) - 1);
+      sum += weight[i] * ((gaps * shot + reload) / (gaps * after + reload) - 1);
     });
     out[lv] = sum / span;
   });

@@ -50,6 +50,38 @@ Result
 Two different weapons agreeing to within 0.005s means these are the tiers
 themselves rather than anything about the weapons.
 
+Reload
+------
+All three recordings carried no handling skills and were fired as a full
+circle through every magazine, so each gap from the last shot of one magazine
+to the first shot of the next is a clean magazine switch.
+
+   Rex Fusillade   into pierce/spread  Slow       3.65s
+                   into normal         Normal     3.20s
+   Dual Threat     into piercing       Very slow  4.00s
+                   into normal         Fast       2.20s
+
+Within one recording the player's own overhead is the same, so the difference
+between two gaps is the difference between two tiers:
+
+   Slow - Normal          0.45s over 1 tier  = 0.450s per tier
+   Very slow - Fast       1.80s over 4 tiers = 0.450s per tier
+
+One reading spanning a single tier and one spanning four, agreeing to the
+millisecond. The ladder is evenly spaced at 0.45s.
+
+Dual Threat also settles which magazine the tier belongs to: the long gap is
+the one going INTO its very-slow pierce magazine, not out of it. So the reload
+word on a magazine is the cost of switching to it.
+
+The absolute level is the soft part. The two recordings disagree by about
+0.55s on where the ladder sits, which is the player and not the game, so the
+engine uses a least-squares fit across all four gaps:
+
+   Fast 2.48   Normal 2.93   Slow 3.38   (large_2) 3.83   Very slow 4.28
+
+These may run slightly long if either circle carried a moment's hesitation.
+
 What this says about Recoil Down
 --------------------------------
 Timed by hand earlier on Anja Buster (flaming rounds, Average recoil):
@@ -67,5 +99,40 @@ about half. One timing of a full magazine at Recoil Down 1 on an
 Average-recoil gun decides it - near 0.63s means per-tier, near 0.74s means
 even scaling. The engine currently assumes even scaling.
 
-Reload was never timed. The player repositions between magazines in all three
-recordings, so no gap in them is a clean reload.
+
+What would be worth recording next
+----------------------------------
+1. LAGUNA BLITZ, four recordings, same full circle each time:
+      no handling skills
+      Recoil Down 1 + Reload Speed 1
+      Recoil Down 2 + Reload Speed 2
+      Recoil Down 3 + Reload Speed 3
+   Its three magazines are normal x5 Average/Normal, piercing x4 High/Slow and
+   sticky x4 Very high/Very slow - three recoil tiers and three reload tiers in
+   one circle, all sharing the same player overhead. That one weapon gives the
+   Very high recoil tier, the absolute level of the reload ladder, and both
+   skill ladders at once. Sticky hits once per round, unlike slicing, so every
+   shot is readable.
+
+2. QUICKCASTER, one screenshot of the weapon screen, no recording needed.
+   It is the only weapon carrying both an unknown tier on recoil (sticky) and
+   on reload (pierce and normal), so the screen says in one look whether those
+   show as High or Very high, and as Slow or Very slow. The data holds five
+   recoil tiers and five reload tiers but the game has only ever shown four
+   words for each, so two of them share a word and this says which.
+
+3. Nothing else. Low, Average and High recoil are settled, and the reload
+   spacing is settled.
+
+A prediction worth checking against run 2 above: if Reload Speed also moves
+one tier per level, it is worth about 0.45s out of a cycle of six to eight
+seconds, which is nearer 6% a level than the 15% at Lv3 the engine currently
+assumes for it - so the skill may be overrated in the suggester today.
+
+Rules for the recordings
+------------------------
+   - no Spare Shot and no Evading Reload; both break the magazine count
+   - keep firing straight through the switch, since the gap is the measurement
+   - one full circle and then a few more shots, so the last magazine's own
+     switch cost is visible too
+   - keep the Total Damage panel on screen; it is the whole signal
