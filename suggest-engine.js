@@ -149,9 +149,11 @@ const UTILITY = {
   // flattened to a straight line.
   Focus: { 1: 0.033, 2: 0.067, 3: 0.100, 4: 0.133, 5: 0.200 },
   Ballistics: { 1: 0.05, 2: 0.10, 3: 0.15 },
-  // Recoil Down is not a flat percentage — see recoilDownTable(), which works
-  // the gain out from the weapon's own recoil tier. The entry here is only the
-  // fallback for a weapon whose rounds are not known.
+  // Neither handling skill is a flat percentage — see handlingTable(), which
+  // works each one out from the weapon's own magazines against measured tier
+  // timings. Both can be worth nothing at all on a gun whose rounds the skill
+  // cannot move a band, and a great deal on one where it can. The entries here
+  // are only the fallback for a weapon whose rounds are not known.
   'Recoil Down': { 1: 0.10, 2: 0.20, 3: 0.28 },
   'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
 
@@ -162,13 +164,10 @@ const UTILITY = {
   'Evading Reload': { 1: 0.04, 2: 0.07, 3: 0.10, 4: 0.13, 5: 0.15 },
 
   // A 10/20/30% chance a shot does not consume ammo, so a magazine of n yields
-  // n/(1-p) shots and you reload that much less often. Derived from the same
-  // Anja Buster timings: 6 rounds at 0.84s a shot with a reload of roughly
-  // 1.75s is a 6.8s cycle, and at 30% the magazine stretches to 8.6 shots for
-  // a 9.0s cycle — 8% more damage per second. Lower levels scale the same way.
-  //
-  // The reload figure is the soft part: it was not timed, only inferred.
-  'Spare Shot': { 1: 0.03, 2: 0.05, 3: 0.08 },
+  // n/(1-p) shots out of one reload. Worked out per weapon by handlingTable()
+  // off the same measured cycle as the two handling skills, since what the
+  // skill is really worth is one fewer reload — this entry is the fallback.
+  'Spare Shot': { 1: 0.03, 2: 0.06, 3: 0.09 },
 };
 
 // Utility skills that only apply to a weapon of a given element. Rude Awakener
@@ -215,138 +214,180 @@ const BALLISTICS_AMMO = ['NORMAL', 'PIERCING', 'SPREAD'];
 // Ammo that gains nothing from reduced recoil.
 const RECOIL_EXEMPT_AMMO = ['WYVERN'];
 
-/* -------------------------------------------------------------- recoil ----
- * MEASURED from gameplay video, 2026-11-09. Three recordings of a training
- * dummy were decoded frame by frame and the on-screen HIT counter watched for
- * the moment it moved, which times every hit to a twentieth of a second.
+/* ------------------------------------------------ recoil and reload ----
+ * MEASURED, 2026-11-09, from seven screen recordings of a training dummy.
  *
- *   Rex Fusillade 4   pierce, capacity 4, High      1.05 1.05 1.05 (+1.10 x1)
- *                     normal, capacity 4, Average   0.90 0.85 0.85
- *   Dual Threat 5     normal, capacity 4, Low       0.65 0.60 0.65
- *                     pierce, capacity 8, Average   0.90 0.85 0.85 0.85 0.85
- *                                                   0.90 0.85
- *   Rose Assault 5    pierce, capacity 4, High      1.05 1.05 1.10 1.05
+ * Method. Each recording was resampled to a constant 20fps — the device
+ * records at a variable rate, so frame counts cannot be trusted for timing —
+ * and the "n HIT" counter in the Total Damage panel was decoded frame by
+ * frame, a change in that region being the counter moving. That times every
+ * hit to 0.05s. A hit is not a shot, since pierce and sticky rounds land more
+ * than once, but within a shot the hits are 0.10s apart and between shots
+ * 0.6-2.1s, so the two never run together.
  *
- * Two different weapons agree on Average to within 0.003s and on High to
- * within 0.005s, so these are the tiers themselves, not the weapons.
+ * Four of the recordings are the same weapon, Laguna Blitz, fired the same
+ * way at Recoil Down and Reload Speed 0, 1, 2 and 3, with a weapon-screen
+ * screenshot taken at each level. The screenshot matters: the weapon screen
+ * shows the tier AFTER the skills, so each recording says both what the game
+ * claimed and what it actually did.
  *
- * Very high is NOT measured. Rose Assault's slicing rounds hit five times each
- * over a second, which hides where one shot ends and the next begins; the one
- * reading that can be read off it is about 2.05s and is not trusted. The
- * figure below is extrapolated from the spacing of the three tiers that were
- * measured. RECOIL_LARGE_2 never appears on the weapon screen as its own word,
- * so it is placed between the two tiers that bracket it.
+ * THE CENTRAL FINDING. The two agree exactly. Laguna Blitz's pierce magazine
+ * read High at Recoil Down 1 and fired at 1.05s, the same as at Recoil Down
+ * 0; it read Average at Lv2 and fired at 0.87s, the same as a magazine that
+ * is natively Average; it read Low at Lv3 and fired at 0.60s. Its sticky
+ * magazine dropped from Very high to High at Lv3 and went from 2.05s to
+ * 1.08s. So the displayed tier is the whole story for timing: there is
+ * nothing hidden inside a tier, and a skill is worth exactly the tiers it
+ * moves you down.
  */
-const RECOIL_SECONDS = {
-  RECOIL_SMALL: 0.633,
-  RECOIL_MEDIUM: 0.865,
-  RECOIL_LARGE: 1.057,
-  RECOIL_LARGE_2: 1.25,        // extrapolated
-  RECOIL_EXTRA_LARGE: 1.45,    // extrapolated
-  RECOIL_WYVERN: 1.057,        // exempt from the skill anyway
-};
-
-/* -------------------------------------------------------------- reload ----
- * The SPACING is measured; the absolute level is softer.
- *
- * A bowgun reloads by switching to its next magazine, and the reload tier
- * shown against a magazine is the cost of switching INTO it, not out of it.
- * The same three recordings were each a full circle through every magazine,
- * so the gap from the last shot of one to the first shot of the next is that
- * switch. Within one recording the player's own overhead is constant, so
- * differences between gaps are the tiers themselves:
- *
- *   Rex Fusillade   into slow 3.65s, into normal 3.20s
- *                   -> 0.45s over one tier
- *   Dual Threat     into very slow 4.00s, into fast 2.20s
- *                   -> 1.80s over four tiers, 0.450s each
- *
- * Two readings, one spanning a single tier and one spanning four, agreeing on
- * 0.450s to the millisecond. Dual Threat also settles the direction: the long
- * gap is the one into its very-slow magazine, not out of it.
- *
- * The absolute is the weak part. The two recordings disagree by about half a
- * second on where the ladder sits, which is the player rather than the game,
- * so the base below is a least-squares fit across all four gaps. It may also
- * carry a little hesitation, which would make every figure here slightly too
- * long. A single recording covering three reload tiers at once would remove
- * the disagreement entirely — see recoil-readings.txt.
- */
-const RELOAD_SECONDS = {
-  RELOAD_SMALL: 2.48,
-  RELOAD_MEDIUM: 2.93,
-  RELOAD_LARGE: 3.38,
-  RELOAD_LARGE_2: 3.83,     // interpolated; never seen on a weapon screen
-  RELOAD_EXTRA_LARGE: 4.28,
-};
+const SHOT_SECONDS = [0.603, 0.862, 1.063, 2.056];   // Low, Average, High, Very high
+const RELOAD_SECONDS = [1.90, 2.85, 3.30, 4.83];     // Fast, Normal, Slow, Very slow
 
 /*
- * What Recoil Down does to the interval between shots.
+ * Shot interval, pooled across every recording by the tier on screen:
  *
- * ANCHORED ON ONE MEASUREMENT. Anja Buster's flaming rounds are Average
- * recoil, and with Recoil Down 2 they were timed at 0.646s a shot against
- * 0.843s without it — a factor of 0.77, and close enough to the Low tier's
- * own 0.633s that Lv2 looks like exactly one tier down.
+ *   Low        0.603s   18 gaps, 3 weapons
+ *   Average    0.862s   17 gaps, 3 weapons
+ *   High       1.063s   19 gaps, 4 weapons
+ *   Very high  2.056s    9 gaps, 1 weapon
  *
- * Lv1 and Lv3 are INTERPOLATED geometrically from that single point, which
- * assumes the levels scale evenly. They may not: the skill could instead move
- * one whole tier per level, in which case Lv1 already does what Lv2 does here
- * and Lv3 is wasted on anything but the worst recoil. One timing of a full
- * magazine at Lv1 on an Average-recoil gun would settle it — if it comes out
- * near 0.63s the skill is per-tier, if near 0.74s this ladder is right.
+ * Very high is nearly double High rather than one more even step.
  *
- * The floor is the Low tier. No weapon in the data fires faster than that, so
- * the skill is taken not to push past it.
+ * Reload is the gap from the last shot of one magazine to the first shot of
+ * the next, since a bowgun reloads by switching magazines. Only Laguna Blitz
+ * is used, because all four clips are one weapon fired one way, so whatever
+ * fixed cost the switch carries is constant throughout:
+ *
+ *   Fast       1.90s   1 reading
+ *   Normal     2.85s   1 reading
+ *   Slow       3.30s   3 readings, 3.40 / 3.20 / 3.30
+ *   Very slow  4.83s   3 readings, 4.90 / 5.00 / 4.60
+ *
+ * Rex Fusillade, a different weapon, puts Slow 0.45s above Normal; so does
+ * Laguna Blitz, to the millisecond. The absolute level does carry a per-weapon
+ * offset — Rex sits about 0.35s above Laguna on both tiers — so these figures
+ * are Laguna's, and another weapon's reloads may run a little longer or
+ * shorter together.
+ *
+ * The tier shown against a magazine is the cost of switching INTO it, not out
+ * of it, which Dual Threat settles: its long gap is the one going into its
+ * very-slow pierce magazine.
  */
-const RECOIL_DOWN_FACTOR = { 1: 0.856, 2: 0.732, 3: 0.626 };
+
+/*
+ * How the game turns a stat into a word, and what the skills do to it.
+ *
+ * The data holds five recoil values and five reload values, but the weapon
+ * screen has only ever shown four words for each. Quickcaster carries the two
+ * that had never been seen — RECOIL_LARGE_2 and RELOAD_LARGE_2 — and shows
+ * them as "High" and "Slow", the same words as plain LARGE. So two values
+ * share a band.
+ *
+ * Within a band the skills still tell them apart, which is how the positions
+ * below are pinned. Laguna Blitz is Average/High/Very high on recoil, and
+ * Recoil Down moved them like this:
+ *
+ *                 Lv1          Lv2          Lv3
+ *   Average       Low          Low          Low
+ *   High          High         Average      Low
+ *   Very high     Very high    Very high    High
+ *
+ * Reload Speed moved the reload words in exactly the same pattern. A skill
+ * that simply dropped one band per level cannot do that — High would have
+ * fallen to Average at Lv1. What fits all twelve cells, and the twelve for
+ * reload too, is a finer ladder where the skill subtracts its own level:
+ * Average sits one step up, High spans two steps, and Very high sits three
+ * steps above the top of High.
+ *
+ * LARGE_2 therefore sits at the BOTTOM of the High band and LARGE at the top,
+ * despite the name. That is forced: Laguna's High magazine is LARGE and still
+ * read High after one level, so there has to be another step below it inside
+ * the same band, and LARGE_2 is the only candidate the data offers. The
+ * LARGE_2 row of the table is the one part of this that is derived rather
+ * than watched.
+ */
+const STEP = {
+  RECOIL_SMALL: 0, RECOIL_MEDIUM: 1, RECOIL_LARGE_2: 2, RECOIL_LARGE: 3,
+  RECOIL_EXTRA_LARGE: 6,
+  RELOAD_SMALL: 0, RELOAD_MEDIUM: 1, RELOAD_LARGE_2: 2, RELOAD_LARGE: 3,
+  RELOAD_EXTRA_LARGE: 6,
+};
+// Which band each step falls in: 0 Low/Fast, 1 Average/Normal, 2 High/Slow,
+// 3 Very high/Very slow.
+const BAND_OF_STEP = [0, 1, 2, 2, 3, 3, 3];
+
+/** The band a stat ends up in once a handling skill has taken its levels off. */
+function bandAfter(tier, levels) {
+  const step = STEP[tier];
+  if (step === undefined) return null;
+  return BAND_OF_STEP[Math.max(0, step - (levels || 0))];
+}
 
 /**
- * Recoil Down's worth on one weapon, as a fraction of its damage.
+ * What a handling skill is worth on one weapon, as a fraction of its damage.
  *
  * A magazine of n rounds has n-1 gaps between its shots and then one gap to
- * the next magazine's first shot, so the cycle is (capacity - 1) x the shot
- * interval plus the reload. Recoil Down shrinks the firing part and leaves the
- * reload alone, so a big magazine of badly recoiling rounds gains most and a
- * two-round magazine that spends most of its life reloading gains least.
+ * the next magazine's first shot, so a cycle is (capacity - 1) shot intervals
+ * plus a reload. Recoil Down shortens the first part, Reload Speed the second,
+ * and the gain is the ratio of the two cycles.
  *
- * Rounds the skill does nothing for — wyvern — are left out of the average,
- * and the rest are weighted by how much of the hunt each is actually fired
- * for, so sliding reload's 90% of shots on normal ammo counts as such.
+ * Rounds the skill does nothing for are left out, and the rest are weighted by
+ * how much of the hunt each is actually fired for, so sliding reload's 90% of
+ * shots on normal ammo counts as such.
  */
-function recoilDownTable(w) {
+function handlingTable(w, which) {
   const seen = {};
   const rounds = (w.rounds || []).filter((r) => {
-    if (seen[r.type] || !RECOIL_SECONDS[r.recoil]) return false;
+    if (seen[r.type] || STEP[r.recoil] === undefined || STEP[r.reload] === undefined) return false;
     seen[r.type] = 1;
-    return RECOIL_EXEMPT_AMMO.indexOf(r.type) < 0;
+    return which !== 'recoil' || RECOIL_EXEMPT_AMMO.indexOf(r.type) < 0;
   });
-  if (!rounds.length) return UTILITY['Recoil Down'];
-  const floor = RECOIL_SECONDS.RECOIL_SMALL;
+  if (!rounds.length) return null;
   const weight = rounds.map((r) => ammoShare(w, { types: [r.type] }) || 1 / rounds.length);
   const span = weight.reduce((a, b) => a + b, 0) || 1;
+
   const out = {};
-  Object.keys(RECOIL_DOWN_FACTOR).forEach((lv) => {
+  for (let lv = 1; lv <= 3; lv++) {
     let sum = 0;
     rounds.forEach((r, i) => {
-      const shot = RECOIL_SECONDS[r.recoil];
-      const after = Math.max(floor, shot * RECOIL_DOWN_FACTOR[lv]);
-      const reload = RELOAD_SECONDS[r.reload] || RELOAD_SECONDS.RELOAD_LARGE;
-      const gaps = Math.max(0, (r.capacity || 1) - 1);
-      sum += weight[i] * ((gaps * shot + reload) / (gaps * after + reload) - 1);
+      const cap = r.capacity || 1;
+      const shot0 = SHOT_SECONDS[bandAfter(r.recoil, 0)];
+      const load0 = RELOAD_SECONDS[bandAfter(r.reload, 0)];
+      const before = (cap - 1) * shot0 + load0;
+
+      let after, shots = cap;
+      if (which === 'spare') {
+        // A chance not to consume the round stretches the magazine, so more
+        // shots come out of one reload rather than each shot coming sooner.
+        shots = cap / (1 - SPARE_SHOT_CHANCE[lv]);
+        after = (shots - 1) * shot0 + load0;
+      } else {
+        const shot1 = which === 'recoil' ? SHOT_SECONDS[bandAfter(r.recoil, lv)] : shot0;
+        const load1 = which === 'reload' ? RELOAD_SECONDS[bandAfter(r.reload, lv)] : load0;
+        after = (cap - 1) * shot1 + load1;
+      }
+      sum += weight[i] * ((shots / after) / (cap / before) - 1);
     });
     out[lv] = sum / span;
-  });
+  }
   return out;
 }
+// The chance a shot does not consume ammo, from the skill's own text.
+const SPARE_SHOT_CHANCE = { 1: 0.10, 2: 0.20, 3: 0.30 };
+
 
 /**
  * The utility ladder for one skill on one weapon.
  *
  * Most skills are worth the same wherever they go, so this hands back the flat
- * table. Recoil Down is not one of them.
+ * table. The two handling skills are not among them: what they are worth comes
+ * out of the weapon's own magazines and is measured rather than assumed, so
+ * the flat entry is only a fallback for a weapon whose rounds are not known.
  */
 function utilityTable(name, w) {
-  if (name === 'Recoil Down') return recoilDownTable(w);
+  if (name === 'Recoil Down') return handlingTable(w, 'recoil') || UTILITY[name];
+  if (name === 'Reload Speed') return handlingTable(w, 'reload') || UTILITY[name];
+  if (name === 'Spare Shot') return handlingTable(w, 'spare') || UTILITY[name];
   return UTILITY[name];
 }
 
@@ -1003,7 +1044,8 @@ function makeScorer(w, damageOnly) {
 return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
   knownSkills: knownSkills, styleVariants: styleVariants,
-  utilityTable: utilityTable, RECOIL_SECONDS: RECOIL_SECONDS,
-  RELOAD_SECONDS: RELOAD_SECONDS,
+  utilityTable: utilityTable, handlingTable: handlingTable,
+  SHOT_SECONDS: SHOT_SECONDS, RELOAD_SECONDS: RELOAD_SECONDS,
+  bandAfter: bandAfter,
   ELEMENTS: ELEMENTS, STATUS: STATUS };
 }));

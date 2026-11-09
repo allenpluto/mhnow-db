@@ -1,9 +1,9 @@
-Shot timings read off gameplay video, 2026-11-09
-================================================
+Bowgun handling, measured from gameplay video, 2026-11-09
+=========================================================
 
 Method
 ------
-Three screen recordings of a training dummy (480x1046, variable frame rate,
+Seven screen recordings of a training dummy (480x1046, variable frame rate,
 nominally 60fps but really about 26.5). Frame counts are therefore useless for
 timing, so each recording was resampled to a constant 20fps and the "n HIT"
 counter in the Total Damage panel was decoded frame by frame: the region
@@ -11,128 +11,134 @@ x=270..360, y=220..254 was differenced against the previous frame, and a change
 of more than a dozen bright pixels taken as the counter moving. That times every
 hit to 0.05s.
 
-A hit is not a shot. Pierce and slicing rounds land several times per shot, so
-shots are the first hit of each cluster; within a cluster the hits are 0.10s
-apart, between shots they are 0.6-1.1s apart, so the two never run together.
+A hit is not a shot. Pierce and sticky rounds land more than once, so shots are
+the first hit of each cluster; within a cluster the hits are 0.10s apart, and
+between shots 0.6 to 2.1s, so the two never run together.
 
-Readings
---------
-Rex Fusillade 4 (grade 8 lv2, attack 1340, affinity -40%)
-   pierce, capacity 4, High recoil
-      5.65  6.70  7.75  8.80          -> 1.05  1.05  1.05
-     12.45 13.50 14.55 15.65          -> 1.05  1.05  1.10
-   normal, capacity 4, Average recoil
-     18.85 19.75 20.60 21.45          -> 0.90  0.85  0.85
+Every recording used equipment carrying nothing that touches handling, except
+where a level of Recoil Down and Reload Speed is named, and each was fired as a
+full circle through every magazine without pausing.
 
-Dual Threat 5 (grade 10 lv5, attack 2532, affinity 0%)
-   normal, capacity 4, Low recoil
-      4.40  5.05  5.65  6.30          -> 0.65  0.60  0.65
-   piercing, capacity 8, Average recoil
-     10.30 11.20 12.05 12.90 13.75
-     14.60 15.50 16.35               -> 0.90  0.85  0.85  0.85  0.85  0.90  0.85
+The weapon screen shows the tier AFTER skills
+---------------------------------------------
+Four recordings are one weapon, LAGUNA BLITZ, fired the same way at Recoil
+Down and Reload Speed 0, 1, 2 and 3, with a weapon-screen screenshot at each
+level. Its three magazines are water x5, piercing water x4 and sticky water x4,
+and the screenshots read:
 
-Rose Assault 5 (grade 10 lv5, attack 3233, affinity -40%)
-   pierce, capacity 4, High recoil
-      4.20  5.25  6.30  7.40  8.45    -> 1.05  1.05  1.10  1.05
-   slicing, capacity 2, Very high recoil
-     clusters beginning 13.45, 15.50, 18.15, each five hits over about a
-     second. One round hitting repeatedly, so where one shot ends and the next
-     begins cannot be read. NOT USED.
+   recoil           base        Lv1          Lv2          Lv3
+     water          Average     Low          Low          Low
+     piercing       High        High         Average      Low
+     sticky         Very high   Very high    Very high    High
 
-Result
-------
-   Low        0.633s between shots   (3 gaps, one weapon)
-   Average    0.865s                 (10 gaps, two weapons, agreeing to 0.003s)
-   High       1.057s                 (7 gaps, two weapons, agreeing to 0.005s)
-   Very high  not measured
-   LARGE_2    not measured, and never seen as its own word on a weapon screen
+   reload           base        Lv1          Lv2          Lv3
+     water          Normal      Fast         Fast         Fast
+     piercing       Slow        Slow         Normal       Fast
+     sticky         Very slow   Very slow    Very slow    Slow
 
-Two different weapons agreeing to within 0.005s means these are the tiers
-themselves rather than anything about the weapons.
+THE CENTRAL FINDING: the timings agree with those words exactly.
 
-Reload
-------
-All three recordings carried no handling skills and were fired as a full
-circle through every magazine, so each gap from the last shot of one magazine
-to the first shot of the next is a clean magazine switch.
+   piercing at Lv1  reads High        fires 1.05s   same as at Lv0
+   piercing at Lv2  reads Average     fires 0.87s   same as a native Average
+   piercing at Lv3  reads Low         fires 0.60s   same as a native Low
+   sticky   at Lv3  reads High        fires 1.08s   down from 2.05s
 
-   Rex Fusillade   into pierce/spread  Slow       3.65s
-                   into normal         Normal     3.20s
-   Dual Threat     into piercing       Very slow  4.00s
-                   into normal         Fast       2.20s
+So the displayed tier is the whole story for timing. Nothing is hidden inside
+a tier, and a handling skill is worth exactly the bands it moves you down -
+which also means it is worth NOTHING when it moves you none.
 
-Within one recording the player's own overhead is the same, so the difference
-between two gaps is the difference between two tiers:
+Shot interval, by the tier on screen
+------------------------------------
+   Low         0.603s   18 gaps, 3 weapons
+   Average     0.862s   17 gaps, 3 weapons
+   High        1.063s   19 gaps, 4 weapons
+   Very high   2.056s    9 gaps, 1 weapon
 
-   Slow - Normal          0.45s over 1 tier  = 0.450s per tier
-   Very slow - Fast       1.80s over 4 tiers = 0.450s per tier
+Very high is nearly double High, not one more even step. Weapons agree with
+each other to within 0.005s on the tiers they share.
 
-One reading spanning a single tier and one spanning four, agreeing to the
-millisecond. The ladder is evenly spaced at 0.45s.
-
-Dual Threat also settles which magazine the tier belongs to: the long gap is
-the one going INTO its very-slow pierce magazine, not out of it. So the reload
-word on a magazine is the cost of switching to it.
-
-The absolute level is the soft part. The two recordings disagree by about
-0.55s on where the ladder sits, which is the player and not the game, so the
-engine uses a least-squares fit across all four gaps:
-
-   Fast 2.48   Normal 2.93   Slow 3.38   (large_2) 3.83   Very slow 4.28
-
-These may run slightly long if either circle carried a moment's hesitation.
-
-What this says about Recoil Down
---------------------------------
-Timed by hand earlier on Anja Buster (flaming rounds, Average recoil):
-
-   without the skill   8 shots in 5.90s over 7 gaps  = 0.843s
-   with Recoil Down 2  6 shots in 3.23s over 5 gaps  = 0.646s
-
-0.843 against the Average tier's 0.865, and 0.646 against the Low tier's 0.633
-- so Recoil Down 2 is one whole tier, within the error of a stopwatch.
-
-STILL OPEN: whether Lv1 is half a tier or a whole one. If the skill moves one
-tier per level then Lv1 already does everything Lv2 does on an Average gun and
-the higher levels are dead weight there; if it scales evenly, Lv1 is worth
-about half. One timing of a full magazine at Recoil Down 1 on an
-Average-recoil gun decides it - near 0.63s means per-tier, near 0.74s means
-even scaling. The engine currently assumes even scaling.
-
-
-What would be worth recording next
-----------------------------------
-1. LAGUNA BLITZ, four recordings, same full circle each time:
-      no handling skills
-      Recoil Down 1 + Reload Speed 1
-      Recoil Down 2 + Reload Speed 2
-      Recoil Down 3 + Reload Speed 3
-   Its three magazines are normal x5 Average/Normal, piercing x4 High/Slow and
-   sticky x4 Very high/Very slow - three recoil tiers and three reload tiers in
-   one circle, all sharing the same player overhead. That one weapon gives the
-   Very high recoil tier, the absolute level of the reload ladder, and both
-   skill ladders at once. Sticky hits once per round, unlike slicing, so every
-   shot is readable.
-
-2. QUICKCASTER, one screenshot of the weapon screen, no recording needed.
-   It is the only weapon carrying both an unknown tier on recoil (sticky) and
-   on reload (pierce and normal), so the screen says in one look whether those
-   show as High or Very high, and as Slow or Very slow. The data holds five
-   recoil tiers and five reload tiers but the game has only ever shown four
-   words for each, so two of them share a word and this says which.
-
-3. Nothing else. Low, Average and High recoil are settled, and the reload
-   spacing is settled.
-
-A prediction worth checking against run 2 above: if Reload Speed also moves
-one tier per level, it is worth about 0.45s out of a cycle of six to eight
-seconds, which is nearer 6% a level than the 15% at Lv3 the engine currently
-assumes for it - so the skill may be overrated in the suggester today.
-
-Rules for the recordings
+Reload gap, Laguna Blitz
 ------------------------
-   - no Spare Shot and no Evading Reload; both break the magazine count
-   - keep firing straight through the switch, since the gap is the measurement
-   - one full circle and then a few more shots, so the last magazine's own
-     switch cost is visible too
-   - keep the Total Damage panel on screen; it is the whole signal
+A bowgun reloads by switching magazines, so the gap from the last shot of one
+to the first shot of the next is the reload. Only Laguna Blitz is used here,
+because all four clips are one weapon fired one way, so whatever fixed cost
+the switch carries is the same throughout.
+
+   Fast        1.90s   1 reading
+   Normal      2.85s   1 reading
+   Slow        3.30s   3 readings, 3.40 / 3.20 / 3.30
+   Very slow   4.83s   3 readings, 4.90 / 5.00 / 4.60
+
+Rex Fusillade, a different weapon, puts Slow 0.45s above Normal; Laguna Blitz
+puts it 0.45s above Normal too, to the millisecond. The absolute level does
+carry a per-weapon offset, though - Rex sits about 0.35s above Laguna on both
+tiers - so another weapon's reloads may run a little longer or shorter
+together. The figures above are Laguna's.
+
+Dual Threat settles which magazine the tier belongs to: its long gap is the
+one going INTO its very-slow pierce magazine, not out of it. The word on a
+magazine is the cost of switching to it.
+
+Five values, four words
+-----------------------
+The data holds five recoil values and five reload values, but the weapon
+screen has only ever shown four words for each. QUICKCASTER carries the two
+that had never been seen, and shows RECOIL_LARGE_2 as "High" and
+RELOAD_LARGE_2 as "Slow" - the same words as plain LARGE. So two values share
+a band.
+
+Within a band the skills still tell them apart, which is how the ladder below
+is pinned. A skill that simply dropped one band per level cannot fit the
+Laguna Blitz table: High would have fallen to Average at Lv1, and it did not.
+What fits all twenty-four cells is a finer ladder on which the skill subtracts
+its own level:
+
+   step 0   SMALL         Low / Fast
+   step 1   MEDIUM        Average / Normal
+   step 2   LARGE_2       High / Slow
+   step 3   LARGE         High / Slow
+   step 4   -             Very high / Very slow
+   step 5   -             Very high / Very slow
+   step 6   EXTRA_LARGE   Very high / Very slow
+
+LARGE_2 therefore sits at the BOTTOM of the High band and LARGE at the top,
+despite the name. That is forced: Laguna's High magazine is LARGE and still
+read High after one level, so there must be another step below it inside the
+same band. Steps 4 and 5 are empty because no ammo in the data sits there.
+
+The LARGE_2 row is the one part of this that is derived rather than watched -
+no recording has ever had a LARGE_2 magazine with a handling skill on. It
+predicts LARGE_2 falls to Average at Lv1 and Low at Lv2.
+
+What this does to the two skills
+--------------------------------
+Both are now priced per weapon from its own magazines, not as a flat ladder.
+The cycle is (capacity - 1) shot intervals plus one reload gap, weighted by
+how much of the hunt each magazine is fired for.
+
+   Laguna Blitz    Recoil Down    6.6 / 10.0 / 27.9 %
+                   Reload Speed   5.9 /  8.4 / 20.5 %
+   Anja Buster     Recoil Down   11.0 / 11.0 / 29.3 %
+                   Reload Speed   7.6 / 10.9 / 19.3 %
+   Dual Threat     Recoil Down   10.0 / 10.0 / 10.0 %
+                   Reload Speed   0.0 /  0.0 /  8.2 %
+   Rose Assault    Recoil Down    0.0 /  5.1 / 26.2 %
+                   Reload Speed  12.0 / 15.7 / 25.8 %
+
+Recoil Down 1 is worth nothing at all on Rose Assault, and Reload Speed 1 and
+2 nothing at all on Dual Threat, because neither moves a band on the rounds
+those weapons carry. Both skills jump sharply at Lv3 wherever a Very high or
+Very slow magazine finally drops a band. The old flat 10/20/28 and 5/10/15
+ladders could express none of this.
+
+Still open
+----------
+   - The LARGE_2 row above is derived. One recording of a weapon carrying a
+     LARGE_2 magazine at Recoil Down 1 would confirm or break it; Quickcaster
+     is the obvious candidate, its sticky rounds being LARGE_2 recoil.
+   - Steps 4 and 5 are unoccupied in the data, so EXTRA_LARGE sitting exactly
+     at step 6 is the simplest fit rather than a proven one. Any value that
+     takes three levels to leave the Very high band behaves identically, so
+     this does not matter unless a skill reaches level 4 or more.
+   - The reload figures carry a per-weapon offset of a few tenths. Only the
+     differences between tiers are solid.
