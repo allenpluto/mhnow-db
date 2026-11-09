@@ -90,6 +90,11 @@ const W = {
   ammo: (d.weaponAmmo || []).filter((a) => a.weapon_id === wRow.id)
     .map((a) => a.ammo_type)
     .filter((t, i, arr) => arr.indexOf(t) === i),
+  // Magazine size and handling tier per round, which is what Recoil Down's
+  // worth is worked out from.
+  rounds: (d.weaponAmmo || []).filter((a) => a.weapon_id === wRow.id)
+    .map((a) => ({ type: a.ammo_type, capacity: a.capacity,
+      recoil: a.recoil, reload: a.reload })),
 };
 const isStatus = E.STATUS.indexOf(W.element) >= 0;
 const DAMAGE_ONLY = flag('--damage-only');

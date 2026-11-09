@@ -149,23 +149,10 @@ const UTILITY = {
   // flattened to a straight line.
   Focus: { 1: 0.033, 2: 0.067, 3: 0.100, 4: 0.133, 5: 0.200 },
   Ballistics: { 1: 0.05, 2: 0.10, 3: 0.15 },
-  // MEASURED, not guessed. Anja Buster, Flaming Ammo, 6 rounds at medium
-  // recoil, timed first shot to last:
-  //   without the skill   8 shots (two free from Spare Shot) in 5.90s over 7
-  //                       gaps = 0.843s per shot
-  //   with Recoil Down 2  6 shots in 3.23s over 5 gaps = 0.646s per shot
-  // which is 23.4% faster.
-  //
-  // Firing faster also empties the magazine sooner, so damage per second gains
-  // less than the firing rate does once reloads are counted — between 18% and
-  // 24% for a reload of 1 to 2.5 seconds. 20% is taken for Lv2, against the 10%
-  // guessed before.
-  //
-  // Two caveats. The ladder below assumes the improvement is linear, which TWO
-  // measurements cannot show — a reading at Lv1 or Lv3 would settle it. And it
-  // was taken at medium recoil; the skill should be worth more on a worse
-  // recoil tier and less on a better one, which is not modelled.
-  'Recoil Down': { 1: 0.10, 2: 0.20, 3: 0.29 },
+  // Recoil Down is not a flat percentage — see recoilDownTable(), which works
+  // the gain out from the weapon's own recoil tier. The entry here is only the
+  // fallback for a weapon whose rounds are not known.
+  'Recoil Down': { 1: 0.10, 2: 0.20, 3: 0.28 },
   'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
 
   // Refills ammo on an evade, which covers much of what Reload Speed does —
@@ -227,6 +214,121 @@ const EVADE_RELOAD_TYPES = ['Light Bowgun', 'Heavy Bowgun', 'Gunlance', 'Charge 
 const BALLISTICS_AMMO = ['NORMAL', 'PIERCING', 'SPREAD'];
 // Ammo that gains nothing from reduced recoil.
 const RECOIL_EXEMPT_AMMO = ['WYVERN'];
+
+/* -------------------------------------------------------------- recoil ----
+ * MEASURED from gameplay video, 2026-11-09. Three recordings of a training
+ * dummy were decoded frame by frame and the on-screen HIT counter watched for
+ * the moment it moved, which times every hit to a twentieth of a second.
+ *
+ *   Rex Fusillade 4   pierce, capacity 4, High      1.05 1.05 1.05 (+1.10 x1)
+ *                     normal, capacity 4, Average   0.90 0.85 0.85
+ *   Dual Threat 5     normal, capacity 4, Low       0.65 0.60 0.65
+ *                     pierce, capacity 8, Average   0.90 0.85 0.85 0.85 0.85
+ *                                                   0.90 0.85
+ *   Rose Assault 5    pierce, capacity 4, High      1.05 1.05 1.10 1.05
+ *
+ * Two different weapons agree on Average to within 0.003s and on High to
+ * within 0.005s, so these are the tiers themselves, not the weapons.
+ *
+ * Very high is NOT measured. Rose Assault's slicing rounds hit five times each
+ * over a second, which hides where one shot ends and the next begins; the one
+ * reading that can be read off it is about 2.05s and is not trusted. The
+ * figure below is extrapolated from the spacing of the three tiers that were
+ * measured. RECOIL_LARGE_2 never appears on the weapon screen as its own word,
+ * so it is placed between the two tiers that bracket it.
+ */
+const RECOIL_SECONDS = {
+  RECOIL_SMALL: 0.633,
+  RECOIL_MEDIUM: 0.865,
+  RECOIL_LARGE: 1.057,
+  RECOIL_LARGE_2: 1.25,        // extrapolated
+  RECOIL_EXTRA_LARGE: 1.45,    // extrapolated
+  RECOIL_WYVERN: 1.057,        // exempt from the skill anyway
+};
+
+/*
+ * Reload is ASSUMED, not measured. The videos never show a clean reload — the
+ * player repositions between magazines — so these are a plausible ladder, used
+ * only to decide how much of a magazine cycle is spent firing. The answer is
+ * not very sensitive to them: halving every figure moves Recoil Down's value
+ * by about three points.
+ */
+const RELOAD_SECONDS = {
+  RELOAD_SMALL: 0.8,
+  RELOAD_MEDIUM: 1.2,
+  RELOAD_LARGE: 1.6,
+  RELOAD_LARGE_2: 1.9,
+  RELOAD_EXTRA_LARGE: 2.2,
+};
+
+/*
+ * What Recoil Down does to the interval between shots.
+ *
+ * ANCHORED ON ONE MEASUREMENT. Anja Buster's flaming rounds are Average
+ * recoil, and with Recoil Down 2 they were timed at 0.646s a shot against
+ * 0.843s without it — a factor of 0.77, and close enough to the Low tier's
+ * own 0.633s that Lv2 looks like exactly one tier down.
+ *
+ * Lv1 and Lv3 are INTERPOLATED geometrically from that single point, which
+ * assumes the levels scale evenly. They may not: the skill could instead move
+ * one whole tier per level, in which case Lv1 already does what Lv2 does here
+ * and Lv3 is wasted on anything but the worst recoil. One timing of a full
+ * magazine at Lv1 on an Average-recoil gun would settle it — if it comes out
+ * near 0.63s the skill is per-tier, if near 0.74s this ladder is right.
+ *
+ * The floor is the Low tier. No weapon in the data fires faster than that, so
+ * the skill is taken not to push past it.
+ */
+const RECOIL_DOWN_FACTOR = { 1: 0.856, 2: 0.732, 3: 0.626 };
+
+/**
+ * Recoil Down's worth on one weapon, as a fraction of its damage.
+ *
+ * A magazine cycle is capacity x the interval between shots, plus a reload.
+ * Recoil Down shrinks the firing part and leaves the reload alone, so a big
+ * magazine of badly recoiling rounds gains most and a two-round magazine that
+ * spends half its life reloading gains least.
+ *
+ * Rounds the skill does nothing for — wyvern — are left out of the average,
+ * and the rest are weighted by how much of the hunt each is actually fired
+ * for, so sliding reload's 90% of shots on normal ammo counts as such.
+ */
+function recoilDownTable(w) {
+  const seen = {};
+  const rounds = (w.rounds || []).filter((r) => {
+    if (seen[r.type] || !RECOIL_SECONDS[r.recoil]) return false;
+    seen[r.type] = 1;
+    return RECOIL_EXEMPT_AMMO.indexOf(r.type) < 0;
+  });
+  if (!rounds.length) return UTILITY['Recoil Down'];
+  const floor = RECOIL_SECONDS.RECOIL_SMALL;
+  const weight = rounds.map((r) => ammoShare(w, { types: [r.type] }) || 1 / rounds.length);
+  const span = weight.reduce((a, b) => a + b, 0) || 1;
+  const out = {};
+  Object.keys(RECOIL_DOWN_FACTOR).forEach((lv) => {
+    let sum = 0;
+    rounds.forEach((r, i) => {
+      const shot = RECOIL_SECONDS[r.recoil];
+      const after = Math.max(floor, shot * RECOIL_DOWN_FACTOR[lv]);
+      const reload = RELOAD_SECONDS[r.reload] || 1.6;
+      const cap = r.capacity || 1;
+      sum += weight[i] * ((cap * shot + reload) / (cap * after + reload) - 1);
+    });
+    out[lv] = sum / span;
+  });
+  return out;
+}
+
+/**
+ * The utility ladder for one skill on one weapon.
+ *
+ * Most skills are worth the same wherever they go, so this hands back the flat
+ * table. Recoil Down is not one of them.
+ */
+function utilityTable(name, w) {
+  if (name === 'Recoil Down') return recoilDownTable(w);
+  return UTILITY[name];
+}
 
 /**
  * Which handling skill a bowgun still needs, given its style.
@@ -718,7 +820,7 @@ function score(totals, w) {
   Object.keys(UTILITY).forEach((n) => {
     if (!lv(n)) return;
     if (!utilityApplies(n, w)) return;
-    const table = UTILITY[n];
+    const table = utilityTable(n, w);
     const max = Math.max.apply(null, Object.keys(table).map(Number));
     util += table[Math.min(lv(n), max)] || 0;
   });
@@ -792,8 +894,9 @@ function makeScorer(w, damageOnly) {
   Object.keys(UTILITY).forEach((n) => {
     if (!utilityApplies(n, w)) return;
     if (I(n) < 0) return;
-    util.push({ i: I(n), table: UTILITY[n],
-      max: Math.max.apply(null, Object.keys(UTILITY[n]).map(Number)) });
+    const table = utilityTable(n, w);
+    util.push({ i: I(n), table: table,
+      max: Math.max.apply(null, Object.keys(table).map(Number)) });
   });
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
@@ -880,5 +983,7 @@ function makeScorer(w, damageOnly) {
 return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
   knownSkills: knownSkills, styleVariants: styleVariants,
+  utilityTable: utilityTable, RECOIL_SECONDS: RECOIL_SECONDS,
+  RELOAD_SECONDS: RELOAD_SECONDS,
   ELEMENTS: ELEMENTS, STATUS: STATUS };
 }));

@@ -91,12 +91,24 @@ foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
 
 // Ammo types each bowgun carries, so an ammo boost is only offered where there
 // is ammo for it to boost.
-$sql = 'SELECT DISTINCT weapon_id, ammo_type FROM weapon_ammo';
+// Magazine size and handling tier come with them, because Recoil Down's worth
+// is worked out from the weapon's own rounds rather than assumed flat.
+$sql = 'SELECT weapon_id, ammo_type, capacity, recoil, reload FROM weapon_ammo';
 foreach ($pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $id = (int) $r['weapon_id'];
     if (!isset($byId[$id])) continue;
-    if (!isset($weapons[$byId[$id]]['ammo'])) $weapons[$byId[$id]]['ammo'] = array();
-    $weapons[$byId[$id]]['ammo'][] = $r['ammo_type'];
+    $k = $byId[$id];
+    if (!isset($weapons[$k]['ammo'])) {
+        $weapons[$k]['ammo'] = array();
+        $weapons[$k]['rounds'] = array();
+    }
+    if (!in_array($r['ammo_type'], $weapons[$k]['ammo'], true)) {
+        $weapons[$k]['ammo'][] = $r['ammo_type'];
+    }
+    $weapons[$k]['rounds'][] = array(
+        'type' => $r['ammo_type'], 'capacity' => (int) $r['capacity'],
+        'recoil' => $r['recoil'], 'reload' => $r['reload'],
+    );
 }
 
 // --- which skills a driftgem can grant -------------------------------------
