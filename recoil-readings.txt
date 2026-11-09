@@ -191,13 +191,24 @@ SLIDING RELOAD swaps the magazine on a dodge, and will do it on a magazine
 that is not empty. Anja Buster, one shot then one slide, repeated - gaps
 between consecutive shots:
 
-   2.05  2.50  2.90  2.50  3.00  2.35     mean 2.52s
+   led by flaming (Average)     2.05  2.90  3.00     mean 2.65
+   led by sticky  (Very high)   2.50  2.50  2.35     mean 2.45
+   all six                                           mean 2.52
 
-and, read against the magazine indicator, which magazine was fired makes no
-difference: flaming at Average leads to 2.05 2.90 3.00 and sticky at Very
-high to 2.50 2.50 2.35. The slide cancels the shot's own recovery. Taking one
-shot out of the mean leaves about 1.65s for the slide itself, which is what
-the engine uses.
+DO NOT take a shot out of that. Subtracting each magazine's own steady-fire
+interval gives 1.79s from the flaming gaps and 0.39s from the sticky ones, a
+four-fold disagreement, so shot and slide are not additive. The slide cancels
+the shot's recovery rather than queueing behind it, which is why sliding out
+of a Very high magazine costs no more than sliding out of an Average one -
+and it is why sticky being slow to fire does not show up here at all.
+
+No subtraction is wanted in any case. The gap measured is last shot to the
+next magazine's first shot, which is exactly what the reload ladder holds, so
+2.52s is directly comparable to it: a little quicker than a Normal reload and
+far quicker than a Very slow one. It does carry more of the player than the
+ladder does, since each cycle needs a deliberate slide and re-aim rather than
+firing straight on, which is most of the 2.05 to 3.00 spread. The fastest of
+the six is the floor.
 
 GUARD RELOAD swaps the magazine without firing and loads only HALF the rounds
 - visible directly, a hold-and-slide putting 4 of 8 pierce rounds up, and the

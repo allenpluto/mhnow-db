@@ -358,11 +358,23 @@ function bandAfter(tier, levels) {
  * from Average to Low; crouching shot simply does not care.
  *
  * SLIDING RELOAD changes magazine on a dodge, and will do it on a magazine
- * that is not empty. Anja Buster, one shot then one slide, repeated: the gaps
- * between consecutive shots ran 2.05 2.50 2.90 2.50 3.00 2.35, mean 2.52s,
- * and did NOT depend on which magazine was fired — the slide cancels the
- * shot's own recovery, so flaming at Average and sticky at Very high cost the
- * same. Taking one shot out of that leaves about 1.65s for the slide itself.
+ * that is not empty. Anja Buster, one shot then one slide, repeated: gaps
+ * between consecutive shots of 2.05 2.50 2.90 2.50 3.00 2.35, mean 2.52s.
+ *
+ * Do NOT try to take a shot out of that. Subtracting each magazine's own
+ * steady-fire interval gives 1.79s from the flaming gaps and 0.39s from the
+ * sticky ones — a four-fold disagreement, so the two are not additive. The
+ * slide cancels the shot's recovery instead of queueing behind it, which is
+ * why sliding out of a Very high magazine costs no more than sliding out of
+ * an Average one.
+ *
+ * No subtraction is needed anyway. The gap measured here is last shot to the
+ * next magazine's first shot, which is exactly the quantity the reload ladder
+ * holds, so 2.52s goes in as it stands and is directly comparable: a little
+ * quicker than a Normal reload and far quicker than a Very slow one. It does
+ * carry more of the player than the ladder does, since each cycle needs a
+ * deliberate slide and re-aim rather than firing straight on; the fastest of
+ * the six, 2.05s, is the least contaminated and is the floor.
  *
  * GUARD RELOAD changes magazine without firing, and loads only HALF the
  * rounds — seen directly, a hold-and-slide putting 4 of 8 pierce rounds up.
@@ -372,7 +384,7 @@ function bandAfter(tier, levels) {
  * the price of half the capacity.
  */
 const DODGE_SECONDS = 0.975;      // measured; what an evade costs
-const SLIDE_RELOAD_SECONDS = 1.65;   // measured, less one shot
+const SLIDE_RELOAD_SECONDS = 2.52;   // measured, same basis as the ladder
 const GUARD_RELOAD_SECONDS = 2.05;   // measured directly
 const CROUCH_OPEN = 0.60;         // measured, whatever the ammo
 const CROUCH_FLOOR = 0.30;        // measured
