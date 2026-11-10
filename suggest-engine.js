@@ -164,6 +164,8 @@ const ASSUME = {
 // These are the user's own exchange rates â€” Power Prolonger and Quick Work at
 // 15% for their max level, Lock On a flat 10% â€” not anything derived from data.
 const UTILITY = {
+  // The user's own exchange rate, still in force on every weapon type except
+  // Dual Blades — see POWER_PROLONGER_BY_TYPE, where it is measured.
   'Power Prolonger': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
@@ -572,6 +574,9 @@ function utilityTable(name, w) {
   if (name === 'Recoil Down') return handlingTable(w, 'recoil') || UTILITY[name];
   if (name === 'Reload Speed') return handlingTable(w, 'reload') || UTILITY[name];
   if (name === 'Spare Shot') return handlingTable(w, 'spare') || UTILITY[name];
+  if (name === 'Power Prolonger' && POWER_PROLONGER_BY_TYPE[w.category]) {
+    return POWER_PROLONGER_BY_TYPE[w.category];
+  }
   return UTILITY[name];
 }
 
@@ -713,6 +718,47 @@ function statSlotChoices(w) {
   }
   return out;
 }
+
+/* ------------------------------------------------- Power Prolonger ----
+ * MEASURED on Dual Blades, 2026-11-10. The skill slows the drain of the
+ * Demon Mode energy bar, and that bar is on screen under the health bar, so
+ * the drain is read straight off it. Four training-dummy runs, attacking
+ * continuously, bar tracked frame by frame:
+ *
+ *   No style       Lv0  5.23%/s   the bar lasts 19.1s
+ *                  Lv2  3.13%/s                 31.9s
+ *                  Lv3  2.00%/s                 50.0s
+ *   Feral Demon    Lv0  13.5%/s                  7.4s
+ *                  Lv3  5.05%/s                 19.8s
+ *
+ * The rule is a FIXED REDUCTION PER LEVEL, 20% of the base drain each: Lv2
+ * implies 20.1% a level and Lv3 implies 20.6%, and the same 20% predicts
+ * Feral's window stretching 2.50x where it actually stretched 2.67x. So the
+ * drain is base x (1 - 0.2 x level), and Lv3 leaves only two fifths of it.
+ *
+ * Turning that into damage needs the other half of the cycle. Demon Mode is
+ * worth 1732 damage a second against normal stance's 985, and the bar refills
+ * at 5.6%/s, so a cycle is the bar's life plus 17.9 seconds of refilling:
+ *
+ *   Lv0  demon up 52% of the cycle   1371 dmg/s
+ *   Lv1  up 57%                      1413     +3.0%   (drain interpolated)
+ *   Lv2  up 64%                      1464     +6.8%
+ *   Lv3  up 74%                      1535    +12.0%
+ *
+ * Against the 5/10/15% assumed. The measured figures are lower but the shape
+ * holds, and Lv3 at 12% is close enough to the user's 15% that their estimate
+ * from play was a good one.
+ *
+ * WHAT THIS STILL CANNOT SEE: a dummy never attacks back, and Demon Mode's
+ * other advantage is attacking through a slide while a monster is swinging.
+ * These figures are therefore a floor on the skill's worth in a real hunt.
+ *
+ * Only Dual Blades is measured. The other six weapon types the skill names
+ * keep the assumed ladder, because the mechanic it slows differs on each.
+ */
+const POWER_PROLONGER_BY_TYPE = {
+  'Dual Blades': { 1: 0.030, 2: 0.068, 3: 0.120 },
+};
 
 /**
  * How much of the hunt Elemental Release is up for.
