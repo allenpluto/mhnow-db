@@ -214,33 +214,55 @@ whose Demon Mode you should not use.
 That is a dummy result. Demon Mode's other half is attacking through a slide
 while a monster swings at you, which no dummy can show.
 
-The red dot, isolated
----------------------
-Two runs of Spiral Slash, slashing only in Demon Mode.
+The red dot, measured clean
+---------------------------
+With Burst 5 taken off the set, so nothing intermittent is riding on the
+numbers:
 
-   with the dot      20 hits   11560 dmg    578 a hit
-   without the dot   15 hits    8500 dmg    567 a hit
+   with the dot      20 hits   9968 dmg   498 a hit
+   without the dot   15 hits   7613 dmg   508 a hit
 
-The dot is worth five more hits, a third again, at the same power - 578
-against 567 is within 2%. It buys DURATION, as the first pair of slashes
-already suggested, and the larger sample says the same thing.
+The dot is worth FIVE MORE HITS, a third again, at identical power - 498
+against 508 is noise. It buys duration and nothing else, which is what the
+first pair of slashes suggested and this now says cleanly.
 
-Power Prolonger multiplies the slashes, not just the window
------------------------------------------------------------
-The bar cost of a slash is not fixed:
+Burst's contribution, incidentally. The same with-the-dot slash ran 11560 with
+Burst 5 against 9968 without, a factor of 1.16. Burst 5 is +30% attack, so it
+was up for a little over half of that move - which matches the user seeing its
+banner announce itself as the move finished.
 
-   Power Prolonger 0   one slash took the bar from 94% to 1%
-   Power Prolonger 3   one slash took it from 100% to 67%
+A WRONG READING CORRECTED. An earlier draft of this file took three groups of
+exactly fifteen hits in the Power Prolonger 3 run - 8500 damage, 8500 again,
+then 9898 - to be without-the-dot slashes. They are MOVING ATTACKS. The user
+flagged the first and the energy bar confirms all three: a slash eats a
+visible chunk of the bar, and after the one at 7s the bar drains at a flat
+2.29%/s, its passive rate, from 14s all the way to empty at 39s, leaving no
+room for another slash's cost. The fifteen-hit count is a coincidence between
+the two moves, and they differ on power once Burst is removed.
 
-93% against 33%, a ratio of 0.35 where the passive drain's ratio is 0.40. So
-Power Prolonger appears to cut the slash's own cost by about the same factor
-as it cuts the passive drain - which means roughly THREE slashes per bar at
-Lv3 against one at Lv0, exactly as the user predicted before recording it.
+That the bar is the only reliable test also puts a question over the earlier
+pair of slashes timed from hit density alone. The first of those did collapse
+the bar, 74% to 0; the second did not, so it may have been a moving attack
+too. Density is not enough on its own - a moving attack lands about 3.75 hits
+a second and an airborne slash 5 to 8, and those overlap.
 
-On that style Power Prolonger is therefore worth far more than the 12% the
-engine now carries, since it triples the number of the weapon's hardest
-attack rather than merely lengthening a window. One run each, so the 0.35 is
-a single observation rather than a ladder.
+Power Prolonger cuts the slash's cost, not just the drain
+----------------------------------------------------------
+Taking the passive drain out of each run leaves what the slash itself ate:
+
+   Power Prolonger 0   bar 94% to 1% over 4.5s, passive would be 25%
+                       -> the slash cost about 68% of the bar
+   Power Prolonger 3   bar 100% to 55% over 7.0s, passive would be 16%
+                       -> the slash cost about 29%
+
+A ratio of 0.43 where the passive drain's own ratio at Lv3 is 0.40. So Power
+Prolonger appears to cut the slash's cost by about the same factor as it cuts
+the drain, which would allow roughly three slashes a bar at Lv3 against one
+and a half at Lv0 - what the user predicted before recording it.
+
+PREDICTED, NOT OBSERVED. Only one slash was actually performed in the Lv3
+run, so the three-slashes figure is arithmetic from the cost, not something
+seen. A run that simply slashes as often as the bar allows would settle it.
 
 What to record next
 -------------------
