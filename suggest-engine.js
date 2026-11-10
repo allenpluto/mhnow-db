@@ -512,6 +512,49 @@ const CROUCH_BONUS = {
   NORMAL: 4, PIERCING: 4, SPREAD: 4, SLICING: 2, STICKY: 2, CLUSTER: 1, WYVERN: 0,
 };
 
+/* -------------------------------------------- Dual Blades styles ----
+ * Dual Blades choose a style the way bowguns do, and the three differ by far
+ * more than any skill. All of the figures below are MEASURED on a training
+ * dummy, one weapon, attacking without pause — see dual-blades-readings.txt.
+ *
+ *   No style           normal stance 985 dmg/s, Demon Mode 1732, the bar
+ *                      lasting 19.1s against 17.9s to refill, so Demon Mode
+ *                      is up 52% of a cycle: 1371 dmg/s overall.
+ *   Feral Demon Mode   normal stance 1950, which is the highest sustained
+ *                      figure on the weapon and nearly double No style's.
+ *                      Its Demon Mode runs at 1823 but pays a three-second
+ *                      entry out of a 7.4-second window, so cycling it gives
+ *                      1777 — LESS than simply not using it. The style is
+ *                      therefore priced at its normal stance.
+ *   Spiral Slash       normal stance 896, Demon Mode standing 1392, and an
+ *                      airborne slash worth 9968 damage that eats 68% of the
+ *                      bar. One slash a window works out at 1180 dmg/s.
+ *
+ * The rates are relative to No style, since that is what the damage model
+ * calls one.
+ *
+ * POWER PROLONGER IS NOT THE SAME SKILL ON EACH. It lengthens Demon Mode, so
+ * on No style it is worth the measured 3.0/6.8/12.0%; on Feral it is worth
+ * NOTHING, because the Demon Mode it lengthens should not be entered; and on
+ * Spiral Slash it is worth more than either, because it cuts the slash's own
+ * bar cost as well as the passive drain and so buys extra slashes. The Spiral
+ * figures are derived from those two measurements rather than timed directly.
+ *
+ * WHAT THE DUMMY CANNOT SEE, and it matters most here: Demon Mode also lets
+ * you attack through a slide and carries a forward dash. A real Feral hunt
+ * recorded afterwards enters Demon Mode in short bursts for exactly that, not
+ * for damage. So "never enter Demon Mode" is the damage answer, not the play
+ * answer, and Power Prolonger's zero on Feral is a floor.
+ */
+const DUAL_BLADES_STYLES = [
+  { name: 'no style', label: 'no style', rate: 1.00,
+    pp: { 1: 0.030, 2: 0.068, 3: 0.120 } },
+  { name: 'feral demon', label: 'Feral Demon Mode, played in normal stance', rate: 1.42,
+    pp: { 1: 0, 2: 0, 3: 0 } },
+  { name: 'spiral slash', label: 'Spiral Slash', rate: 0.86,
+    pp: { 1: 0.029, 2: 0.060, 3: 0.153 } },
+];
+
 /** How many rounds a magazine actually holds under a style. */
 function magazineSize(round, style) {
   const cap = round.capacity || 1;
@@ -562,6 +605,7 @@ function reloadSeconds(round, style, reloadLevels) {
  * skill each style left wanted.
  */
 function styleRate(w) {
+  if (w.style && w.style.blades) return w.style.blades.rate;
   if (!w.style || !w.rounds || !w.rounds.length) return 1;
   const seen = {};
   const rounds = w.rounds.filter((r) => {
@@ -649,6 +693,11 @@ function utilityTable(name, w) {
   if (name === 'Recoil Down') return handlingTable(w, 'recoil') || UTILITY[name];
   if (name === 'Reload Speed') return handlingTable(w, 'reload') || UTILITY[name];
   if (name === 'Spare Shot') return handlingTable(w, 'spare') || UTILITY[name];
+  // Power Prolonger lengthens a different thing on each Dual Blades style,
+  // and on one of them lengthens something you should not be using.
+  if (name === 'Power Prolonger' && w.style && w.style.blades) {
+    return w.style.blades.pp;
+  }
   return UTILITY[name];
 }
 
@@ -696,6 +745,17 @@ function gunHandling(w) {
  */
 function styleVariants(weapon) {
   const one = [{ label: null, weapon: weapon }];
+
+  // Dual Blades pick a style too, and theirs change the damage rate outright
+  // rather than deciding which handling skill is wanted.
+  if (weapon.category === 'Dual Blades') {
+    if (!weapon.styleSelectable) return one;
+    return DUAL_BLADES_STYLES.map((s) => ({
+      label: s.label,
+      weapon: Object.assign({}, weapon, { style: { name: s.name, blades: s } }),
+    }));
+  }
+
   if (RANGED_GUNS.indexOf(weapon.category) < 0 || !weapon.styleSelectable) return one;
 
   const has = (t) => (weapon.ammo || []).indexOf(t) >= 0;

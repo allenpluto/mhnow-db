@@ -271,6 +271,40 @@ PREDICTED, NOT OBSERVED. Only one slash was actually performed in the Lv3
 run, so the three-slashes figure is arithmetic from the cost, not something
 seen. A run that simply slashes as often as the bar allows would settle it.
 
+In the engine
+-------------
+Dual Blades now choose a style the way bowguns do: three variants, each
+searched as its own build, with the best winning. The rates are relative to
+No style, since that is what the damage model calls one.
+
+   no style                                      1.00   PP 3.0 / 6.8 / 12.0%
+   Feral Demon Mode, played in normal stance     1.42   PP    0 /   0 /    0
+   Spiral Slash                                  0.86   PP 2.9 / 6.0 / 15.3%
+
+Power Prolonger is no longer one number on this weapon. It lengthens Demon
+Mode, so on No style it is worth the measured ladder; on Feral it is worth
+nothing, because the Demon Mode it lengthens should not be entered; and on
+Spiral Slash it is worth more than either, because it cuts the slash's own
+bar cost as well as the passive drain and so buys extra slashes. The Spiral
+figures are derived from those two measurements rather than timed.
+
+A related bug fixed while doing it. The search collapses two styles that
+reach the same skill totals, and used to label every such pair "either style
+reaches this set". That was true when all styles scored alike; it stopped
+being true once styles carried their own damage rates, and the note was being
+printed on pairs that differ by 40%. It now only appears when the scores
+actually tie.
+
+Twenty of the fifty-five Dual Blades in the data are style selectable, so the
+other thirty-five are unaffected.
+
+A CAVEAT ON THE WEAPON. The screenshot sent with the three dummy runs is
+Bloom Snow Wail+, which is a CHARGE BLADE, so which Dual Blades those runs
+used is not actually recorded. Nothing above depends on it - every figure is
+a measured damage rate and every comparison is between styles on the same
+weapon within the same session - but the absolute dmg/s cannot be carried to
+another weapon without knowing the attack behind them.
+
 What to record next
 -------------------
 Nothing urgent. If the Spiral Slash figure is ever worth pinning, a Lv1 and

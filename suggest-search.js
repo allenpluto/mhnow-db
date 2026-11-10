@@ -105,16 +105,25 @@
     });
     merged.sort(function (x, y) { return y.score - x.score; });
 
-    // Two styles reaching the same skill totals is the same build twice: the
-    // style only mattered through Recoil Down or Reload Speed, and neither made
-    // the set. Listing it once, noting the style is free, beats presenting a
-    // choice that is not one.
+    // Two styles reaching the same skill totals are the same armour twice, so
+    // the weaker is dropped and only the best survives. Whether the style was
+    // a real choice depends on whether it changed the SCORE: on a bowgun whose
+    // styles only mattered through Recoil Down or Reload Speed, neither of
+    // which made the set, the scores tie and the style is genuinely free. Dual
+    // Blades styles change the damage rate outright, so they never tie, and
+    // calling that free — as an earlier version did for every duplicate —
+    // offers a choice that is not one in the opposite direction.
     var seen = {}, unique = [];
     merged.forEach(function (r) {
       var key = Object.keys(r.totals).sort().map(function (n) {
         return n + r.totals[n];
       }).join(',');
-      if (seen[key]) { seen[key].styleFree = true; return; }
+      var kept = seen[key];
+      if (kept) {
+        // merged is sorted by score, so the kept one is never the weaker.
+        if (Math.abs(kept.score - r.score) < 1e-6) kept.styleFree = true;
+        return;
+      }
       seen[key] = r;
       unique.push(r);
     });
