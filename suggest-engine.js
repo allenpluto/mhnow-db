@@ -66,6 +66,18 @@ const ASSUME = {
   burstUptime: 0.35,
   offensiveGuardUptime: 0.00,   // zero unless you actually guard
 
+  // Elemental Release is not a free-floating uptime: the skill gives element
+  // +100% for a stated 20 seconds after each Special Skill, so the uptime is
+  // 20s times how many Specials a hunt yields, over its length. The count is
+  // what is unknown, and the figure above is still a guess standing in for it
+  // — 0.35 of a 75s hunt is 1.3 Specials, which is what it has always meant.
+  //
+  // It is spelled out here because Nergigante Avidity stops the gauge filling
+  // from attacking altogether, and then the count is not a rate at all: it is
+  // whatever the hunt hands you outright. See elemReleaseUptime().
+  specialSeconds: 20,
+  openWithSpecial: true,   // you can enter a hunt with the gauge already full
+
   // Threshold skills. An average of 60% health means full health and sub-29%
   // health are both occasional, so these are weighted at a tenth of nominal
   // rather than being deleted or taken at face value.
@@ -680,6 +692,35 @@ function statSlotChoices(w) {
   return out;
 }
 
+/**
+ * How much of the hunt Elemental Release is up for.
+ *
+ * The skill reads "elemental attack power increases by 100% for 20 secs. after
+ * activating a Special Skill", so this is 20s per Special over the hunt. What
+ * fills the gauge is landing hits — not damage, since a grade 10 weapon at
+ * nearly twice a grade 8's attack charges no faster.
+ *
+ * NERGIGANTE AVIDITY BREAKS THAT. Its own text is "Damage increased by 20%,
+ * but Special Gauge will no longer fill when attacking", so a set carrying it
+ * gets no Specials from fighting at all — only the ones the hunt hands over:
+ * the one you can open with if you enter on a full gauge, and the one Valor
+ * grants outright on the first roar. Two Specials in a 75s hunt is 53%; one is
+ * 27%. The two skills were priced independently before this, so the suggester
+ * was handing a set Avidity's +20% and a full Elemental Release at the same
+ * time, which the game does not allow.
+ *
+ * Still missing: Evasive Concentration, Guard and Parry Concentration and
+ * Special Partbreaker all put gauge back without attacking, so they would
+ * survive Avidity too. None of them is priced by this engine yet, and how
+ * often each fires is unknown, so none is counted.
+ */
+function elemReleaseUptime(avidityLevel, valorLevel) {
+  if (!avidityLevel) return ASSUME.elementalReleaseUptime;
+  const specials = (ASSUME.openWithSpecial ? 1 : 0) + (valorLevel ? 1 : 0);
+  if (!specials) return 0;
+  return Math.min(1, ASSUME.specialSeconds * specials / ASSUME.huntSeconds);
+}
+
 /** One hit's damage before the flat multipliers, for given stats. */
 function critDamage(atk, ele, aff, m, ce, cfLevel) {
   const c = (aff > 100 ? 100 : aff < -100 ? -100 : aff) / 100;
@@ -1038,7 +1079,8 @@ function score(totals, w) {
     if (lv(w.element + ' Attack') >= 5) ele += ADV_ELEM[lv('Advanced ' + w.element + ' Attack')] || 0;
     const hp = (ASSUME.baseHp + (HEALTH[lv('Health Boost')] || 0)) * ASSUME.hpFraction;
     ele += (VITAL[lv('Vital ' + w.element)] || 0) * hp;
-    elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) * ASSUME.elementalReleaseUptime;
+    elePct = (ELEM_RELEASE[lv('Elemental Release')] || 0) *
+      elemReleaseUptime(lv('Nergigante Avidity'), lv('Valor'));
     (ELEMENT_SKILLS[w.element] || []).forEach((p) => { elePct += p[1][lv(p[0])] || 0; });
     if (w.category === 'Bow' && !(w.styleSelectable && isStatus(w))) {
       elePct += CHARGE_MASTER[lv('Charge Master')] || 0;
@@ -1214,7 +1256,8 @@ function makeScorer(w, damageOnly) {
       if (g(v, iEA) >= 5) ele += ADV_ELEM[g(v, iAEA)] || 0;
       const hp = (ASSUME.baseHp + (HEALTH[g(v, iHealth)] || 0)) * ASSUME.hpFraction;
       ele += (VITAL[g(v, iVital)] || 0) * hp;
-      elePct = (ELEM_RELEASE[g(v, iER)] || 0) * ASSUME.elementalReleaseUptime;
+      elePct = (ELEM_RELEASE[g(v, iER)] || 0) *
+        elemReleaseUptime(g(v, iAvidity), g(v, iValor));
       for (let k = 0; k < elemSkills.length; k++) {
         elePct += elemSkills[k].table[v[elemSkills[k].i]] || 0;
       }
@@ -1285,6 +1328,7 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   score: score, scoreTotal: scoreTotal, makeScorer: makeScorer,
   knownSkills: knownSkills, styleVariants: styleVariants,
   utilityTable: utilityTable, handlingTable: handlingTable,
+  elemReleaseUptime: elemReleaseUptime,
   styleRate: styleRate, shotSeconds: shotSeconds,
   reloadSeconds: reloadSeconds, magazineSize: magazineSize,
   statSlotChoices: statSlotChoices,

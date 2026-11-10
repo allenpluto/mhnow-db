@@ -445,6 +445,28 @@
           'Critical Element, Elemental Release and the Vital skills are excluded.'
         : 'Only ' + W.element + ' skills are considered; other elements cannot help this weapon.',
     ]);
+    // Elemental Release and Nergigante Avidity fight each other, and the
+    // winning set often carries one or both, so say so where it applies.
+    var topTotals = out.results[0] ? out.results[0].totals || {} : {};
+    if (topTotals['Elemental Release'] || topTotals['Nergigante Avidity']) {
+      var hasAv = !!topTotals['Nergigante Avidity'];
+      var hasValor = !!topTotals.Valor;
+      lines.push('Elemental Release is not a loose uptime: it gives element +100% at Lv5 ' +
+        'for a stated 20 seconds after each Special Skill, so what matters is how many ' +
+        'Specials a hunt yields. Nergigante Avidity stops the Special Gauge filling from ' +
+        'attacking altogether, so a set carrying it only gets the Special you open with ' +
+        'and the one Valor grants on the first roar.' +
+        (hasAv
+          ? ' This set takes Avidity, so Elemental Release is held at ' +
+            Math.round(E.elemReleaseUptime(1, hasValor ? 1 : 0) * 100) + '% over ' +
+            a.huntSeconds + 's' + (hasValor ? ', Valor\'s free Special included' :
+              ' — adding Valor would double it') + '.'
+          : ' This set leaves the gauge alone, so it is held at the assumed ' +
+            Math.round(a.elementalReleaseUptime * 100) + '%, which is ' +
+            (a.elementalReleaseUptime * a.huntSeconds / a.specialSeconds).toFixed(1) +
+            ' Specials over ' + a.huntSeconds + 's. That count is a guess and is the ' +
+            'next thing due to be measured.'));
+    }
     if (Object.keys(ignored).length) {
       lines.push('On the winning set, these skills are scored as zero because damage cannot price them: ' +
         Object.keys(ignored).sort().join(', ') + '.');
