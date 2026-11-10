@@ -64,6 +64,33 @@ And the Spiral Slash itself is far better than the segment average suggested.
 Across 6.0s to 9.0s, the airborne part, it runs at 3239 dmg/s - nearly double
 Demon Mode standing and about three and a half times normal stance.
 
+THE TWO SPIRAL SLASHES, SEPARATELY. The hit record isolates them cleanly: the
+airborne spin is far denser than anything on the ground, 7 or 8 hits a second
+against 2 or 3.
+
+   first slash    airborne hits 6.75s - 8.20s    1.45s, 12 hits, 8422 dmg
+   second slash   airborne hits 20.85s - 21.60s  0.75s,  7 hits, 5362 dmg
+
+So the second really is about HALF as long in the air, which is the red mark
+at the centre of the energy bar having been spent on the first. The first
+slash also collapsed the bar outright - 74% to 0 between 5.4s and 6.9s - while
+the second drained it at the ordinary 6.7%/s and took nothing extra.
+
+But it is not weaker while it lasts. Per hit it is slightly HARDER, 766
+against 702. Counting each whole cycle from the last attack on the ground to
+half a second past the last hit in the air:
+
+   first slash    6.10s - 8.70s   2.60s   8422 dmg   3239 dmg/s
+   second slash   20.40s - 22.10s 1.70s   5362 dmg   3154 dmg/s
+
+Within a rounding error of each other. The red mark buys DURATION, not power:
+the second slash delivers 36% less damage because it is 35% shorter, not
+because it hits any softer.
+
+The landing moment is the soft part of this - the counter only shows that no
+damage lands after it, not the exact frame of touchdown - so the half second
+allowed for the descent is the same for both rather than measured for each.
+
 Neither effect is a big opening hit, and neither is the recorder stuttering.
 No style's FIRST interval is its slowest of the six, so a large first hit is
 not inflating it; and a stutter would show as a flat stretch, where Feral
