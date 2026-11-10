@@ -159,9 +159,13 @@ bar's life plus 17.9 seconds of refilling:
 
 Against the 5/10/15% assumed. Lower, but the same shape, and Lv3 at 12% is
 close enough to the user's 15% that the estimate from play was a good one.
-The engine now carries the measured ladder for Dual Blades and leaves the
-other six weapon types on the assumed one, since the mechanic Power Prolonger
-slows is different on each.
+
+The engine now uses this ladder on ALL SEVEN weapon types the skill names, at
+the user's direction, not only on Dual Blades. The mechanic it slows differs
+on each - a spirit gauge, a phial charge, a song - so that is an
+extrapolation, and the better of the two options on offer: a number measured
+on one weapon beats one measured on none. If another type is ever timed it
+should get its own entry rather than displacing this.
 
 A DUMMY CANNOT SEE ALL OF IT. Demon Mode's other advantage is attacking
 through a slide while a monster is swinging at you, and nothing here measures
