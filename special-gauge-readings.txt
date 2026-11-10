@@ -1,0 +1,101 @@
+Special Gauge and Elemental Release, measured from video
+========================================================
+
+Why it matters
+--------------
+Elemental Release is not a free-floating uptime. The skill reads "elemental
+attack power increases by 100% for 20 secs. after activating a Special Skill",
+so the uptime is 20 seconds times how many Specials a hunt yields, over its
+length. Everything below is about counting Specials.
+
+Method
+------
+The Special button is tracked frame by frame off recordings resampled to a
+constant 20fps, by counting the warm-coloured pixels of the wedge filling it.
+Firing the Special empties the button, which shows as a sustained full reading
+followed by a fall.
+
+What the HUD actually does, learned the hard way
+------------------------------------------------
+   - The button is a DIFFERENT SIZE for different weapons, on the same device
+     and the same recorder: radius about 21px on an Insect Glaive, about 43px
+     on Dual Blades. It has to be located per recording, not assumed.
+   - On a training dummy the fill reads yellow; in a real hunt it reads
+     orange. One colour test will not do for both.
+   - The pre-fight start button is the same colour in nearly the same place,
+     which reads as a Special fired before the fight has begun.
+   - DUAL BLADES use the same button for two things. One press enters Demon
+     Mode; a second press while the gauge is full fires the Special. A red
+     swirl on the button means Demon Mode is running and the gauge is NOT
+     full, so long red stretches are not a stolen or empty gauge.
+   - Also on Dual Blades, the yellow bar under the health bar is Demon Mode's
+     own energy, which drains while Demon Mode is up. POWER PROLONGER SLOWS
+     THAT DRAIN. That makes Power Prolonger measurable - see the open items.
+
+How fast the gauge fills
+------------------------
+Two training-dummy runs, attacking without pause:
+
+   Charge Blade,  attack 1450    39.1s and 40.9s between Specials
+   Insect Glaive, attack 1155    42.0s and 33.3s
+
+Two weapons 26% apart on attack and TWICE apart on hit rate - 1.2 against 2.5
+hits a second - refilled in near enough the same wall-clock time. So the gauge
+fills on TIME SPENT ATTACKING, not on damage dealt and not on hits landed.
+About 38 seconds of uninterrupted attacking buys one Special.
+
+One real hunt, same Insect Glaive, solo against Rajang: Special fired at 6.9s,
+gauge back to 67% by 41.4s, so a full refill would have taken 51.6s. About a
+third longer than the dummy, which is the price of not attacking continuously.
+The engine uses 52s.
+
+A real hunt end to end
+----------------------
+Dual Blades, three players, 5-star Riftborne Deviljho, with Valor 3 and
+Special Partbreaker 5. The hunt timer read 60 at video t=40, so it began at
+t=25 and ran the standard 75 seconds. Specials fired at video t = 34, 47 and
+68, which is 9s, 22s and 43s into the hunt.
+
+   windows   9-29, 22-42, 43-63
+   merged    9-42, 43-63
+   up for    53s of 75s = 70.7%
+
+The engine computes 80% for that hunt - three Specials times 20 seconds over
+75 - because it assumes the windows do not overlap. Here the first two were
+fired 13 seconds apart, so 7 seconds of the second window fell inside the
+first and bought nothing.
+
+So the structure is right and the arithmetic is optimistic by exactly the
+overlap. The cause is not the game but the player: firing a Special the moment
+the gauge fills wastes Elemental Release when a previous window is still
+running. Worth knowing as play advice, and worth not over-fitting a correction
+to from one hunt.
+
+Valor and Special Partbreaker both hand over gauge outright rather than
+earning it, which is what let three Specials fire in a 75-second hunt when the
+natural refill alone would have given two.
+
+What this leaves
+----------------
+   40s hunt    50%        these are what the engine now uses, against the
+   75s hunt    53%        flat 35% that was assumed before any of it was
+   150s hunt   40%        measured
+
+With Valor adding its free Special: 100%, 80% and 53%. With Nergigante
+Avidity, which stops the gauge filling from attacking at all: 50%, 27% and
+13%, or 100%, 53% and 27% if Valor is also carried.
+
+Open items
+----------
+   - POWER PROLONGER is still a flat 5/10/15% guess across seven weapon
+     types. On Dual Blades it is now known to slow the Demon Mode energy
+     drain, and that bar is on screen under the health bar. Timing Demon Mode
+     from entry to collapse at Power Prolonger 0 and again at 3 would turn
+     that guess into a measurement, on the weapon where the skill matters
+     most.
+   - BURST is a flat 35% guess. The skill states its own duration, "+30%
+     attack for 4 seconds" after consecutive hits, so only the trigger rate
+     needs reading, and the banner that announces it is on screen. Footage
+     carrying Burst 5 already exists.
+   - Specials fired close together waste uptime, and the engine does not
+     model it. One hunt is not enough to say how much is typically wasted.

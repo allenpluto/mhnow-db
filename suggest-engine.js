@@ -83,6 +83,18 @@ const ASSUME = {
    * longer than the dummy, which is the price of not being able to attack
    * continuously. That stretch is one fight by one player, so it is the
    * softest number here.
+   *
+   * CHECKED END TO END against a 75-second hunt carrying Valor 3 and Special
+   * Partbreaker 5, which fired Specials 9s, 22s and 43s in. The windows they
+   * open run 9-29, 22-42 and 43-63, which merge to 53 seconds of the 75 —
+   * 70.7%. This function returns 80% for that hunt, because it counts three
+   * whole 20-second windows and the first two overlapped by seven seconds.
+   *
+   * So the shape is right and the number is optimistic by exactly the
+   * overlap. That is the player rather than the game: firing a Special the
+   * moment the gauge fills throws away whatever is left of the window still
+   * running. One hunt is not enough to fit a correction to, so none is
+   * applied — see special-gauge-readings.txt.
    */
   specialSeconds: 20,            // the skill's own stated duration
   specialRefillSeconds: 52,      // measured in a real fight
