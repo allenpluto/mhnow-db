@@ -85,7 +85,7 @@ With Valor adding its free Special: 100%, 80% and 53%. With Nergigante
 Avidity, which stops the gauge filling from attacking at all: 50%, 27% and
 13%, or 100%, 53% and 27% if Valor is also carried.
 
-Burst: the limit is activation, not duration
+Burst: the limit is activation, not duration   [SUPERSEDED BELOW]
 ---------------------------------------------
 Burst is "+30% attack for 4 seconds" after consecutive hits, and CRUCIALLY the
 four seconds RESET on every hit landed while it is up. So once it starts it
@@ -128,6 +128,49 @@ left open.
 What would fix it: any dummy recording where the top-left corner holds SKY
 rather than ground. The Charge Blade run has it and reads perfectly; it is
 purely a matter of where the camera points.
+
+Burst, settled: 50%
+-------------------
+THE HIT COUNTER CAPS AT 99. Once pegged it stops changing while the fight
+carries on, and every chain read off it after that point is wrong - one run
+appeared to have a thirteen-second lull in the middle when the player had in
+fact never stopped attacking. The Total Damage digits keep climbing and are
+the signal to use. All the chains below are read from those.
+
+   Charge Blade dummy, Axe Boost     longest lull 2.55s    ceiling  98%
+   Charge Blade dummy, earlier       3 chains              ceiling  97%
+   Insect Glaive dummy               one chain, 0.7-81.0   ceiling  99%
+   real hunt, Rajang, solo           longest lull 2.55s    ceiling 100%
+   real hunt, Deviljho, 3 players    4 lulls over 6s       ceiling  87%
+
+The chain barely ever breaks. A real SOLO hunt held one unbroken chain for its
+whole length - the expectation that a moving, attacking monster would shred
+Burst's uptime turns out not to hold there, because a hit every four seconds
+is a very low bar. Only the three-player hunt broke it, costing an eighth of
+the time.
+
+So uptime is set by the FIRST ACTIVATION and nothing else. On the two Charge
+Blade runs where the banner is legible the first activation came 41.7s into
+one and 12.5s into the other, giving 51% and about 78% of their length.
+
+The engine now carries 50%, the lower of the two, against the 35% that was
+assumed. Slow activation is the risk worth respecting, and a fast weapon has
+still never been read.
+
+Two detector notes, both earned the hard way. The banner must be found by its
+WIDTH - a wide continuous bar of panel colour - not by panel-coloured pixels,
+which also catches white sparks against the sky and the grey UI strip at the
+left edge. And even that fails where the background is dark ground, which is
+every Insect Glaive recording so far; the same false positives at 19s, 33s,
+50s and 67s survive both tests and are scenery.
+
+A caveat on the banner itself: it has twice appeared while the buff should
+still have been running by the four-second rule, once in each Charge Blade
+run. Either it re-announces while active, or the refresh needs hits closer
+together than four seconds apart. The user, who was playing, reads the second
+case and puts the lapse at a long sword-to-axe transition. The two readings
+differ by only a few points on these runs - 74% against 81% - so nothing here
+turns on it.
 
 Open items
 ----------

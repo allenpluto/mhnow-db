@@ -62,8 +62,40 @@ const ASSUME = {
   // lowered: a weak point is not always available, and a buff with a short
   // window is not up as often as it feels.
   weakPointUptime: 0.70,   // Weakness Exploit only applies on a weak point
-  burstUptime: 0.35,
   offensiveGuardUptime: 0.00,   // zero unless you actually guard
+
+  /* Burst, MEASURED rather than guessed, though on one weapon only.
+   *
+   * The skill is "+30% attack for 4 seconds" after consecutive hits, and the
+   * four seconds RESET on every hit landed while it is up. So the four is not
+   * a duration, it is the longest pause allowed, and what limits the skill is
+   * not how long it lasts but how long it takes to start.
+   *
+   * Reading the hit record off the TOTAL DAMAGE digits — the HIT counter caps
+   * at 99 and then stops moving while the fight carries on, which cost one
+   * wrong answer — the chain barely ever breaks:
+   *
+   *   Charge Blade dummy, Axe Boost     longest lull 2.55s   ceiling  98%
+   *   Charge Blade dummy, earlier       3 chains             ceiling  97%
+   *   Insect Glaive dummy               one chain            ceiling  99%
+   *   real hunt, Rajang, solo           longest lull 2.55s   ceiling 100%
+   *   real hunt, Deviljho, 3 players    4 lulls over 6s      ceiling  87%
+   *
+   * Even a real solo hunt holds an unbroken chain for its whole length. Only
+   * the three-player hunt broke it, and only for an eighth of the time.
+   *
+   * Uptime is therefore set by the first activation. Two Charge Blade runs
+   * where the banner is legible — it needs sky behind it, not ground — put
+   * that at 41.7s into one run and 12.5s into another, giving 51% and about
+   * 78% of their length. The lower of the two is taken here, because slow
+   * activation is the risk and a fast weapon has never been read: the glaive
+   * recordings all have dark ground behind the banner and no test has yet
+   * separated it from scenery.
+   *
+   * Still an extrapolation from one weapon to all of them, like Power
+   * Prolonger. 50% measured somewhere beats 35% measured nowhere.
+   */
+  burstUptime: 0.50,
 
   /* Elemental Release is not a free-floating uptime. The skill gives element
    * +100% for a stated 20 seconds after each Special Skill, so the uptime is
