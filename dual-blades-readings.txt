@@ -226,10 +226,17 @@ The dot is worth FIVE MORE HITS, a third again, at identical power - 498
 against 508 is noise. It buys duration and nothing else, which is what the
 first pair of slashes suggested and this now says cleanly.
 
-Burst's contribution, incidentally. The same with-the-dot slash ran 11560 with
-Burst 5 against 9968 without, a factor of 1.16. Burst 5 is +30% attack, so it
-was up for a little over half of that move - which matches the user seeing its
-banner announce itself as the move finished.
+NO BURST UPTIME CAN BE READ OFF THIS. An earlier draft divided the same slash
+with Burst 5, 11560, by the figure without it, 9968, and called the resulting
+1.16 on a +30% skill "Burst up for half the move". That is wrong. Burst does
+not cover the Burst-5 runs evenly - it came up partway through one move and
+was already running at the start of another, since a slash taken straight
+after a previous one inherits a buff that is still live. A ratio between two
+moves with different Burst coverage measures the difference in coverage, not
+the skill.
+
+Which is exactly why the runs above were redone with the skill off the set,
+and why only those numbers are used here.
 
 A WRONG READING CORRECTED. An earlier draft of this file took three groups of
 exactly fifteen hits in the Power Prolonger 3 run - 8500 damage, 8500 again,
