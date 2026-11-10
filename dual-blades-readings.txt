@@ -37,7 +37,39 @@ Damage per second, measured
    Spiral Slash   the Spiral Slash    1753     2.60      672
    Spiral Slash   normal               896     2.34      383
 
-Three findings fall out.
+THE SEGMENT AVERAGES ABOVE MISLEAD ON TWO ROWS. Sampling the damage counter
+every 1.5s through the first nine seconds of each run shows why:
+
+   seconds     No style demon    Feral demon     Spiral Slash style
+   0.3 - 1.5        1338 dmg/s       554 dmg/s         947 dmg/s
+   1.5 - 3.0        1811            1071              1551
+   3.0 - 4.5        2639             887              1095
+   4.5 - 6.0         984            1559               960
+   6.0 - 7.5        2016            2159              3096   <- airborne
+   7.5 - 9.0        1871            1752              3383   <- airborne
+
+Feral RAMPS. Its first three seconds run at a third of its later rate, because
+the measured window contains the entry into Feral Demon Mode while No style's
+window does not - that recording was already in Demon Mode at frame zero. Take
+the ramp out and compare like with like, 4.5s to 9.0s in both:
+
+   No style demon   1624 dmg/s
+   Feral demon      1823 dmg/s
+
+So Feral is NOT weaker once it is running; it is 12% stronger, which is what
+the style promises. Its problem is that a roughly three-second entry eats a
+large share of a window that only lasts 7.4 seconds.
+
+And the Spiral Slash itself is far better than the segment average suggested.
+Across 6.0s to 9.0s, the airborne part, it runs at 3239 dmg/s - nearly double
+Demon Mode standing and about three and a half times normal stance.
+
+Neither effect is a big opening hit, and neither is the recorder stuttering.
+No style's FIRST interval is its slowest of the six, so a large first hit is
+not inflating it; and a stutter would show as a flat stretch, where Feral
+shows a steady climb.
+
+Three further findings fall out.
 
 DEMON MODE IS WORTH 1.76x NORMAL on No style, standing still. It gets there
 from both directions: 43% more damage a hit and 29% more hits a second.
@@ -47,12 +79,15 @@ often - 4.22 hits a second against 3.26 - but each hit is worth half as much,
 288 against 557, so it nets 1216 against 1732. Movement is bought with damage,
 not given free.
 
-FERAL DEMON MODE LOSES TO ITS OWN NORMAL STANCE, 1369 against 1912. The user
-predicted this from feel before it was measured. What makes it stranger is
-that the Feral style's NORMAL stance is nearly twice No style's - 1912 against
-985 - which is the single number here most worth re-checking, since the other
-two styles agree with each other on normal stance (985 and 896) and only this
-one does not.
+FERAL DEMON MODE LOSES TO ITS OWN NORMAL STANCE over a whole window, 1369
+against 1912 - which the user predicted from feel. But the cause is the entry
+ramp above, not weak attacks: running, Feral beats No style's Demon Mode. The
+style is a short expensive burst with a long start, and the start is most of
+why it does not pay.
+
+The Feral style's NORMAL stance at 1912 is the single number here most worth
+re-checking, since the other two styles agree with each other on normal stance
+- 985 and 896 - and only this one is nearly double.
 
 What that makes of the whole cycle
 ----------------------------------
