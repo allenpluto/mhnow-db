@@ -179,9 +179,71 @@ length. Pricing that properly needs the 1912 figure for Feral's normal stance
 re-checked first, since it is what decides whether Feral's Demon Mode is worth
 entering at all.
 
+Feral's normal stance: confirmed, and it is the best thing on the weapon
+------------------------------------------------------------------------
+A dedicated run, Feral Demon Mode style, normal stance only, attacking without
+pause. The counter is almost perfectly linear:
+
+    6.0s   8706 dmg   17 hits
+   11.0s  18458       34
+   16.0s  28210       51
+   21.0s  37962       68
+
+Exactly 9752 damage and 17 hits in every five seconds. 1950 dmg/s, 3.4 hits a
+second, 574 a hit. The earlier 1912 was right.
+
+So the Feral style's NORMAL stance out-damages everything else measured on
+this weapon:
+
+   Feral style, normal stance     1950 dmg/s
+   Feral style, demon (running)   1823
+   No style, demon, standing      1732
+   No style, demon, moving        1216
+   No style, normal                985
+   Spiral style, normal            896
+
+Against No style's normal at 985, Feral's normal does double - from both
+directions, 574 a hit against 389 and 3.40 hits a second against 2.53.
+
+The consequence is awkward and worth stating plainly: on the Feral style the
+best sustained damage is to NEVER ENTER DEMON MODE. Cycling it gives 1777
+dmg/s, and 1792 even with Power Prolonger 3 stretching the window, against
+1950 for simply not bothering. Power Prolonger is worth nothing on a style
+whose Demon Mode you should not use.
+
+That is a dummy result. Demon Mode's other half is attacking through a slide
+while a monster swings at you, which no dummy can show.
+
+The red dot, isolated
+---------------------
+Two runs of Spiral Slash, slashing only in Demon Mode.
+
+   with the dot      20 hits   11560 dmg    578 a hit
+   without the dot   15 hits    8500 dmg    567 a hit
+
+The dot is worth five more hits, a third again, at the same power - 578
+against 567 is within 2%. It buys DURATION, as the first pair of slashes
+already suggested, and the larger sample says the same thing.
+
+Power Prolonger multiplies the slashes, not just the window
+-----------------------------------------------------------
+The bar cost of a slash is not fixed:
+
+   Power Prolonger 0   one slash took the bar from 94% to 1%
+   Power Prolonger 3   one slash took it from 100% to 67%
+
+93% against 33%, a ratio of 0.35 where the passive drain's ratio is 0.40. So
+Power Prolonger appears to cut the slash's own cost by about the same factor
+as it cuts the passive drain - which means roughly THREE slashes per bar at
+Lv3 against one at Lv0, exactly as the user predicted before recording it.
+
+On that style Power Prolonger is therefore worth far more than the 12% the
+engine now carries, since it triples the number of the weapon's hardest
+attack rather than merely lengthening a window. One run each, so the 0.35 is
+a single observation rather than a ladder.
+
 What to record next
 -------------------
-Feral Demon Mode, normal stance, one clean stretch of continuous attacking -
-enough to settle whether it really is 1912 dmg/s against the 985 and 896 the
-other two styles give. It is the one number here that nothing corroborates,
-and two conclusions rest on it.
+Nothing urgent. If the Spiral Slash figure is ever worth pinning, a Lv1 and
+Lv2 run would turn that single 0.35 into a ladder and say whether the slash
+cost falls with the same 20% a level as the passive drain does.
