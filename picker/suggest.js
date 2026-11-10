@@ -420,10 +420,10 @@
     }
     lines = lines.concat([
       'Assumptions: average health ' + (a.hpFraction * 100) + '% (the Vital skills), ' +
-        'Valor ' + (a.valorUptime * 100) + '% uptime, Elemental Release ' +
-        (a.elementalReleaseUptime * 100) + '%, Burst ' + (a.burstUptime * 100) + '%, ' +
+        'Valor ' + (a.valorUptime * 100) + '% uptime, Burst ' + (a.burstUptime * 100) + '%, ' +
         'Weakness Exploit ' + (a.weakPointUptime * 100) + '%, ' +
-        'the health-threshold skills at ' + (a.peakPerformanceUptime * 100) + '%.',
+        'the health-threshold skills at ' + (a.peakPerformanceUptime * 100) + '%. ' +
+        'Elemental Release is no longer among them — it is measured.',
       'Over a ' + a.huntSeconds + 's hunt, Latent Power is up for ' +
         Math.round(Math.max(0, (a.huntSeconds - a.latentPowerStart) / a.huntSeconds) * 100) +
         '% and Rising Tide averages ' + (30 * ((a.huntSeconds - 25) / a.huntSeconds +
@@ -453,19 +453,17 @@
       var hasValor = !!topTotals.Valor;
       lines.push('Elemental Release is not a loose uptime: it gives element +100% at Lv5 ' +
         'for a stated 20 seconds after each Special Skill, so what matters is how many ' +
-        'Specials a hunt yields. Nergigante Avidity stops the Special Gauge filling from ' +
-        'attacking altogether, so a set carrying it only gets the Special you open with ' +
-        'and the one Valor grants on the first roar.' +
-        (hasAv
-          ? ' This set takes Avidity, so Elemental Release is held at ' +
-            Math.round(E.elemReleaseUptime(1, hasValor ? 1 : 0) * 100) + '% over ' +
-            a.huntSeconds + 's' + (hasValor ? ', Valor\'s free Special included' :
-              ' — adding Valor would double it') + '.'
-          : ' This set leaves the gauge alone, so it is held at the assumed ' +
-            Math.round(a.elementalReleaseUptime * 100) + '%, which is ' +
-            (a.elementalReleaseUptime * a.huntSeconds / a.specialSeconds).toFixed(1) +
-            ' Specials over ' + a.huntSeconds + 's. That count is a guess and is the ' +
-            'next thing due to be measured.'));
+        'Specials a hunt yields. MEASURED off gameplay video, the gauge refills on time ' +
+        'spent attacking rather than on damage or hits — about 38 seconds of ' +
+        'uninterrupted attacking on a training dummy, and ' + a.specialRefillSeconds +
+        's in a real fight, where you cannot attack continuously. Nergigante Avidity ' +
+        'stops the gauge filling from attacking at all, so a set carrying it only gets ' +
+        'the Special you open with and the one Valor grants on the first roar.' +
+        ' This set ' + (hasAv ? 'takes Avidity' : 'leaves the gauge alone') +
+        (hasValor ? ' and carries Valor' : '') + ', so Elemental Release is up for ' +
+        Math.round(E.elemReleaseUptime(hasAv ? 1 : 0, hasValor ? 1 : 0) * 100) +
+        '% of a ' + a.huntSeconds + 's hunt' +
+        (hasAv && !hasValor ? ' — adding Valor would roughly double it' : '') + '.');
     }
     if (Object.keys(ignored).length) {
       lines.push('On the winning set, these skills are scored as zero because damage cannot price them: ' +

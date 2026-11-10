@@ -62,21 +62,31 @@ const ASSUME = {
   // lowered: a weak point is not always available, and a buff with a short
   // window is not up as often as it feels.
   weakPointUptime: 0.70,   // Weakness Exploit only applies on a weak point
-  elementalReleaseUptime: 0.35,
   burstUptime: 0.35,
   offensiveGuardUptime: 0.00,   // zero unless you actually guard
 
-  // Elemental Release is not a free-floating uptime: the skill gives element
-  // +100% for a stated 20 seconds after each Special Skill, so the uptime is
-  // 20s times how many Specials a hunt yields, over its length. The count is
-  // what is unknown, and the figure above is still a guess standing in for it
-  // — 0.35 of a 75s hunt is 1.3 Specials, which is what it has always meant.
-  //
-  // It is spelled out here because Nergigante Avidity stops the gauge filling
-  // from attacking altogether, and then the count is not a rate at all: it is
-  // whatever the hunt hands you outright. See elemReleaseUptime().
-  specialSeconds: 20,
-  openWithSpecial: true,   // you can enter a hunt with the gauge already full
+  /* Elemental Release is not a free-floating uptime. The skill gives element
+   * +100% for a stated 20 seconds after each Special Skill, so the uptime is
+   * 20s times how many Specials a hunt yields, over its length — and the
+   * Special count is now MEASURED rather than guessed.
+   *
+   * Two training-dummy recordings, attacking without pause:
+   *   Charge Blade, attack 1450    39.1s and 40.9s between Specials
+   *   Insect Glaive, attack 1155   42.0s and 33.3s
+   * Two weapons 26% apart on attack and TWICE apart on hit rate (1.2 against
+   * 2.5 hits a second) refilled in near enough the same wall-clock time, so
+   * the gauge is filling on time spent attacking rather than on damage dealt
+   * or hits landed. About 38 seconds of uninterrupted attacking per Special.
+   *
+   * One real hunt with the same glaive: Special fired at 6.9s, gauge back to
+   * 67% by 41.4s, so a full refill would have taken 51.6s — about a third
+   * longer than the dummy, which is the price of not being able to attack
+   * continuously. That stretch is one fight by one player, so it is the
+   * softest number here.
+   */
+  specialSeconds: 20,            // the skill's own stated duration
+  specialRefillSeconds: 52,      // measured in a real fight
+  openWithSpecial: true,         // you can enter a hunt on a full gauge
 
   // Threshold skills. An average of 60% health means full health and sub-29%
   // health are both occasional, so these are weighted at a tenth of nominal
@@ -696,9 +706,11 @@ function statSlotChoices(w) {
  * How much of the hunt Elemental Release is up for.
  *
  * The skill reads "elemental attack power increases by 100% for 20 secs. after
- * activating a Special Skill", so this is 20s per Special over the hunt. What
- * fills the gauge is landing hits — not damage, since a grade 10 weapon at
- * nearly twice a grade 8's attack charges no faster.
+ * activating a Special Skill", so this is 20s per Special over the hunt, and
+ * the Special count comes from the measured refill — see ASSUME. It works out
+ * at about half a hunt whatever the hunt's length: 50% over 40 seconds, 53%
+ * over 75, 40% over 150. All of those are well above the 35% that used to be
+ * assumed here.
  *
  * NERGIGANTE AVIDITY BREAKS THAT. Its own text is "Damage increased by 20%,
  * but Special Gauge will no longer fill when attacking", so a set carrying it
@@ -715,8 +727,13 @@ function statSlotChoices(w) {
  * often each fires is unknown, so none is counted.
  */
 function elemReleaseUptime(avidityLevel, valorLevel) {
-  if (!avidityLevel) return ASSUME.elementalReleaseUptime;
-  const specials = (ASSUME.openWithSpecial ? 1 : 0) + (valorLevel ? 1 : 0);
+  let specials = ASSUME.openWithSpecial ? 1 : 0;
+  // Valor's roar hands over a full gauge outright, so it survives Avidity and
+  // adds a Special that would otherwise have had to be earned.
+  if (valorLevel) specials += 1;
+  if (!avidityLevel) {
+    specials += Math.floor(ASSUME.huntSeconds / ASSUME.specialRefillSeconds);
+  }
   if (!specials) return 0;
   return Math.min(1, ASSUME.specialSeconds * specials / ASSUME.huntSeconds);
 }
