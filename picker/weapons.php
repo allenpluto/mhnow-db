@@ -429,11 +429,23 @@ function asset($f) {
   <b>Critical Boost 1 (130%)</b> with Critical Element 5 multiplying on top of it, on element only:
   the critting element share deals 1.30 &times; 1.80 = <b>2.34</b>.
   ATK &times; (1 + a &times; 0.30) + ELE &times; a &times; 2.34 + ELE &times; (1 &minus; a).
+  <span class="a">Rel ELE</span> &mdash; the same five levels spent on <b>Elemental Release 5</b>
+  instead of Critical Element 5, same affinity <b>a</b> and Critical Boost 1.
+  The skill is element +100% for 20 seconds after each Special Skill, and the Special gauge was
+  <b>measured from gameplay video</b>: it fills on time spent attacking, not on damage or hits &mdash;
+  about 38s of uninterrupted attacking on a training dummy, around 52s in a real fight.
+  That is near <b>half of any hunt</b> (50% over 40s, 53% over 75s, 40% over 150s), so element is
+  lifted <b>&times;1.50</b> on the critting and non-critting share alike:
+  (ATK &times; (1 + a &times; 0.30)) + 1.50 &times; ELE &times; (a &times; 1.30 + (1 &minus; a)).
+  It beats Crit ELE on <b>every</b> weapon with real element, because it does not need the crit to land
+  &mdash; but it assumes you <b>open the hunt on a full gauge</b>, which costs an item.
+  Critical Element needs nothing, so its column stays.
   <span class="a">CF ATK</span> &mdash; final affinity <b>affinity &minus; 30%</b>, no affinity skills alongside it.
   With n = |final affinity|, a negative crit deals 250% on a measured <b>30%</b> proc and 75% otherwise,
   so Sum &times; ((1 &minus; n) + n &times; 1.275).
-  <span class="a">Best</span> = the highest of those three builds, ignoring any that cannot apply.
-  The table is sorted by it.
+  <span class="a">Best</span> = the highest of <b>Crit ATK, Rel ELE and CF ATK</b>, ignoring any that
+  cannot apply. The table is sorted by it. Crit ELE is shown but left out of Best: Rel ELE beats it on
+  every weapon that has element, so it could never change the answer.
   <br>
   <span class="warn">Blast, Poison, Paralysis and Sleep weapons</span> carry an ELE value that is a status
   <b>buildup rate, not damage</b> &mdash; higher triggers the ailment sooner. Those 110 weapons are treated

@@ -28,6 +28,30 @@
   // together, so that column carries Critical Boost 1 (130%) instead of 5.
   var CRIT_BOOST_LOW = 0.30;  // Critical Boost 1 -> crit damage 130%
   var CRIT_ELEMENT = 1.80;    // Critical Element 5 -> element x1.8, on top of Critical Boost
+
+  // The Rel ELE column spends the same five levels on Elemental Release 5
+  // rather than Critical Element 5, keeping Critical Eye 1, Weakness Exploit 1
+  // and Critical Boost 1 alongside. So the two columns put one question:
+  // which of those two skills is the better use of the same slots?
+  //
+  // Elemental Release 5 is element +100% for 20 seconds after each Special
+  // Skill. The Special gauge was MEASURED off gameplay video, and it fills on
+  // time spent attacking rather than on damage or hits: about 38 seconds of
+  // uninterrupted attacking on a training dummy, around 52 in a real fight.
+  // At 20 seconds a Special that works out near half of any hunt - 50% over
+  // 40 seconds, 53% over 75, 40% over 150 - so the element multiplier is
+  // 1 + 1.00 x 0.50.
+  //
+  // THAT ASSUMES YOU OPEN THE HUNT ON A FULL GAUGE, which in game costs an
+  // item. Critical Element needs nothing, which is why its column stays even
+  // though it now loses on every element weapon in the data.
+  var ELEM_RELEASE = 1.00;      // Elemental Release 5 -> element +100% while up
+  var ELEM_RELEASE_UP = 0.50;   // measured; see above
+
+  // Critical Element is kept as a column but left OUT of Best. It is beaten by
+  // Elemental Release on all 420 weapons carrying real element, so including
+  // it could never change the answer, and leaving it in suggested otherwise.
+  var BEST_COLUMNS = ['critAtk', 'relEle', 'cfAtk'];
   var BASE_CRIT = 1.25;     // an ordinary crit is 125%
   var NEG_CRIT = 0.25;      // an ordinary negative crit is 75%, i.e. -25%
   var CF_AFFINITY = 30;     // Critical Ferocity 5 subtracts 30 affinity
@@ -70,7 +94,7 @@
 
     // --- builds carrying Critical Eye 1 + Weakness Exploit 1 --------------
     var c = clamp(w.aff + CRIT_AFFINITY) / 100;   // final affinity
-    var critAtk = null, critEle = null;
+    var critAtk = null, critEle = null, relEle = null;
     if (c >= 0) {
       // Critical Boost 5: the critting share of the whole hit deals 150%.
       critAtk = sum * (1 + c * CRIT_BOOST);
@@ -81,6 +105,14 @@
       critEle = w.atk * (1 + c * CRIT_BOOST_LOW)
               + ele * c * (1 + CRIT_BOOST_LOW) * CRIT_ELEMENT
               + ele * (1 - c);
+      // Same build with Elemental Release 5 in place of Critical Element 5.
+      // It lifts the weapon's element value itself, so it applies to the
+      // critting and non-critting shares alike — which is the whole reason it
+      // wins: it does not need the crit to happen.
+      var lifted = ele * (1 + ELEM_RELEASE * ELEM_RELEASE_UP);
+      relEle = w.atk * (1 + c * CRIT_BOOST_LOW)
+             + lifted * c * (1 + CRIT_BOOST_LOW)
+             + lifted * (1 - c);
     }
 
     // --- Critical Ferocity build ------------------------------------------
@@ -99,12 +131,15 @@
     // Best of the three builds. A build that cannot apply is null and simply
     // does not compete; at least one is always available, since the crit
     // columns only blank below -30 affinity and CF only above +30.
+    var all = { critAtk: critAtk, critEle: critEle, relEle: relEle, cfAtk: cfAtk };
     var best = null;
-    [critAtk, critEle, cfAtk].forEach(function (v) {
+    BEST_COLUMNS.forEach(function (k) {
+      var v = all[k];
       if (v !== null && (best === null || v > best)) best = v;
     });
 
-    return { sum: sum, calib: calib, critAtk: critAtk, critEle: critEle, cfAtk: cfAtk, best: best };
+    return { sum: sum, calib: calib, critAtk: critAtk, critEle: critEle,
+      relEle: relEle, cfAtk: cfAtk, best: best };
   }
 
   DATA.weapons.forEach(function (w) {
@@ -133,6 +168,7 @@
     { k: 'calib', h: 'Calib', num: true, calc: true, dp: 0 },
     { k: 'critAtk', h: 'Crit ATK', num: true, calc: true, dp: 0 },
     { k: 'critEle', h: 'Crit ELE', num: true, calc: true, dp: 0 },
+    { k: 'relEle', h: 'Rel ELE', num: true, calc: true, dp: 0 },
     { k: 'cfAtk', h: 'CF ATK', num: true, calc: true, dp: 0 },
     { k: 'best', h: 'Best', num: true, dp: 0, cls: 'bestcol' },
     { k: 'attrText', h: 'Attributes', cls: 'attr' },
