@@ -85,6 +85,38 @@ With Valor adding its free Special: 100%, 80% and 53%. With Nergigante
 Avidity, which stops the gauge filling from attacking at all: 50%, 27% and
 13%, or 100%, 53% and 27% if Valor is also carried.
 
+Burst: one weapon read, the rest defeated by the background
+-----------------------------------------------------------
+Burst states its own duration - "+30% attack for 4 seconds" after consecutive
+hits - so only the trigger times need reading. Each trigger slides a grey
+notice panel into the top left at x 0..130, y 264..310. The panel lasts about
+2.4s, SHORTER than the buff, so it marks the start and the window is counted
+as the skill's own four seconds from there.
+
+   dummy, Charge Blade, Burst 5    2 triggers in 88s, at 41.8s and 51.2s
+                                   up for 8.0s = 9% of the recording
+
+That is attacking without pause the whole time, at 1.2 hits a second. Burst
+wants "consecutive hits in a short span" and a slow heavy weapon rarely
+supplies them, so 9% against the 35% the engine assumes.
+
+THE OTHER TWO RECORDINGS CANNOT BE READ. The banner is a muted grey panel, and
+in the Insect Glaive footage that corner of the screen is dark ground, which
+is the same colour. Two tests were tried and both failed: counting panel
+colour reported 50% and 66% uptime, and spot-checking four of those moments
+showed scenery every time, not a banner; requiring the pixels to be stable
+frame to frame, since UI does not drift with the camera, then rejected
+everything including the real banners, because the static dark ground is
+stable too. The 50% and 66% figures are withdrawn.
+
+So Burst is left at its assumed 35%. One reading on one weapon is not enough
+to replace it, especially when that reading is from the slowest-hitting weapon
+in the set and the skill plainly favours fast ones.
+
+What would fix it: any dummy recording where the top-left corner holds SKY
+rather than ground. The Charge Blade run has it and reads perfectly; it is
+purely a matter of where the camera points.
+
 Open items
 ----------
    - POWER PROLONGER is still a flat 5/10/15% guess across seven weapon
@@ -93,9 +125,16 @@ Open items
      from entry to collapse at Power Prolonger 0 and again at 3 would turn
      that guess into a measurement, on the weapon where the skill matters
      most.
-   - BURST is a flat 35% guess. The skill states its own duration, "+30%
-     attack for 4 seconds" after consecutive hits, so only the trigger rate
-     needs reading, and the banner that announces it is on screen. Footage
-     carrying Burst 5 already exists.
+   - BURST is still a flat 35% guess away from the Charge Blade. A dummy run
+     on a fast weapon, camera pointed so the top-left corner holds sky, gives
+     the other end of the range in one recording.
+   - DEMON MODE on Dual Blades needs its damage measured, not just its
+     length. The dummy's Total Damage counter gives it exactly: attack
+     continuously in normal stance for a stretch, then through a whole Demon
+     Mode until it drops by itself, and the counter at each boundary gives
+     damage per second in both states. The red swirl on the Special button
+     marks the Demon Mode window automatically. Done twice - once without
+     Power Prolonger and once at max - it prices the skill properly: extra
+     seconds of Demon Mode times the gap in damage per second.
    - Specials fired close together waste uptime, and the engine does not
      model it. One hunt is not enough to say how much is typically wasted.
