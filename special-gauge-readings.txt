@@ -85,33 +85,45 @@ With Valor adding its free Special: 100%, 80% and 53%. With Nergigante
 Avidity, which stops the gauge filling from attacking at all: 50%, 27% and
 13%, or 100%, 53% and 27% if Valor is also carried.
 
-Burst: one weapon read, the rest defeated by the background
------------------------------------------------------------
-Burst states its own duration - "+30% attack for 4 seconds" after consecutive
-hits - so only the trigger times need reading. Each trigger slides a grey
-notice panel into the top left at x 0..130, y 264..310. The panel lasts about
-2.4s, SHORTER than the buff, so it marks the start and the window is counted
-as the skill's own four seconds from there.
+Burst: the limit is activation, not duration
+---------------------------------------------
+Burst is "+30% attack for 4 seconds" after consecutive hits, and CRUCIALLY the
+four seconds RESET on every hit landed while it is up. So once it starts it
+runs until a gap longer than four seconds between hits. The four-second figure
+is therefore not the duration at all - it is the maximum pause you may take.
 
-   dummy, Charge Blade, Burst 5    2 triggers in 88s, at 41.8s and 51.2s
-                                   up for 8.0s = 9% of the recording
+That makes the hit record, read off the on-screen HIT counter, the whole
+story. Splitting each recording into chains with no gap over four seconds:
 
-That is attacking without pause the whole time, at 1.2 hits a second. Burst
-wants "consecutive hits in a short span" and a slow heavy weapon rarely
-supplies them, so 9% against the 35% the engine assumes.
+   dummy, Insect Glaive   2.21 hits/s   ONE chain, 0.3-81.0   ceiling 100%
+   dummy, Charge Blade    1.08 hits/s   3 chains              ceiling  97%
+   real fight, Glaive     1.28 hits/s   3 chains              ceiling  99%
 
-THE OTHER TWO RECORDINGS CANNOT BE READ. The banner is a muted grey panel, and
-in the Insect Glaive footage that corner of the screen is dark ground, which
-is the same colour. Two tests were tried and both failed: counting panel
-colour reported 50% and 66% uptime, and spot-checking four of those moments
-showed scenery every time, not a banner; requiring the pixels to be stable
+So duration never binds. On a glaive hitting twice a second the chain does not
+break once in 81 seconds; even the slow Charge Blade only breaks twice in 88.
+
+What binds is ACTIVATION. The Charge Blade's banner - a grey notice panel at
+x 0..130, y 264..310 - fired at 41.8s and 51.2s and nowhere else, despite the
+player attacking from 1.1s onwards. Taking the first of those as the start,
+Burst then rode the hit chain to 81.9s:
+
+   dummy, Charge Blade, Burst 5    up 41.8-81.9 = 40.1s of 88.2s = 45%
+
+Reading 9% earlier was wrong: it counted each banner as a bare four-second
+buff and ignored the refresh.
+
+THE GLAIVE RECORDINGS CANNOT BE READ for activation. The banner is a muted
+grey panel and in that footage the corner of the screen is dark ground, the
+same colour. Counting panel colour gave 50% and 66%, and spot-checking four of
+those moments showed scenery every time; requiring the pixels to be stable
 frame to frame, since UI does not drift with the camera, then rejected
-everything including the real banners, because the static dark ground is
-stable too. The 50% and 66% figures are withdrawn.
+everything including the genuine banners, because static dark ground is stable
+too. Both figures are withdrawn.
 
-So Burst is left at its assumed 35%. One reading on one weapon is not enough
-to replace it, especially when that reading is from the slowest-hitting weapon
-in the set and the skill plainly favours fast ones.
+So one weapon is measured at 45% against the 35% assumed, and its ceiling is
+97%, with the gap being how long Burst took to start. A fast weapon would sit
+near its 100% ceiling if it activates at all readily, which is the question
+left open.
 
 What would fix it: any dummy recording where the top-left corner holds SKY
 rather than ground. The Charge Blade run has it and reads perfectly; it is
@@ -125,9 +137,10 @@ Open items
      from entry to collapse at Power Prolonger 0 and again at 3 would turn
      that guess into a measurement, on the weapon where the skill matters
      most.
-   - BURST is still a flat 35% guess away from the Charge Blade. A dummy run
-     on a fast weapon, camera pointed so the top-left corner holds sky, gives
-     the other end of the range in one recording.
+   - BURST is still a flat 35% guess away from the Charge Blade's 45%. What
+     is missing is how readily it ACTIVATES on a fast weapon, since duration
+     never binds. A dummy run on a fast weapon, camera pointed so the
+     top-left corner holds sky, answers it in one recording.
    - DEMON MODE on Dual Blades needs its damage measured, not just its
      length. The dummy's Total Damage counter gives it exactly: attack
      continuously in normal stance for a stretch, then through a whole Demon
