@@ -99,15 +99,48 @@ weapons into them. Lagombi and Jyuratodus land in the top band and both start
 at a low grade, which is suggestive, while Sinister and Somnacanth both start
 at grade 4 and land in different bands, which kills it.
 
+AND PAOLUMU SETTLES IT. Lumu weapons have base 2113 and no element, and take
+392 at level 20. Black Diablos weapons have base 2658 and take 204. A weapon
+weaker by a fifth draws nearly DOUBLE the compensation, which no scaling of
+the base stats produces in either direction - Mizutsune at base 1363 takes
+only 64. It reads as a number set by hand per monster to prop up the earlier
+sets, and the search for a formula is closed.
+
+A CORRECTION to what is written above. The four pairs that "share base stats
+across different weapon types" are all two weapons of the SAME MONSTER:
+Sinister Set, Black Diablos Set, Mizutsune Set and Somnacanth Set. So what
+they show is narrower than first claimed - the track does not vary by weapon
+type WITHIN a set - and that is exactly what a per-monster hand-set number
+would look like.
+
 So it is a table, not a formula
 --------------------------------
-The fifteen weapons read so far are held as a lookup in the suggester, and
-ticking "spend the three customisation stat slots" fills the attack and
-element boxes from it - a weapon customised far enough to have those slots is
-at the end of its track. Unticking takes the figures back out, but only the
-ones it put in, so a number typed by hand survives. A weapon that has not
-been read says so rather than filling in a guess.
+The readings are held as a lookup in the suggester, and ticking "spend the
+three customisation stat slots" fills the attack and element boxes from it -
+a weapon customised far enough to have those slots is at the end of its
+track. Unticking takes the figures back out, but only the ones it put in, so
+a number typed by hand survives. A weapon that has not been read says so
+rather than filling in a guess.
 
-Reading more weapons would extend the table and might expose the rule; the
-useful ones are weapons whose base stats match one already read, since a
-disagreement there is what broke every hypothesis above.
+The lookup is keyed on SERIES AND BASE STATS, not on the weapon name. Since
+the track does not vary by weapon type within a set, reading one weapon
+covers every weapon of that monster built to the same stat line - which turns
+twelve readings into 100 of the 748 weapons on record. It is deliberately not
+keyed on base stats alone: Rathalos and Zinogre both make a 1463/1420 weapon
+and their tracks are 80/80 and 120/120.
+
+   Sinister Set        1817/516     100/40
+   Halloween Set       1912/417     100/40
+   Halloween Set       1463/1420     80/80
+   Black Diablos Set   2658/0       204/0
+   Paolumu Set         2113/0       392/0
+   Rathalos Set        1463/1420     80/80
+   Zinogre Set         1463/1420    120/120
+   Mizutsune Set       1363/1436     64/96
+   Lagombi Set         1903/785     184/80
+   Somnacanth Set      1878/516     144/52
+   Bazelgeuse Set      2327/309     184/44
+   Jyuratodus Set      1549/1131    156/104
+
+Extending it is now cheap: one weapon screen per monster, at any stat line
+that monster makes. No rule will come out of it, but the coverage will.

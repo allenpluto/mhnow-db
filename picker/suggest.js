@@ -510,30 +510,46 @@
    * are read off the customisation screen, base being the black figure minus
    * the green bracket.
    *
-   * There is no rule yet to compute it for a weapon that has not been read.
-   * It is not the weapon type: four pairs sharing base stats across different
-   * types carry identical tracks. Nor is it the base attack: Bazelhawk
-   * Rookslayer at 2327 and Snow Sisters at 1903 both take Attack +18 then
-   * +28. Something not in the data decides it, so until that is known this
-   * is a table rather than a formula.
+   * There is NO RULE, and the search for one is over. It is not the weapon
+   * type, not the base attack, not any fixed share of the base figures or of
+   * the growth between grades, and not the grade span. Paolumu's weapons
+   * settle it: at base 2113 they take 392, where Black Diablos at base 2658
+   * take 204 — a weaker weapon drawing nearly double the compensation. It
+   * looks hand-set per monster to prop up the earlier sets.
+   *
+   * So it is a table. It is keyed on SERIES AND BASE STATS rather than on the
+   * weapon name, because every pair that was read twice — Sword & Shield
+   * against Dual Blades, Dual Blades against Hammer twice, Dual Blades
+   * against Long Sword — was two weapons of one monster sharing base stats,
+   * and they carried identical tracks. Reading one weapon therefore covers
+   * every weapon of that monster built to the same stat line.
+   *
+   * Matching is deliberately NOT by base stats alone: Rathalos and Zinogre
+   * both make a 1463/1420 weapon and their tracks are 80/80 and 120/120.
    */
-  var CUSTOM_TRACK = {
-    'Sinister Shadekeeper': { atk: 100, ele: 40 },
-    'Sinister Famineblades': { atk: 100, ele: 40 },
-    Skullwhistle: { atk: 100, ele: 40 },
-    'Thanatos Mauls': { atk: 204, ele: 0 },
-    'Chaos Shatterer': { atk: 204, ele: 0 },
-    'Wyvern Lovers': { atk: 80, ele: 80 },
-    Squawkscythe: { atk: 80, ele: 80 },
-    "Despot's Blitz": { atk: 120, ele: 120 },
-    'Evening Dusk': { atk: 64, ele: 96 },
-    Tamonowo: { atk: 64, ele: 96 },
-    'Snow Sisters': { atk: 184, ele: 80 },
-    'Illusory Frilled Claw': { atk: 144, ele: 52 },
-    'Illusory Frilled Blow': { atk: 144, ele: 52 },
-    'Bazelhawk Rookslayer': { atk: 184, ele: 44 },
-    'Water Basher': { atk: 156, ele: 104 },
-  };
+  var CUSTOM_TRACK = [
+    { series: 'Sinister Set', atk: 1817, ele: 516, give: { atk: 100, ele: 40 } },
+    { series: 'Halloween Set', atk: 1912, ele: 417, give: { atk: 100, ele: 40 } },
+    { series: 'Halloween Set', atk: 1463, ele: 1420, give: { atk: 80, ele: 80 } },
+    { series: 'Black Diablos Set', atk: 2658, ele: 0, give: { atk: 204, ele: 0 } },
+    { series: 'Paolumu Set', atk: 2113, ele: 0, give: { atk: 392, ele: 0 } },
+    { series: 'Rathalos Set', atk: 1463, ele: 1420, give: { atk: 80, ele: 80 } },
+    { series: 'Zinogre Set', atk: 1463, ele: 1420, give: { atk: 120, ele: 120 } },
+    { series: 'Mizutsune Set', atk: 1363, ele: 1436, give: { atk: 64, ele: 96 } },
+    { series: 'Lagombi Set', atk: 1903, ele: 785, give: { atk: 184, ele: 80 } },
+    { series: 'Somnacanth Set', atk: 1878, ele: 516, give: { atk: 144, ele: 52 } },
+    { series: 'Bazelgeuse Set', atk: 2327, ele: 309, give: { atk: 184, ele: 44 } },
+    { series: 'Jyuratodus Set', atk: 1549, ele: 1131, give: { atk: 156, ele: 104 } },
+  ];
+
+  function trackFor(w) {
+    if (!w) return null;
+    for (var i = 0; i < CUSTOM_TRACK.length; i++) {
+      var t = CUSTOM_TRACK[i];
+      if (t.series === w.series && t.atk === w.atk && t.ele === w.ele) return t.give;
+    }
+    return null;
+  }
 
   function currentWeapon() {
     return DATA.weapons.filter(function (w) { return w.name === elWeapon.value; })[0];
@@ -550,7 +566,7 @@
   var tracked = { atk: null, ele: null };
   function applyTrack(on) {
     var w = currentWeapon();
-    var t = w && CUSTOM_TRACK[w.name];
+    var t = trackFor(w);
     var set = function (el, key) {
       if (on && t) {
         if (Number(el.value) === 0 || Number(el.value) === tracked[key]) {
