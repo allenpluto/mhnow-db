@@ -270,6 +270,17 @@
         ss.textContent = 'Stat slots: ' + r.detail.statSlots;
         box.appendChild(ss);
       }
+      // Weakness Exploit and Sneak Attack cannot both be held, so a set that
+      // carries either one implies where to stand, and that is worth saying
+      // outright rather than leaving in the score.
+      if (r.detail.stance) {
+        var sn = document.createElement('p');
+        sn.className = 'gems';
+        sn.textContent = r.detail.stance === 'behind'
+          ? 'Stance: behind the monster — this set is scored on Sneak Attack, so Weakness Exploit adds nothing to it'
+          : 'Stance: on the weak point — this set is scored on Weakness Exploit, so Sneak Attack adds nothing to it';
+        box.appendChild(sn);
+      }
 
       if (r.gemText) {
         var g = document.createElement('p');
@@ -432,9 +443,17 @@
     lines = lines.concat([
       'Assumptions: average health ' + (a.hpFraction * 100) + '% (the Vital skills), ' +
         'Valor ' + (a.valorUptime * 100) + '% uptime, Burst ' + (a.burstUptime * 100) + '%, ' +
-        'Weakness Exploit ' + (a.weakPointUptime * 100) + '%, ' +
         'the health-threshold skills at ' + (a.peakPerformanceUptime * 100) + '%. ' +
         'Elemental Release is no longer among them — it is measured.',
+      'WEAKNESS EXPLOIT AND SNEAK ATTACK CANNOT BOTH BE HELD. One needs you on the ' +
+        'weak point, the other behind the monster, and lock-on commits you to one of ' +
+        'them: on the tail about ' + Math.round(a.behindRate * 100) + '% of hits land ' +
+        'from behind, and the fraction that stray onto a head weak point is not worth ' +
+        'counting. So each stance is priced separately — Weakness Exploit at ' +
+        (a.weakPointUptime * 100) + '% on the weak point, Sneak Attack at ' +
+        Math.round(a.behindRate * 100) + '% from behind — and a set keeps the better ' +
+        'of the two, never the sum. A set carrying both gets no more than the stronger ' +
+        'one alone, which is why the winner states a stance.',
       'Over a ' + a.huntSeconds + 's hunt, Latent Power is up for ' +
         Math.round(Math.max(0, (a.huntSeconds - a.latentPowerStart) / a.huntSeconds) * 100) +
         '% and Rising Tide averages ' + (30 * ((a.huntSeconds - 25) / a.huntSeconds +

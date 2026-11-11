@@ -199,6 +199,11 @@ out.results.forEach((r, i) => {
       (r.styleFree ? '   (either style reaches this set — the handling skill did not make it)' : ''));
   }
   if (r.detail.statSlots) console.log('     stats  ' + r.detail.statSlots);
+  if (r.detail.stance) {
+    console.log('     stance ' + (r.detail.stance === 'behind'
+      ? 'behind the monster (Sneak Attack) — Weakness Exploit adds nothing here'
+      : 'on the weak point (Weakness Exploit) — Sneak Attack adds nothing here'));
+  }
   if (r.gemText) console.log('     gems   ' + r.gemText + '   (' + r.slots + ' slot(s))');
   else if (r.gemPotential) {
     const gain = r.gemPotential.detail.dmg - r.detail.dmg;

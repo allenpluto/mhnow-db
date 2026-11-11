@@ -174,10 +174,28 @@ const ASSUME = {
   // applies to every paralysis weapon, not only ones carrying the Exploit.
   paralysisBaseBonus: 0.10,
 
-  // Share of hits landed from behind. Deliberately NOT tied to the weak-point
-  // figure: a weak point can be at the back, so the two overlap rather than
-  // competing, and binding them would wrongly make Weakness Exploit look wasted
-  // on a player who fights from behind.
+  /* STANCE: Weakness Exploit and Sneak Attack are MUTUALLY EXCLUSIVE.
+   *
+   * This file used to treat them as independent, on the reasoning that a weak
+   * point can be at the back, so 70% x 80% of hits collected both. That was
+   * wrong, and the player's own account of how the lock-on works says why:
+   * lock onto the tail and about 80% of hits land from behind, while the 20%
+   * the monster moves out of land on a random spot, perhaps a tenth of those on
+   * the head. Two percent is not a skill. In practice you pick a stance, and
+   * whichever you pick, the other skill scores zero.
+   *
+   * So each stance is priced on its own and the better one wins:
+   *
+   *    on the weak point   Weakness Exploit at weakPointUptime, no Sneak
+   *    from behind         Sneak Attack at behindRate, no Weakness Exploit
+   *
+   * That also resolves a contradiction these two numbers used to carry. 70%
+   * and 80% sum past 100 and could only both be true if weak points were
+   * usually at the back; as per-stance rates they are consistent, each one
+   * describing how well you hold the position you chose.
+   *
+   * score() reports which stance won, so a set can say where to stand.
+   */
   behindRate: 0.80,
 
   // Blast stacks do not arrive evenly. Each threshold is about 30% harder than
@@ -1313,7 +1331,6 @@ function score(totals, w) {
   }
 
   aff += (CEYE[lv('Critical Eye')] || 0);
-  aff += (WEX[lv('Weakness Exploit')] || 0) * ASSUME.weakPointUptime;
   aff += (LATENT[lv('Latent Power')] || 0) * latentUptime();
   aff -= (CFERO_AFF[lv('Critical Ferocity')] || 0);
   aff -= (RAW_AFF[lv('Raw Power')] || 0);
@@ -1329,7 +1346,6 @@ function score(totals, w) {
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
-  mult *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
   mult *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
   mult *= 1 + (FIGHT_SPIRIT[lv('Fighting Spirit')] || 0) *
     fightingSpiritUptime(lv('Nergigante Avidity'), lv('Valor'));
@@ -1340,14 +1356,19 @@ function score(totals, w) {
   });
 
   // --- the status path --------------------------------------------------
+  // Status Sneak Attack needs you behind the monster too, so it belongs to the
+  // behind stance and is worth nothing on the weak point. That makes the
+  // Buildup Boost factor stance-dependent, and nothing else here is.
   let blastBonus = 0;
+  let buildupWeak = 1, buildupBehind = 1;
   if (STATUS.indexOf(w.element) >= 0) {
-    const proc = procChance(lv('Status Sneak Attack'),
-      w.element === 'Blast' ? lv('Blast Exploit') : 0,
-      w.element === 'Blast' ? lv('Teostra Blastpowder') : lv('Chameleos Venomist'));
+    const exLv = w.element === 'Blast' ? lv('Blast Exploit') : 0;
+    const powder = w.element === 'Blast' ? lv('Teostra Blastpowder') : lv('Chameleos Venomist');
+    const bb = BUILDUP_BOOST[lv('Buildup Boost')] || 0;
     // Buildup Boost pays on the hit that procs, so it is the skill's value
     // times how often that happens.
-    mult *= 1 + (BUILDUP_BOOST[lv('Buildup Boost')] || 0) * proc;
+    buildupBehind = 1 + bb * procChance(lv('Status Sneak Attack'), exLv, powder);
+    buildupWeak = 1 + bb * procChance(0, exLv, powder);
 
     const ex = STATUS_EXPLOIT[w.element];
     if (ex) {
@@ -1365,15 +1386,26 @@ function score(totals, w) {
   }
   mult *= styleRate(w);
 
+  // The two stances — see STANCE above.
+  const wexAff = (WEX[lv('Weakness Exploit')] || 0) * ASSUME.weakPointUptime;
+  const sneakMult = (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
+
   // The three stat slots are chosen against this set rather than before it.
   const slots = statSlotChoices(w) || NO_SLOTS;
-  let dmg = -Infinity, pick = null;
+  let dmg = -Infinity, pick = null, stance = null;
   slots.forEach((s) => {
     const a = atk + s.atk;
     const e = elemental ? (ele + s.ele) * (1 + elePct) : 0;
-    let d = critDamage(a, e, aff + s.aff, m, ce, cf) * mult;
-    if (blastBonus) d *= (a + blastBonus) / a;
-    if (d > dmg) { dmg = d; pick = s.label; }
+    const scale = blastBonus ? (a + blastBonus) / a : 1;
+    const onWeakPoint = critDamage(a, e, aff + s.aff + wexAff, m, ce, cf) *
+      mult * buildupWeak * scale;
+    const fromBehind = critDamage(a, e, aff + s.aff, m, ce, cf) * mult *
+      (1 + sneakMult) * buildupBehind * scale;
+    const d = onWeakPoint >= fromBehind ? onWeakPoint : fromBehind;
+    if (d > dmg) {
+      dmg = d; pick = s.label;
+      stance = onWeakPoint >= fromBehind ? 'weak point' : 'behind';
+    }
   });
 
   // Utility, priced as a fraction of damage.
@@ -1386,7 +1418,10 @@ function score(totals, w) {
     util += table[Math.min(lv(n), max)] || 0;
   });
 
-  return { dmg: dmg, util: util, total: dmg * (1 + util), statSlots: pick };
+  // Reporting only: which of the two stances the set was priced on, so a set
+  // can say whether it wants you on the weak point or behind the monster.
+  if (!wexAff && !sneakMult) stance = null;
+  return { dmg: dmg, util: util, total: dmg * (1 + util), statSlots: pick, stance: stance };
 }
 
 /**
@@ -1497,7 +1532,6 @@ function makeScorer(w, damageOnly) {
     }
 
     aff += CEYE[g(v, iCEye)] || 0;
-    aff += (WEX[g(v, iWEx)] || 0) * ASSUME.weakPointUptime;
     aff += (LATENT[g(v, iLat)] || 0) * latentUptime();
     aff -= CFERO_AFF[g(v, iCF)] || 0;
     aff -= RAW_AFF[g(v, iRaw)] || 0;
@@ -1512,7 +1546,6 @@ function makeScorer(w, damageOnly) {
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
-    dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
     dmg *= 1 + (FIGHT_SPIRIT[g(v, iFS)] || 0) *
       fightingSpiritUptime(g(v, iAvidity), g(v, iValor));
@@ -1521,11 +1554,16 @@ function makeScorer(w, damageOnly) {
       dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoBoosts[k].share;
     }
     let blastBonus = 0;
+    // Status Sneak Attack is a behind-the-monster skill, so Buildup Boost is
+    // worth less on the weak point. Everything else here is stance-blind.
+    let buildupWeak = 1, buildupBehind = 1;
 
     if (isStatusW) {
-      const proc = procChance(g(v, iSSA), iBlastEx >= 0 ? g(v, iBlastEx) : 0,
-        iPowder >= 0 ? g(v, iPowder) : 0);
-      dmg *= 1 + (BUILDUP_BOOST[g(v, iBuildup)] || 0) * proc;
+      const exLv = iBlastEx >= 0 ? g(v, iBlastEx) : 0;
+      const powder = iPowder >= 0 ? g(v, iPowder) : 0;
+      const bb = BUILDUP_BOOST[g(v, iBuildup)] || 0;
+      buildupBehind = 1 + bb * procChance(g(v, iSSA), exLv, powder);
+      buildupWeak = 1 + bb * procChance(0, exLv, powder);
       if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
       if (iBlastEx >= 0 && g(v, iBlastEx)) {
         blastBonus = (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * blastAverageStacks();
@@ -1534,13 +1572,22 @@ function makeScorer(w, damageOnly) {
 
     dmg *= sRate;
 
+    // The two stances. Only one can be held, so each is priced on its own and
+    // the better one wins — see STANCE. When a candidate carries neither skill
+    // the two collapse to the same number, so the common case is unaffected.
+    const wexAff = (WEX[g(v, iWEx)] || 0) * ASSUME.weakPointUptime;
+    const sneakMult = 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
+
     // The three stat slots, chosen against this set. One entry when they are
     // off, so the usual case costs one pass of the formula as before.
     let best = -Infinity;
     for (let s = 0; s < slots.length; s++) {
       const a = atk + slots[s].atk;
       const e = elemental ? (ele + slots[s].ele) * (1 + elePct) : 0;
-      let d = critDamage(a, e, aff + slots[s].aff, m, ce, cf) * dmg;
+      const base = aff + slots[s].aff;
+      let d = critDamage(a, e, base + wexAff, m, ce, cf) * dmg * buildupWeak;
+      const b = critDamage(a, e, base, m, ce, cf) * dmg * sneakMult * buildupBehind;
+      if (b > d) d = b;
       if (blastBonus) d *= (a + blastBonus) / a;
       if (d > best) best = d;
     }

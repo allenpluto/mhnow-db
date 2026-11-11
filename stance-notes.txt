@@ -1,0 +1,84 @@
+Stance: Weakness Exploit against Sneak Attack
+=============================================
+
+The rule
+--------
+THEY ARE MUTUALLY EXCLUSIVE. Weakness Exploit needs you on the monster's weak
+point, Sneak Attack needs you behind it, and lock-on commits you to one. In the
+player's words: when you use Sneak, Weakness Exploit scores 0; when you use
+Weakness Exploit, Sneak scores 0.
+
+The detail behind it: lock onto the tail and about 80% of hits land from
+behind. The other 20% are the monster moving out from under the attack, landing
+on a random spot - perhaps a tenth of those on a head weak point. 2% is not a
+skill.
+
+Status Sneak Attack carries the same condition - "from behind" - so it belongs
+to the behind stance too and is worth nothing on the weak point.
+
+What the engine used to do, and why it was wrong
+------------------------------------------------
+It treated the two as INDEPENDENT, so 70% x 80% = 56% of hits collected both.
+The reasoning, recorded in commit 825b248, was that a weak point can be at the
+back, so the conditions overlap rather than compete. That is now withdrawn.
+
+It also left the two assumptions contradicting each other: 70% on the weak
+point plus 80% from behind sums past 100, which could only be true if weak
+points were usually at the back. As PER-STANCE rates they are consistent -
+each one says how well you hold the position you chose - so the fix resolves
+the contradiction rather than trading one error for another.
+
+How it is modelled now
+----------------------
+Each stance is priced on its own and the better one wins:
+
+   on the weak point   Weakness Exploit at weakPointUptime (70%), no Sneak
+                       Attack, and Status Sneak Attack reverts to base proc
+   from behind         Sneak Attack at behindRate (80%) and Status Sneak
+                       Attack in full, no Weakness Exploit
+
+A set carrying both now scores exactly the better of the two, never the sum -
+checked as an invariant. score() reports which stance won, and both the page
+and the command line state it, because a set now implies where to stand.
+
+Checked: score() and the search's own scorer agree to within floating-point
+noise on 2400 random sets across six weapons, status and ranged included.
+
+What it changed
+---------------
+Less than expected, because behindRate at 80% already made Sneak Attack the
+stronger of the two in most sets. Across a sample of five weapons at 75s and
+150s, exactly one recommendation moved - and it is the one that prompted this:
+
+   Bloom Snow Wail+, 150s hunt, Charge Blade, Ice, affinity -20%
+      before   gems 1 x Weakness Exploit, 1 x Sneak Attack
+      after    gems 1 x Latent Power,     1 x Sneak Attack
+
+The winning SETS did not change, only the driftgems, since the sets were
+already behind-stance. Search cost rose about 6% (3.4s to 3.6s on 9.3M sets)
+for pricing the crit path twice.
+
+A side finding, on negative affinity
+------------------------------------
+Measured on that weapon at -20% affinity, as marginal damage from one gem:
+
+   +246  Meditation           not gemmable
+   +242  Critical Ferocity    not gemmable - chase it on armour
+   +195  Latent Power
+   +193  Sneak Attack
+   +142  Critical Eye
+   +  0  Critical Boost
+   +  0  Critical Element
+   +  0  Weakness Exploit     under the stance rule, on a behind-stance set
+
+CRITICAL BOOST AND CRITICAL ELEMENT ARE WORTH EXACTLY NOTHING on a weapon
+whose final affinity stays negative - there are no crits to multiply. The
+affinity POINT skills still pay, because they shrink the share of hits taking
+the 75% penalty. That is the opposite of the usual advice and worth
+remembering: on a negative-affinity weapon, chase affinity points or Critical
+Ferocity, never the crit multipliers.
+
+Before the stance rule, Weakness Exploit led that list at +199 and the
+crossover against Critical Eye sat at a weak-point share of 50%: above it WEx
+won, below it Critical Eye did. That crossover is what made the old 70%
+assumption load-bearing, and it is why the question was worth settling.
