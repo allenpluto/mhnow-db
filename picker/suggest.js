@@ -92,6 +92,7 @@
     cb.addEventListener('change', function () {
       opts[pair[0]] = cb.checked;
       lab.className = cb.checked ? 'on' : '';
+      if (pair[0] === 'statSlots') applyTrack(cb.checked);
     });
     lab.appendChild(cb);
     lab.appendChild(document.createTextNode(pair[1]));
@@ -501,8 +502,76 @@
     }
   }
 
+  /**
+   * What the customisation track grants at level 20, per weapon.
+   *
+   * The track is four stat steps and a style choice, repeated four times, so
+   * the total is four times one block. None of it is in the source — these
+   * are read off the customisation screen, base being the black figure minus
+   * the green bracket.
+   *
+   * There is no rule yet to compute it for a weapon that has not been read.
+   * It is not the weapon type: four pairs sharing base stats across different
+   * types carry identical tracks. Nor is it the base attack: Bazelhawk
+   * Rookslayer at 2327 and Snow Sisters at 1903 both take Attack +18 then
+   * +28. Something not in the data decides it, so until that is known this
+   * is a table rather than a formula.
+   */
+  var CUSTOM_TRACK = {
+    'Sinister Shadekeeper': { atk: 100, ele: 40 },
+    'Sinister Famineblades': { atk: 100, ele: 40 },
+    Skullwhistle: { atk: 100, ele: 40 },
+    'Thanatos Mauls': { atk: 204, ele: 0 },
+    'Chaos Shatterer': { atk: 204, ele: 0 },
+    'Wyvern Lovers': { atk: 80, ele: 80 },
+    Squawkscythe: { atk: 80, ele: 80 },
+    "Despot's Blitz": { atk: 120, ele: 120 },
+    'Evening Dusk': { atk: 64, ele: 96 },
+    Tamonowo: { atk: 64, ele: 96 },
+    'Snow Sisters': { atk: 184, ele: 80 },
+    'Illusory Frilled Claw': { atk: 144, ele: 52 },
+    'Illusory Frilled Blow': { atk: 144, ele: 52 },
+    'Bazelhawk Rookslayer': { atk: 184, ele: 44 },
+    'Water Basher': { atk: 156, ele: 104 },
+  };
+
   function currentWeapon() {
     return DATA.weapons.filter(function (w) { return w.name === elWeapon.value; })[0];
+  }
+
+  /**
+   * Fill the attack and element boxes from the customisation track.
+   *
+   * A weapon customised far enough to have the three stat slots is at the end
+   * of its track, so ticking that box implies the track bonus too. Untick it
+   * and the figures come back out — but only the ones that were put in, so a
+   * number typed by hand survives.
+   */
+  var tracked = { atk: null, ele: null };
+  function applyTrack(on) {
+    var w = currentWeapon();
+    var t = w && CUSTOM_TRACK[w.name];
+    var set = function (el, key) {
+      if (on && t) {
+        if (Number(el.value) === 0 || Number(el.value) === tracked[key]) {
+          el.value = t[key];
+          tracked[key] = t[key];
+        }
+      } else if (tracked[key] !== null && Number(el.value) === tracked[key]) {
+        el.value = 0;
+        tracked[key] = null;
+      }
+    };
+    set(elAtk, 'atk');
+    set(elEle, 'ele');
+    var msg = document.getElementById('s-trackmsg');
+    if (msg) {
+      msg.textContent = (on && w && !t)
+        ? 'The customisation track for ' + w.name + ' has not been read off a weapon ' +
+          'screen, so the attack and element boxes are left alone — fill them in by hand.'
+        : '';
+      msg.hidden = !msg.textContent;
+    }
   }
 
   /**
@@ -575,6 +644,10 @@
   elWeapon.addEventListener('change', function () {
     syncSlotBox(currentWeapon());
     renderWeaponNote(currentWeapon());
+    // The track is per weapon, so changing weapon re-fills the boxes.
+    if (tracked.atk !== null && Number(elAtk.value) === tracked.atk) { elAtk.value = 0; tracked.atk = null; }
+    if (tracked.ele !== null && Number(elEle.value) === tracked.ele) { elEle.value = 0; tracked.ele = null; }
+    if (opts.statSlots) applyTrack(true);
     if (elWeapon.value) run();
   });
   syncSlotBox(currentWeapon());

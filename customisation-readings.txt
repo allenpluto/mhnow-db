@@ -63,21 +63,51 @@ base stats across different types and carrying identical tracks:
 It is also not a fixed percentage of the base. Expressed that way the totals
 run from 4.70% to 10.07% of base attack, with no obvious grouping.
 
-THE ONE CONTRADICTION, and it is the whole puzzle: Wyvern Lovers and Despot's
-Blitz are both Dual Blades, both grades 5-10, and both have base 1463/1420 -
-yet their blocks are 20/20 and 30/30, exactly one and a half times apart. So
-base stats alone do not determine the track, and nothing in the database
-separates these two: same category, same grade span, different series only.
+AND IT IS NOT BASE ATTACK EITHER. Bazelhawk Rookslayer has base attack 2327
+and Snow Sisters 1903 - 22% apart - and both take Attack +18 then +28. Two
+weapons that differ by a fifth in the thing being scaled cannot be taking the
+same step by coincidence, so the attack steps are not a function of base
+attack at all.
 
-What is still needed
---------------------
-Whatever distinguishes those two weapons in game. The weapon screen prints a
-number after the name - Skullwhistle 8, Thanatos Mauls 6, Wyvern Lovers 5,
-Despot's Blitz 1 - and that number is not the grade, not the level within the
-grade, and is not recorded in the data. If it is rarity, or an overgrade
-count, or anything else that varies between those two weapons, it is almost
-certainly the missing term.
+The odd one out is Despot's Blitz, not Wyvern Lovers. A third weapon at
+1463/1420, Squawkscythe, also blocks 20/20, so two of the three agree and
+Despot's Blitz is 1.5x both of them. The user suspects Zinogre is treated as
+a special monster. With it set aside the remaining thirteen are consistent
+with each other, but still have no rule tying them to anything in the data.
 
-Until that is known the track cannot be computed for a weapon that has not
-been photographed, so the attack and element boxes on the suggester stay: they
-are currently the only way to enter it.
+Ruled out so far
+----------------
+   weapon type        four pairs share base stats across different types and
+                      carry identical tracks
+   base attack        Bazelhawk 2327 and Snow Sisters 1903 take the same
+                      steps; Illusory Frilled at 1878 takes smaller ones than
+                      Snow Sisters at 1903
+   a fixed percentage of base attack            4.70% to 10.07%
+   a fixed percentage of base attack + element  1.39% to 2.46%
+   a fixed percentage of the 10-1 figures       1.41% to 3.02%
+   a share of the growth from 10-1 to 10-5      0.071 to 0.152
+   grade span         weapons spanning grades 5-10 take anything from 1.17%
+                      to 1.98% of base attack
+   the number after the weapon name             it counts position within a
+                      name block - Girros Hammer 1-4 for grades 2-5, then
+                      Malady's Fist 1-5 for grades 6-10 - so it carries no
+                      information the grade does not
+
+What the ratios DO look like is three loose bands - about 1.4-1.5%, 1.9-2.2%
+and 2.4-2.5% of base attack plus element - but nothing in the data sorts the
+weapons into them. Lagombi and Jyuratodus land in the top band and both start
+at a low grade, which is suggestive, while Sinister and Somnacanth both start
+at grade 4 and land in different bands, which kills it.
+
+So it is a table, not a formula
+--------------------------------
+The fifteen weapons read so far are held as a lookup in the suggester, and
+ticking "spend the three customisation stat slots" fills the attack and
+element boxes from it - a weapon customised far enough to have those slots is
+at the end of its track. Unticking takes the figures back out, but only the
+ones it put in, so a number typed by hand survives. A weapon that has not
+been read says so rather than filling in a guess.
+
+Reading more weapons would extend the table and might expose the rule; the
+useful ones are weapons whose base stats match one already read, since a
+disagreement there is what broke every hypothesis above.

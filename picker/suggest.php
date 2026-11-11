@@ -168,18 +168,6 @@ function parentAsset($f) {
          foot of the page because it bears on the choice being made. -->
     <div class="wnote" id="s-weaponnote" hidden></div>
   </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="s-atk">Attack bonus</label>
-    <input id="s-atk" type="number" value="0" step="10">
-  </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="s-ele">Element bonus</label>
-    <input id="s-ele" type="number" value="0" step="10">
-  </div>
-  <div class="fgroup narrow">
-    <label class="flabel" for="s-aff">Affinity bonus</label>
-    <input id="s-aff" type="number" value="0" step="10">
-  </div>
   <!-- Latent Power's uptime and how far Rising Tide ramps both follow from
        this, so it is an input rather than a constant. -->
   <div class="fgroup narrow">
@@ -194,6 +182,24 @@ function parentAsset($f) {
     <label class="flabel">Options</label>
     <div class="checkrow" id="s-opts"></div>
   </div>
+  <!-- These sit AFTER the options because ticking the stat-slots box fills
+       them in: a weapon customised far enough to have those slots is at the
+       end of its track, which grants attack and element on top. The track is
+       not in the source and is not yet derivable, so the figures come from a
+       table of weapons read off their customisation screens. -->
+  <div class="fgroup narrow">
+    <label class="flabel" for="s-atk">Attack bonus</label>
+    <input id="s-atk" type="number" value="0" step="10">
+  </div>
+  <div class="fgroup narrow">
+    <label class="flabel" for="s-ele">Element bonus</label>
+    <input id="s-ele" type="number" value="0" step="10">
+  </div>
+  <div class="fgroup narrow">
+    <label class="flabel" for="s-aff">Affinity bonus</label>
+    <input id="s-aff" type="number" value="0" step="10">
+  </div>
+  <p class="hint warn" id="s-trackmsg" hidden></p>
   <button type="button" id="s-go" class="linkbtn">suggest sets</button>
 </section>
 
