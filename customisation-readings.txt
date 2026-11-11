@@ -145,6 +145,29 @@ and their tracks are 80/80 and 120/120.
 Extending it is now cheap: one weapon screen per monster, at any stat line
 that monster makes. No rule will come out of it, but the coverage will.
 
+THE FIRST CROSS-MONSTER TEST, and it says the stat line governs
+----------------------------------------------------------------
+Summit's Grand Glow is a BISHATEN weapon, base 1817/516, and its track is
+100/40 - identical to the SINISTER weapons on the same base. Two different
+monsters, and two different elements, Paralysis against Blast, giving the
+same track. Element type does not enter into it either.
+
+Against that stands Zinogre, which on 1463/1420 gives 120/120 where Rathalos
+and Halloween both give 80/80.
+
+So the score is one confirmation and one refutation, and the refutation is
+the weapon the user already suspected of being special. That is not enough to
+re-key the table on base stats alone, because getting it wrong would fill the
+suggester's boxes with wrong numbers for a hundred weapons rather than
+leaving them blank. LEGIANA AT 1463/1420 IS THE TIEBREAK: if it gives 80/80
+then Zinogre is simply an exception and the table collapses to a stat-line
+lookup with one override; if it gives something else again, the monster
+matters and the table stays as it is.
+
+Also added: Bazel Typhoon, the Bazelgeuse Fire line at 1579/1568, giving
+128/100. That is a line Deviljho and Glavenus also build on, twenty-eight
+weapons between them, so it is another cross-monster test waiting to be made.
+
 Where to point the camera next
 ------------------------------
 SIX STAT LINES ARE BUILT BY MORE THAN ONE MONSTER, and one monster on each is

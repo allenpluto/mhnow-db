@@ -529,6 +529,10 @@
    */
   var CUSTOM_TRACK = [
     { series: 'Sinister Set', atk: 1817, ele: 516, give: { atk: 100, ele: 40 } },
+    // Bishaten, a different monster on the same stat line with a different
+    // element, gives the same track. First evidence that the stat line is
+    // what matters and the monster is not.
+    { series: 'Bishaten Set', atk: 1817, ele: 516, give: { atk: 100, ele: 40 } },
     { series: 'Halloween Set', atk: 1912, ele: 417, give: { atk: 100, ele: 40 } },
     { series: 'Halloween Set', atk: 1463, ele: 1420, give: { atk: 80, ele: 80 } },
     { series: 'Black Diablos Set', atk: 2658, ele: 0, give: { atk: 204, ele: 0 } },
@@ -539,6 +543,7 @@
     { series: 'Lagombi Set', atk: 1903, ele: 785, give: { atk: 184, ele: 80 } },
     { series: 'Somnacanth Set', atk: 1878, ele: 516, give: { atk: 144, ele: 52 } },
     { series: 'Bazelgeuse Set', atk: 2327, ele: 309, give: { atk: 184, ele: 44 } },
+    { series: 'Bazelgeuse Set', atk: 1579, ele: 1568, give: { atk: 128, ele: 100 } },
     { series: 'Jyuratodus Set', atk: 1549, ele: 1131, give: { atk: 156, ele: 104 } },
   ];
 
