@@ -187,10 +187,13 @@ SECOND ROW at y 325 to 371, invisible to a crop that stopped at y 310. The
 first pass therefore reported two Burst activations that were both Rude
 Awakener, and missed the one real Burst entirely.
 
-WORSE THAN THAT: the banner shows only the top TWO skills, so a Burst that
-fires while two others are announcing does not appear at all. Counting
-activations off banners therefore UNDERCOUNTS in a live hunt, where defensive
-and reactive skills are firing constantly.
+The banner shows only the top TWO skills, so a Burst firing while two others
+are announcing would not appear at all. That did NOT bite in the hunt below:
+the set carries Status Sneak Attack, Rude Awakener, Raw Power, Burst, Health
+Boost, Evade Extender, Artful Dodger, Lock On and Power Prolonger, but only
+Rude Awakener and Burst announce, so two announcers never contend for two
+slots. The count that follows is a count, not a floor. It is a trap to keep
+in mind on a set with three or more announcing skills.
 
 THE DUMMY RUNS ARE SAFE FROM THIS, which was worth checking rather than
 assuming. The second banner row is empty for the whole of both Charge Blade
@@ -200,7 +203,34 @@ so the skills that would compete never fire. The 50% the engine carries rests
 on those runs and stands.
 
 Widening the crop to both rows and reading it: in 37 seconds of a live hunt
-on a fast weapon, BURST ACTIVATED AT LEAST ONCE, at about 21s. That is the same order
+on a fast weapon, BURST ACTIVATED ONCE, at about 20.5s.
+
+BURST IN A LIVE HUNT: 27%
+--------------------------
+A live hunt has no Total Damage counter, which is what blocked this for so
+long. It does have the MONSTER'S HEALTH BAR, and that shortens every time
+damage lands - so in a SOLO hunt the bar is the hit record. Reading the
+purple fill of the bar at x 105..385, y 172..190 and taking every new low as
+a hit:
+
+   Charge Blade, solo against Riftborne Pukei-Pukei, 37s
+     39 hits, chains 8.4-16.9, 20.1-30.5, 30.6-34.5
+     longest lulls 7.15s at 12.9s and 4.05s at 26.5s
+     Burst activated 20.5s and rode the chain to 30.5s
+     UP FOR 10.0s OF 37.0s = 27%
+
+Against 51% and 81% on the dummy. The user predicted exactly this - a monster
+that moves out of range and interrupts breaks the chain where a dummy never
+does - and here is the first measurement of it.
+
+Two cautions. The bar is about 265 pixels for the monster's whole health, so
+a small hit may not move it a full pixel and would read as a lull that was
+not one; and the 4.05s lull at 26.5s sits right on the four-second threshold,
+so it alone decides whether Burst stopped at 30.5s or ran on. One clip of 37
+seconds on one weapon is not enough to move the engine off 50% by itself.
+
+Only SOLO hunts work for this. In a group the bar falls to everyone's hits,
+so it stops being a record of yours. That is the same order
 as the dummy runs, which first activated at 12.5s and 41.7s, so nothing
 contradicts the 50% the engine carries - but the live hit chain cannot be
 read, there being no damage counter in a hunt, so the uptime that follows
