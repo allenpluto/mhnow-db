@@ -187,8 +187,20 @@ SECOND ROW at y 325 to 371, invisible to a crop that stopped at y 310. The
 first pass therefore reported two Burst activations that were both Rude
 Awakener, and missed the one real Burst entirely.
 
+WORSE THAN THAT: the banner shows only the top TWO skills, so a Burst that
+fires while two others are announcing does not appear at all. Counting
+activations off banners therefore UNDERCOUNTS in a live hunt, where defensive
+and reactive skills are firing constantly.
+
+THE DUMMY RUNS ARE SAFE FROM THIS, which was worth checking rather than
+assuming. The second banner row is empty for the whole of both Charge Blade
+dummy recordings - no sustained panel in 88s or 67s - so nothing ever
+competed with Burst for a slot. That follows: nothing attacks you on a dummy,
+so the skills that would compete never fire. The 50% the engine carries rests
+on those runs and stands.
+
 Widening the crop to both rows and reading it: in 37 seconds of a live hunt
-on a fast weapon, BURST ACTIVATED ONCE, at about 21s. That is the same order
+on a fast weapon, BURST ACTIVATED AT LEAST ONCE, at about 21s. That is the same order
 as the dummy runs, which first activated at 12.5s and 41.7s, so nothing
 contradicts the 50% the engine carries - but the live hit chain cannot be
 read, there being no damage counter in a hunt, so the uptime that follows
