@@ -1,6 +1,49 @@
 Dual Blades: Demon Mode, styles, and what Power Prolonger buys
 ==============================================================
 
+THE SHORT VERSION, standardised
+--------------------------------
+Everything below was measured on one weapon in one session, so the absolute
+damage per second means nothing on its own. Expressed as an INDEX against
+that weapon's plain normal stance, it carries across weapons, because a
+weapon's attack divides out of a ratio taken on itself:
+
+   No style, normal stance                         100
+   No style, Demon Mode, standing                  176
+   No style, Demon Mode, moving                    123
+   No style, cycled properly (demon 52% of it)     139
+
+   Feral Demon Mode, normal stance                 198
+   Feral Demon Mode, demon once running            185
+   Feral Demon Mode, demon over the whole window   143
+
+   Spiral Slash, normal stance                      91
+   Spiral Slash, Demon Mode, standing              141
+   Spiral Slash, the airborne slash                390   (a burst, not a rate
+                                                          you can sustain)
+
+Read as comparisons:
+
+   Feral's normal attack is 98% stronger than No style's normal attack -
+     almost exactly double - and 13% stronger than No style's DEMON MODE.
+     You beat the other style's best stance just by standing there.
+   Spiral Slash's airborne slash hits 121% harder than No style's Demon Mode
+     while it lasts, which is about two and a half seconds, and you get one
+     per bar without Power Prolonger.
+   Spiral Slash's normal stance is the weakest thing on the weapon, 9% BELOW
+     plain normal stance, so the style is all in the slash.
+
+And played the way each style is best played:
+
+   Feral, never entering Demon Mode                198
+   No style, cycling Demon Mode                    139
+   Spiral Slash, one slash a bar                   120
+
+The index is the honest unit here. A DPS-per-attack figure would be better
+still, since it would compare across weapons as well as across styles, but
+the weapon screen sent with these runs was the wrong one - see the caveat at
+the end - so the attack behind them is not recorded.
+
 Method
 ------
 Three training-dummy recordings, one per style, decoded at 20fps. The energy

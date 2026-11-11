@@ -70,6 +70,24 @@ table.setparts td.sk { opacity: .85; }
 .gems.potential { color: inherit; opacity: .6; }
 .totals { opacity: .7; }
 
+/* Measured facts about the chosen weapon type, shown beside the choice. */
+.wnote {
+  margin-top: .5rem;
+  padding: .55rem .7rem;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-left: 3px solid rgba(255, 255, 255, .35);
+  border-radius: .3rem;
+  font-size: .8rem;
+  line-height: 1.45;
+  opacity: .85;
+  max-width: 62ch;
+}
+.wnote b { font-weight: 600; }
+.wnote table { border-collapse: collapse; margin: .35rem 0 .2rem; }
+.wnote td { padding: .05rem .6rem .05rem 0; }
+.wnote td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.wnote .cap { opacity: .7; }
+
 /* The assumptions behind the numbers. The first line stays on show, because
    it says what the ranking means and the table is misread without it; the rest
    folds away, having grown past what anyone reads every time. */

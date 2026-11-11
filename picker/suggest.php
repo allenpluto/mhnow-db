@@ -163,6 +163,10 @@ function parentAsset($f) {
   <div class="fgroup">
     <label class="flabel" for="s-weapon">Weapon</label>
     <select id="s-weapon"></select>
+    <!-- What is actually known about this weapon type, from measurement
+         rather than assumption. Sits here rather than in the notes at the
+         foot of the page because it bears on the choice being made. -->
+    <div class="wnote" id="s-weaponnote" hidden></div>
   </div>
   <div class="fgroup narrow">
     <label class="flabel" for="s-atk">Attack bonus</label>

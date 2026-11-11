@@ -473,6 +473,7 @@
       var no = out.names.filter(function (n) { return !E.UTILITY[n] && !DATA.gemmable[n]; });
       if (no.length) lines.push('No driftgem exists for: ' + no.join(', ') + ' — equipment only.');
     }
+
     lines = lines.concat(rangedNotes(W, out.results[0] && out.results[0].style));
 
     // The first line is always on show, because it says what the ranking means
@@ -503,10 +504,79 @@
   function currentWeapon() {
     return DATA.weapons.filter(function (w) { return w.name === elWeapon.value; })[0];
   }
+
+  /**
+   * What is known about the chosen weapon's type, shown beside the choice.
+   *
+   * Everything here is measured off gameplay video rather than assumed, and
+   * it bears on which weapon to pick — so it sits under the dropdown instead
+   * of in the notes at the foot of the page.
+   *
+   * Damage is given as an INDEX against the weapon's own plain stance, which
+   * carries to any weapon of the type because its attack divides out of a
+   * ratio taken on itself.
+   */
+  function renderWeaponNote(w) {
+    var el = document.getElementById('s-weaponnote');
+    if (!el) return;
+    var html = '';
+
+    if (w && w.category === 'Dual Blades' && w.styleSelectable) {
+      var rows = [
+        ['No style, normal stance', 100, ''],
+        ['No style, Demon Mode standing', 176, ''],
+        ['Feral Demon Mode, normal stance', 198, 'strongest sustained'],
+        ['Feral Demon Mode, its Demon Mode', 143, 'over the whole window'],
+        ['Spiral Slash, normal stance', 91, ''],
+        ['Spiral Slash, the airborne slash', 390, 'about 2.5s, once a bar'],
+      ];
+      html = '<b>Measured on a dummy</b>, as an index against plain normal stance ' +
+        '(the weapon\'s own attack divides out, so this holds for any Dual Blades):' +
+        '<table>' + rows.map(function (r) {
+          return '<tr><td>' + r[0] + '</td><td class="n">' + r[1] +
+            '</td><td class="cap">' + r[2] + '</td></tr>';
+        }).join('') + '</table>' +
+        'Feral\'s ordinary attack is <b>98% stronger</b> than No style\'s and 13% ' +
+        'stronger than No style\'s Demon Mode — standing still in Feral beats the ' +
+        'other style at its best. Its own Demon Mode loses to not using it, a fixed ' +
+        'three-second entry coming out of a 7.4-second window. Played best: ' +
+        '<b>Feral 198, No style 139, Spiral Slash 120</b>.<br>' +
+        'So Power Prolonger is worth 3.0 / 6.8 / 12.0% on No style, <b>nothing on ' +
+        'Feral</b>, and 2.9 / 6.0 / 15.3% on Spiral Slash, where it buys extra slashes.' +
+        '<br><span class="cap">A dummy cannot price Demon Mode\'s forward dash or ' +
+        'attacking through a slide, so Feral\'s zero is a floor, not a verdict.</span>';
+    } else if (w && (w.rounds || []).length) {
+      var W1 = ['Low', 'Average', 'High', 'Very high'];
+      var L1 = ['Fast', 'Normal', 'Slow', 'Very slow'];
+      var seen = {};
+      var mags = (w.rounds || []).filter(function (r) {
+        if (seen[r.type]) return false;
+        seen[r.type] = 1;
+        return true;
+      });
+      html = '<b>Measured on a dummy.</b> A shot lands every 0.60s at Low recoil, ' +
+        '0.86s Average, 1.06s High and <b>2.06s Very high</b>; a magazine swap takes ' +
+        '1.90s into a Fast one and up to 4.83s into a Very slow one. This weapon ' +
+        'carries ' + mags.map(function (r) {
+          return r.type.toLowerCase() + ' x' + r.capacity + ' ' +
+            W1[E.bandAfter(r.recoil, 0)] + '/' + L1[E.bandAfter(r.reload, 0)];
+        }).join(', ') + '.' +
+        (w.styleSelectable ? ' Styles matter more than skills here: stepping shot ' +
+          'fires at a fixed 0.975s whatever the recoil, crouching shot accelerates to ' +
+          '0.30s and adds rounds, and the two slide reloads swap magazines in 2.5s and ' +
+          '2.05s. The search tries each as its own build.' : '') +
+        ' Full detail in the notes below.';
+    }
+
+    el.innerHTML = html;
+    el.hidden = !html;
+  }
   elGo.addEventListener('click', run);
   elWeapon.addEventListener('change', function () {
     syncSlotBox(currentWeapon());
+    renderWeaponNote(currentWeapon());
     if (elWeapon.value) run();
   });
   syncSlotBox(currentWeapon());
+  renderWeaponNote(currentWeapon());
 }());
