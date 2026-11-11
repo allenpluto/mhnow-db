@@ -1,0 +1,83 @@
+The customisation track, read off fourteen weapon screens
+=========================================================
+
+The source publishes nothing about this. weaponLevels only carries levels 1
+to 5 within a grade; the twenty-step customisation track is not in the data
+at all, so it has to be measured like everything else.
+
+How to read a weapon screen
+---------------------------
+The black figure at the top is the SUM of the base value and everything added
+since, and the green figure in brackets is that addition. So
+
+   base = black - green
+
+and the result matches the database's own 10-5 figures exactly on all
+fourteen weapons below, which is a useful check that both are right.
+
+The green bracket holds TWO different things added together: the customisation
+track, and the three stat slots. Despot's Blitz shows element +420, which is
+120 from its track plus 300 from three slots of +100; Skullwhistle shows
+affinity +30%, which is three slots of +10% and nothing else, since the track
+never touches affinity.
+
+The shape of the track
+----------------------
+Four stat steps, then a fifth step that selects a style, repeating four times
+to level 20. So the total at the end is FOUR TIMES one block, and the blocks
+are identical - Sinister Shadekeeper's step 6 is Element +4 and step 8 is
+Element +6, the same values as steps 1 and 3.
+
+   no element      all four steps are attack
+   with element    element, attack, element, attack
+
+Within a block the second occurrence of each stat is about one and a half
+times the first.
+
+What was read
+-------------
+   weapon                  base atk/ele   block A/E   at level 20
+   Sinister Shadekeeper      1817/516       25/10       100/40
+   Sinister Famineblades     1817/516       25/10       100/40
+   Skullwhistle              1912/417       25/10       100/40
+   Thanatos Mauls            2658/0         51/0        204/0
+   Chaos Shatterer           2658/0         51/0        204/0
+   Wyvern Lovers             1463/1420      20/20        80/80
+   Despot's Blitz            1463/1420      30/30       120/120
+   Evening Dusk              1363/1436      16/24        64/96
+   Tamonowo                  1363/1436      16/24        64/96
+   Snow Sisters              1903/785       46/20       184/80
+   Illusory Frilled Claw     1878/516       36/13       144/52
+   Illusory Frilled Blow     1878/516       36/13       144/52
+   Bazelhawk Rookslayer      2327/309       46/11       184/44
+   Water Basher              1549/1131      39/26       156/104
+
+THE TRACK DOES NOT DEPEND ON WEAPON TYPE. Four pairs prove it, each sharing
+base stats across different types and carrying identical tracks:
+
+   Sword & Shield and Dual Blades   1817/516   both E4 A10 E6 A15
+   Dual Blades and Hammer           2658/0     both A8 A12 A14 A17
+   Dual Blades and Long Sword       1363/1436  both E10 A6 E14 A10
+   Dual Blades and Hammer           1878/516   both E5 A14 E8 A22
+
+It is also not a fixed percentage of the base. Expressed that way the totals
+run from 4.70% to 10.07% of base attack, with no obvious grouping.
+
+THE ONE CONTRADICTION, and it is the whole puzzle: Wyvern Lovers and Despot's
+Blitz are both Dual Blades, both grades 5-10, and both have base 1463/1420 -
+yet their blocks are 20/20 and 30/30, exactly one and a half times apart. So
+base stats alone do not determine the track, and nothing in the database
+separates these two: same category, same grade span, different series only.
+
+What is still needed
+--------------------
+Whatever distinguishes those two weapons in game. The weapon screen prints a
+number after the name - Skullwhistle 8, Thanatos Mauls 6, Wyvern Lovers 5,
+Despot's Blitz 1 - and that number is not the grade, not the level within the
+grade, and is not recorded in the data. If it is rarity, or an overgrade
+count, or anything else that varies between those two weapons, it is almost
+certainly the missing term.
+
+Until that is known the track cannot be computed for a weapon that has not
+been photographed, so the attack and element boxes on the suggester stay: they
+are currently the only way to enter it.
