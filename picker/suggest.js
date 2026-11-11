@@ -472,6 +472,35 @@
         '% of a ' + a.huntSeconds + 's hunt' +
         (hasAv && !hasValor ? ' — adding Valor would roughly double it' : '') + '.');
     }
+    // Two more skills hang off the same gauge timeline, so the moment one of
+    // them is on the winning set the reasoning above is only half the story.
+    if (topTotals['Fighting Spirit'] || topTotals.Meditation) {
+      var av = topTotals['Nergigante Avidity'] ? 1 : 0;
+      var vl = topTotals.Valor ? 1 : 0;
+      var parts = ['Fighting Spirit and Meditation are priced off that same gauge timeline ' +
+        'rather than guessed at.'];
+      if (topTotals['Fighting Spirit']) {
+        parts.push('FIGHTING SPIRIT fires for 20s when the gauge becomes FULL. Release the ' +
+          'Special the moment it fills — which is what this model assumes — and that is the ' +
+          'same instant Elemental Release keys off, so it is up for the same ' +
+          Math.round(E.fightingSpiritUptime(av, vl) * 100) + '% of the hunt, and Nergigante ' +
+          'Avidity cuts it the same way.');
+      }
+      if (topTotals.Meditation) {
+        parts.push('MEDITATION is the opposite condition — damage while the gauge is NOT ' +
+          'full — so under the same assumption it is up essentially all hunt: fire on fill ' +
+          'and the gauge is full for an instant at a time. It is the only uptime here that ' +
+          'follows from the playstyle instead of being measured, and Avidity makes it a ' +
+          'certainty by stopping the gauge filling at all.');
+      }
+      if (topTotals['Fighting Spirit'] && topTotals.Meditation) {
+        parts.push('They stack rather than clash: after a Special the gauge is refilling ' +
+          '(Meditation) while the full-gauge window is still running (Fighting Spirit).');
+      }
+      parts.push('Both assume you spend the gauge on cooldown. Saving it for a part-break ' +
+        'costs Meditation first.');
+      lines.push(parts.join(' '));
+    }
     if (Object.keys(ignored).length) {
       lines.push('On the winning set, these skills are scored as zero because damage cannot price them: ' +
         Object.keys(ignored).sort().join(', ') + '.');

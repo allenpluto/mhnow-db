@@ -258,3 +258,81 @@ Open items
      seconds of Demon Mode times the gap in damage per second.
    - Specials fired close together waste uptime, and the engine does not
      model it. One hunt is not enough to say how much is typically wasted.
+
+
+THE OTHER TWO GAUGE SKILLS: FIGHTING SPIRIT AND MEDITATION
+===========================================================
+Neither of these was priced at all before, so any armour carrying them was
+scored as if those slots were empty. Both are reachable: Fighting Spirit to
+Lv5 (six levels on offer across Kirin Horn, Brachydios Mail, Golden Kote,
+Malzeno Coil, Stygian Coil, Volvidon Coil, Nargacuga Helm, Golden Haori, plus
+two driftstones), Meditation only to Lv4 and only from Rimeguard, so taking it
+costs three pieces of one series. Both run the same ladder:
+
+   Lv1 +10%   Lv2 +15%   Lv3 +20%   Lv4 +25%   Lv5 +35%
+
+Neither needed a new measurement. Both follow from the gauge timeline that
+Elemental Release already commits this engine to - which is the point: once
+you assume the Special is fired the moment the gauge fills, all three skills
+are determined by the same clock.
+
+FIGHTING SPIRIT = ELEMENTAL RELEASE, window for window
+------------------------------------------------------
+Fighting Spirit fires for 20s when the gauge becomes FULL. Elemental Release
+fires for 20s after the Special is ACTIVATED. Different events in the text,
+the same instant in play under release-as-soon-as-full, so the uptime function
+is shared outright:
+
+   plain          2 specials in 75s    53%
+   with Valor     3 specials           80%
+   with Avidity   1 special            27%
+
+Nergigante Avidity cuts it exactly as it cuts Elemental Release, for the same
+reason - no gauge filling, no trigger.
+
+The two part company only if you SIT on a full gauge, which starts Fighting
+Spirit early and Elemental Release late. Nothing prices that, because the
+measured 52s refill was fitted against the release-on-fill assumption.
+
+MEDITATION IS THE COMPLEMENT, AND IT IS ESSENTIALLY ALWAYS ON
+-------------------------------------------------------------
+"Damage while the Special Gauge is NOT full." Fire on fill and the gauge is
+only ever full for an instant, so the skill is up for the whole hunt. Three
+cases, all ending the same way:
+
+   plain             fire at 0, refill to 52, fire again    full ~0s
+   with Avidity      gauge never refills after the opener    full ~0s
+   no opener at all  gauge never fills, so never full        full 0s
+
+So Avidity and Meditation are PARTNERS in the same way Avidity and Elemental
+Release are enemies: the skill that stops the gauge filling guarantees the
+condition the other one pays for.
+
+This is the only uptime in the engine that is neither measured nor guessed -
+it follows from the playstyle. That also makes it the one most easily wrong:
+Meditation is the first thing a player loses by saving the gauge for a
+part-break, and no recording has been made of how often that happens.
+
+They STACK rather than clash. After a Special the gauge is refilling
+(Meditation) while the full-gauge window is still running (Fighting Spirit),
+so the first 20 seconds of every cycle pays both.
+
+What it is worth, at the best reachable level
+----------------------------------------------
+   Meditation 4        +25% x 100%  = +25.0%
+   Fighting Spirit 5   +35% x  53%  = +18.7%
+   Burst 5             +30% x  50%  = +15.0%
+
+Meditation 4 at three Rimeguard pieces is therefore the strongest single
+damage multiplier the engine now knows about, which is why it changes sets.
+Measured against the suggester before and after:
+
+   Despot's Blitz   Dual Blades, Thunder    7219 -> 7973   +10.4%
+   Skullwhistle     status, no element      3489 -> 3621    +3.8%
+   Rose Assault     Light Bowgun            5333 -> 5333    unchanged
+   Bazel Typhoon    no element             10858 -> 10858   unchanged
+
+The two unchanged weapons are not a bug: the winning set was already full of
+better things, though Fighting Spirit still turns up in their driftgems.
+Both skills are searched on EVERY weapon, status and no-element included,
+because they key off the gauge rather than off the element.

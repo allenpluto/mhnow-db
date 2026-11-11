@@ -876,7 +876,7 @@ function statSlotChoices(w) {
  * survive Avidity too. None of them is priced by this engine yet, and how
  * often each fires is unknown, so none is counted.
  */
-function elemReleaseUptime(avidityLevel, valorLevel) {
+function specialCount(avidityLevel, valorLevel) {
   let specials = ASSUME.openWithSpecial ? 1 : 0;
   // Valor's roar hands over a full gauge outright, so it survives Avidity and
   // adds a Special that would otherwise have had to be earned.
@@ -884,8 +884,55 @@ function elemReleaseUptime(avidityLevel, valorLevel) {
   if (!avidityLevel) {
     specials += Math.floor(ASSUME.huntSeconds / ASSUME.specialRefillSeconds);
   }
+  return specials;
+}
+
+function elemReleaseUptime(avidityLevel, valorLevel) {
+  const specials = specialCount(avidityLevel, valorLevel);
   if (!specials) return 0;
   return Math.min(1, ASSUME.specialSeconds * specials / ASSUME.huntSeconds);
+}
+
+/**
+ * THE OTHER TWO GAUGE SKILLS. Neither is a free-floating uptime either: both
+ * fall out of the SAME timeline Elemental Release already commits this engine
+ * to, which is why they belong here rather than being guessed at.
+ *
+ * FIGHTING SPIRIT is "+X% damage for 20 seconds when the Special Gauge becomes
+ * FULL". Elemental Release is "+X% element for 20 seconds after ACTIVATING a
+ * Special". Two different events in the text, the same event in play, because
+ * this engine assumes the Special goes off the moment the gauge fills. So
+ * Fighting Spirit's uptime IS Elemental Release's, window for window, and
+ * Nergigante Avidity cuts it the same way — no gauge filling, no trigger.
+ *
+ * The two part company only if you SIT on a full gauge, which starts Fighting
+ * Spirit early and Elemental Release late. Nothing here prices that, because
+ * the release-as-soon-as-full assumption is what the measured refill time was
+ * fitted against.
+ *
+ * MEDITATION is "+X% damage while the Special Gauge is NOT full" — the
+ * complement, and under the same assumption very nearly the whole hunt: fire on
+ * fill and the gauge is only ever full for an instant. It is the one uptime in
+ * this file that is neither measured nor guessed; it follows from the
+ * playstyle. Three cases, all of them ending the same way:
+ *
+ *   plain              fire at 0, refill to 52, fire again      full ~0s
+ *   with Avidity       gauge never refills after the opener      full ~0s
+ *   no opener at all   gauge never fills, so never full          full 0s
+ *
+ * Avidity turns it from near-certain into certain, which makes Avidity and
+ * Meditation partners in the same way Avidity and Elemental Release are
+ * enemies. The honest caveat is the reverse of Fighting Spirit's: Meditation is
+ * the first thing you lose by saving the gauge for a part-break, and that is
+ * the player's choice rather than anything the data can settle.
+ */
+function fightingSpiritUptime(avidityLevel, valorLevel) {
+  return elemReleaseUptime(avidityLevel, valorLevel);
+}
+
+function meditationUptime() {
+  // Full for an instant at a time, so not-full for all of it.
+  return 1;
 }
 
 /** One hit's damage before the flat multipliers, for given stats. */
@@ -942,6 +989,12 @@ const PEAK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };
 const CFERO_AFF = { 1: 10, 2: 15, 3: 20, 4: 25, 5: 30 };
 const CFERO_MULT = { 1: 1.50, 2: 1.75, 3: 2.00, 4: 2.25, 5: 2.50 };
 const ELEM_RELEASE = { 1: 0.20, 2: 0.40, 3: 0.60, 4: 0.80, 5: 1.00 };
+// The two other Special Gauge skills, both flat damage and both on the same
+// ladder as each other. Reachable from armour alone: Fighting Spirit to Lv5
+// (six levels are on offer across the slots), Meditation only to Lv4, all of it
+// from Rimeguard, so taking it costs three pieces.
+const FIGHT_SPIRIT = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.35 };
+const MEDITATION = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.35 };
 const BURST = { 1: 0.05, 2: 0.10, 3: 0.15, 4: 0.20, 5: 0.30 };
 const ADV_BURST = { 1: 0.05, 2: 0.10 };
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
@@ -1185,6 +1238,11 @@ function knownSkills(weapon) {
 
   s.add('Sneak Attack');            // damage from behind, any weapon
   s.add('Nergigante Avidity');      // flat damage, any weapon
+  // Both key off the Special Gauge rather than off the element, so they are
+  // worth searching on a status or no-element weapon too, unlike Elemental
+  // Release. Leaving them out scored any armour carrying them as empty.
+  s.add('Fighting Spirit');
+  s.add('Meditation');
 
   // An ammo boost is only worth searching for when the weapon carries ammo it
   // applies to, which the database knows per weapon.
@@ -1273,6 +1331,9 @@ function score(totals, w) {
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
   mult *= 1 + (SNEAK[lv('Sneak Attack')] || 0) * ASSUME.behindRate;
   mult *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
+  mult *= 1 + (FIGHT_SPIRIT[lv('Fighting Spirit')] || 0) *
+    fightingSpiritUptime(lv('Nergigante Avidity'), lv('Valor'));
+  mult *= 1 + (MEDITATION[lv('Meditation')] || 0) * meditationUptime();
   AMMO_BOOSTS.forEach((b) => {
     if (!ammoBoostApplies(b, w)) return;
     mult *= 1 + (b.levels[lv(b.skill)] || 0) * ammoShare(w, b);
@@ -1379,6 +1440,10 @@ function makeScorer(w, damageOnly) {
   const iPowder = w.element === 'Blast' ? I('Teostra Blastpowder')
     : w.element === 'Poison' ? I('Chameleos Venomist') : -1;
   const iAvidity = I('Nergigante Avidity');
+  const iFS = I('Fighting Spirit'), iMed = I('Meditation');
+  // Meditation's uptime depends on nothing a candidate carries, so it resolves
+  // once for the whole search.
+  const medUp = meditationUptime();
   // The share depends only on the weapon, not on any skill level, so it is
   // resolved once here rather than recomputed per candidate.
   const ammoBoosts = AMMO_BOOSTS.filter((b) => ammoBoostApplies(b, w) && I(b.skill) >= 0)
@@ -1449,6 +1514,9 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
     dmg *= 1 + (SNEAK[g(v, iSneak)] || 0) * ASSUME.behindRate;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
+    dmg *= 1 + (FIGHT_SPIRIT[g(v, iFS)] || 0) *
+      fightingSpiritUptime(g(v, iAvidity), g(v, iValor));
+    dmg *= 1 + (MEDITATION[g(v, iMed)] || 0) * medUp;
     for (let k = 0; k < ammoBoosts.length; k++) {
       dmg *= 1 + (ammoBoosts[k].levels[v[ammoBoosts[k].i]] || 0) * ammoBoosts[k].share;
     }
@@ -1496,6 +1564,9 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   knownSkills: knownSkills, styleVariants: styleVariants,
   utilityTable: utilityTable, handlingTable: handlingTable,
   elemReleaseUptime: elemReleaseUptime,
+  fightingSpiritUptime: fightingSpiritUptime,
+  meditationUptime: meditationUptime,
+  specialCount: specialCount,
   styleRate: styleRate, shotSeconds: shotSeconds,
   reloadSeconds: reloadSeconds, magazineSize: magazineSize,
   statSlotChoices: statSlotChoices,
