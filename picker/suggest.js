@@ -107,9 +107,15 @@
    */
   function syncSlotBox(weapon) {
     if (!slotBox) return;
-    var ok = !!(weapon && weapon.styleSelectable);
+    // The Hope Set is customisable but its track stops at level 5, which is
+    // before the stat slots appear, so it never gets them.
+    var x = exceptionFor(weapon);
+    var ok = !!(weapon && weapon.styleSelectable) && !(x && x.noSlots);
     slotBox.input.disabled = !ok;
-    slotBox.label.title = ok ? '' : 'This weapon is not customisable, so it has no stat slots';
+    slotBox.label.title = ok ? ''
+      : (x && x.noSlots
+        ? 'The ' + weapon.series + ' customises only to level 5, which is short of the stat slots'
+        : 'This weapon is not customisable, so it has no stat slots');
     slotBox.label.style.opacity = ok ? '' : '0.45';
     if (!ok && slotBox.input.checked) {
       slotBox.input.checked = false;
@@ -521,13 +527,19 @@
    * LINE and not the monster. Six cross-monster tests say so and none
    * disagrees:
    *
-   *   1817/516     Sinister and Bishaten both 100/40, on Blast and Paralysis
+   *   1817/516     Sinister, Bishaten and Rathian all 100/40
    *   1463/1420    Rathalos, Halloween and Legiana all 80/80
    *   2113/0       Paolumu, Bishaten and Banbaro all 392/0
    *   1579/1568    Bazelgeuse, Deviljho and Glavenus all 128/100
+   *   2103/0       Barroth, Pukei and Radobaan all 352/0
+   *   1912/417     Halloween, Pukei and Radobaan all 100/40
+   *   2251/0       Sinister and Rathian both 204/0
    *
    * Element type does not enter into it either — Blast against Paralysis on
-   * the first line, Fire against Dragon on the last.
+   * the first line, Fire against Dragon on the fourth.
+   *
+   * Nor is it smoothly banded. 2103 and 2113 are ten apart and give 352 and
+   * 392; meanwhile 2251, 2371 and 2658 all give 204.
    *
    * ZINOGRE IS THE ONE EXCEPTION, giving 120/120 on 1463/1420 where three
    * other monsters give 80/80. It is listed separately rather than being
@@ -535,6 +547,8 @@
    */
   var CUSTOM_TRACK = [
     { atk: 1363, ele: 1436, give: { atk: 64, ele: 96 } },
+    { atk: 1426, ele: 1131, give: { atk: 156, ele: 104 } },
+    { atk: 1429, ele: 1134, give: { atk: 156, ele: 104 } },
     { atk: 1463, ele: 1420, give: { atk: 80, ele: 80 } },
     { atk: 1549, ele: 1131, give: { atk: 156, ele: 104 } },
     { atk: 1579, ele: 1568, give: { atk: 128, ele: 100 } },
@@ -542,22 +556,47 @@
     { atk: 1878, ele: 516, give: { atk: 144, ele: 52 } },
     { atk: 1903, ele: 785, give: { atk: 184, ele: 80 } },
     { atk: 1912, ele: 417, give: { atk: 100, ele: 40 } },
+    { atk: 2015, ele: 752, give: { atk: 184, ele: 124 } },
+    { atk: 2103, ele: 0, give: { atk: 352, ele: 0 } },
     { atk: 2113, ele: 0, give: { atk: 392, ele: 0 } },
+    { atk: 2251, ele: 0, give: { atk: 204, ele: 0 } },
     { atk: 2327, ele: 309, give: { atk: 184, ele: 44 } },
+    { atk: 2371, ele: 0, give: { atk: 204, ele: 0 } },
+    { atk: 2633, ele: 0, give: { atk: 300, ele: 0 } },
     { atk: 2658, ele: 0, give: { atk: 204, ele: 0 } },
   ];
+
+  /**
+   * Monsters whose track does not follow the stat line.
+   *
+   * Zinogre gives 120/120 on a line three other monsters give 80/80 on, and
+   * nothing in the data marks it out.
+   *
+   * The Hope Set is a different kind of exception: its customisation stops at
+   * level 5, one block rather than four, so it grants 38/0 in total and never
+   * reaches the three stat slots at all — which is why `noSlots` turns that
+   * option off for it. It shares the 2251/0 line with Sinister and Rathian
+   * weapons, which do run the full track and do get 204/0.
+   */
   var CUSTOM_TRACK_EXCEPTIONS = [
     { series: 'Zinogre Set', atk: 1463, ele: 1420, give: { atk: 120, ele: 120 } },
+    { series: 'Hope Set', atk: 2251, ele: 0, give: { atk: 38, ele: 0 }, noSlots: true },
   ];
+
+  function exceptionFor(w) {
+    if (!w) return null;
+    for (var i = 0; i < CUSTOM_TRACK_EXCEPTIONS.length; i++) {
+      var x = CUSTOM_TRACK_EXCEPTIONS[i];
+      if (x.series === w.series && x.atk === w.atk && x.ele === w.ele) return x;
+    }
+    return null;
+  }
 
   function trackFor(w) {
     if (!w) return null;
-    var i;
-    for (i = 0; i < CUSTOM_TRACK_EXCEPTIONS.length; i++) {
-      var x = CUSTOM_TRACK_EXCEPTIONS[i];
-      if (x.series === w.series && x.atk === w.atk && x.ele === w.ele) return x.give;
-    }
-    for (i = 0; i < CUSTOM_TRACK.length; i++) {
+    var x = exceptionFor(w);
+    if (x) return x.give;
+    for (var i = 0; i < CUSTOM_TRACK.length; i++) {
       var t = CUSTOM_TRACK[i];
       if (t.atk === w.atk && t.ele === w.ele) return t.give;
     }
@@ -619,6 +658,21 @@
     if (!el) return;
     var html = '';
 
+    // What maxing the customisation track is worth, which is not in the
+    // source and does not follow from anything in it — see
+    // customisation-readings.txt. Said here because it is a property of the
+    // weapon being chosen.
+    var tr = trackFor(w), ex = exceptionFor(w);
+    if (tr) {
+      html += '<b>Customising it fully</b> grants <b>+' + tr.atk + ' attack</b>' +
+        (tr.ele ? ' and <b>+' + tr.ele + ' element</b>' : '') +
+        (ex && ex.noSlots
+          ? ', and the ' + w.series + ' stops at level 5 — short of the three stat ' +
+            'slots, which it never gets. Type that into the attack box if yours is maxed.'
+          : '. Ticking the stat-slots option below fills that in.') +
+        '<br>';
+    }
+
     if (w && w.category === 'Dual Blades' && w.styleSelectable) {
       var rows = [
         ['No style, normal stance', 100, ''],
@@ -628,7 +682,7 @@
         ['Spiral Slash, normal stance', 91, ''],
         ['Spiral Slash, the airborne slash', 390, 'about 2.5s, once a bar'],
       ];
-      html = '<b>Measured on a dummy</b>, as an index against plain normal stance ' +
+      html += '<b>Measured on a dummy</b>, as an index against plain normal stance ' +
         '(the weapon\'s own attack divides out, so this holds for any Dual Blades):' +
         '<table>' + rows.map(function (r) {
           return '<tr><td>' + r[0] + '</td><td class="n">' + r[1] +
@@ -652,7 +706,7 @@
         seen[r.type] = 1;
         return true;
       });
-      html = '<b>Measured on a dummy.</b> A shot lands every 0.60s at Low recoil, ' +
+      html += '<b>Measured on a dummy.</b> A shot lands every 0.60s at Low recoil, ' +
         '0.86s Average, 1.06s High and <b>2.06s Very high</b>; a magazine swap takes ' +
         '1.90s into a Fast one and up to 4.83s into a Very slow one. This weapon ' +
         'carries ' + mags.map(function (r) {

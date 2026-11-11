@@ -1,264 +1,121 @@
-The customisation track, read off fourteen weapon screens
-=========================================================
+The customisation track
+=======================
 
-The source publishes nothing about this. weaponLevels only carries levels 1
-to 5 within a grade; the twenty-step customisation track is not in the data
-at all, so it has to be measured like everything else.
+What it is
+----------
+Customising a weapon runs a track of twenty steps: four stat steps then a
+style selection, repeated four times. The four blocks are identical, so the
+total at the end is four times one block. A weapon with no element takes four
+attack steps; one with element alternates element, attack, element, attack.
+Within a block the second occurrence of each stat is about one and a half
+times the first. Nothing on the track ever touches affinity.
+
+None of it is in the source. weaponLevels carries only levels 1 to 5 within a
+grade, so all of this is read off weapon screens.
 
 How to read a weapon screen
 ---------------------------
 The black figure at the top is the SUM of the base value and everything added
-since, and the green figure in brackets is that addition. So
+since; the green figure in brackets is that addition. So
 
    base = black - green
 
-and the result matches the database's own 10-5 figures exactly on all
-fourteen weapons below, which is a useful check that both are right.
+and the result matches the database's own 10-5 figures on every weapon read,
+which is a useful check that both are right.
 
-The green bracket holds TWO different things added together: the customisation
-track, and the three stat slots. Despot's Blitz shows element +420, which is
-120 from its track plus 300 from three slots of +100; Skullwhistle shows
-affinity +30%, which is three slots of +10% and nothing else, since the track
-never touches affinity.
+The green bracket holds TWO things added together: the customisation track
+and the three stat slots. Despot's Blitz shows element +420, which is 120
+from its track plus 300 from three slots of +100. Skullwhistle shows affinity
++30%, which is three slots of +10% and nothing else, the track never touching
+affinity.
 
-The shape of the track
-----------------------
-Four stat steps, then a fifth step that selects a style, repeating four times
-to level 20. So the total at the end is FOUR TIMES one block, and the blocks
-are identical - Sinister Shadekeeper's step 6 is Element +4 and step 8 is
-Element +6, the same values as steps 1 and 3.
+THE RULE: THE TRACK FOLLOWS THE STAT LINE
+------------------------------------------
+Not the monster, not the weapon type, not the element. Seven lines were read
+on more than one monster and every one agrees:
 
-   no element      all four steps are attack
-   with element    element, attack, element, attack
+   1817/516     Sinister, Bishaten, Rathian          all 100/40
+   1463/1420    Rathalos, Halloween, Legiana         all 80/80
+   2113/0       Paolumu, Bishaten, Banbaro           all 392/0
+   1579/1568    Bazelgeuse, Deviljho, Glavenus       all 128/100
+   2103/0       Barroth, Pukei, Radobaan             all 352/0
+   1912/417     Halloween, Pukei, Radobaan           all 100/40
+   2251/0       Sinister, Rathian                    both 204/0
 
-Within a block the second occurrence of each stat is about one and a half
-times the first.
+Element type does not enter into it: Blast against Paralysis on the first
+line, Fire against Dragon on the fourth.
 
-What was read
--------------
-   weapon                  base atk/ele   block A/E   at level 20
-   Sinister Shadekeeper      1817/516       25/10       100/40
-   Sinister Famineblades     1817/516       25/10       100/40
-   Skullwhistle              1912/417       25/10       100/40
-   Thanatos Mauls            2658/0         51/0        204/0
-   Chaos Shatterer           2658/0         51/0        204/0
-   Wyvern Lovers             1463/1420      20/20        80/80
-   Despot's Blitz            1463/1420      30/30       120/120
-   Evening Dusk              1363/1436      16/24        64/96
-   Tamonowo                  1363/1436      16/24        64/96
-   Snow Sisters              1903/785       46/20       184/80
-   Illusory Frilled Claw     1878/516       36/13       144/52
-   Illusory Frilled Blow     1878/516       36/13       144/52
-   Bazelhawk Rookslayer      2327/309       46/11       184/44
-   Water Basher              1549/1131      39/26       156/104
+The table, complete
+-------------------
+   base          track       read on
+   1363/1436     64/96       Mizutsune
+   1426/1131     156/104     Barioth
+   1429/1134     156/104     Khezu
+   1463/1420     80/80       Rathalos, Halloween, Legiana
+   1549/1131     156/104     Jyuratodus
+   1579/1568     128/100     Bazelgeuse, Deviljho, Glavenus
+   1817/516      100/40      Sinister, Bishaten, Rathian
+   1878/516      144/52      Somnacanth
+   1903/785      184/80      Lagombi
+   1912/417      100/40      Halloween, Pukei, Radobaan
+   2015/752      184/124     Azure Rathalos
+   2103/0        352/0       Barroth, Pukei, Radobaan
+   2113/0        392/0       Paolumu, Bishaten, Banbaro
+   2251/0        204/0       Sinister, Rathian
+   2327/309      184/44      Bazelgeuse
+   2371/0        204/0       Diablos
+   2633/0        300/0       Rose Assault
+   2658/0        204/0       Black Diablos
 
-THE TRACK DOES NOT DEPEND ON WEAPON TYPE. Four pairs prove it, each sharing
-base stats across different types and carrying identical tracks:
+   exceptions
+   1463/1420     120/120     ZINOGRE only
+   2251/0        38/0        HOPE only, and no stat slots - see below
 
-   Sword & Shield and Dual Blades   1817/516   both E4 A10 E6 A15
-   Dual Blades and Hammer           2658/0     both A8 A12 A14 A17
-   Dual Blades and Long Sword       1363/1436  both E10 A6 E14 A10
-   Dual Blades and Hammer           1878/516   both E5 A14 E8 A22
+That covers ALL 294 CUSTOMISABLE WEAPONS. The work is finished unless the
+game adds more.
 
-It is also not a fixed percentage of the base. Expressed that way the totals
-run from 4.70% to 10.07% of base attack, with no obvious grouping.
+The two exceptions
+------------------
+ZINOGRE gives 120/120 where Rathalos, Halloween and Legiana all give 80/80 on
+the same line. Legiana was the deciding reading and came down against it.
+Nothing in the data marks Zinogre out, so it is listed rather than explained.
 
-AND IT IS NOT BASE ATTACK EITHER. Bazelhawk Rookslayer has base attack 2327
-and Snow Sisters 1903 - 22% apart - and both take Attack +18 then +28. Two
-weapons that differ by a fifth in the thing being scaled cannot be taking the
-same step by coincidence, so the attack steps are not a function of base
-attack at all.
+THE HOPE SET is a different kind of exception. Its customisation stops at
+level 5 - one block rather than four - so it grants 38/0 in total and never
+reaches the three stat slots at all. It shares the 2251/0 line with Sinister
+and Rathian weapons, which do run the full track and do get 204/0. The
+suggester turns the stat-slots option off for it and says why.
 
-The odd one out is Despot's Blitz, not Wyvern Lovers. A third weapon at
-1463/1420, Squawkscythe, also blocks 20/20, so two of the three agree and
-Despot's Blitz is 1.5x both of them. The user suspects Zinogre is treated as
-a special monster. With it set aside the remaining thirteen are consistent
-with each other, but still have no rule tying them to anything in the data.
+There is no formula, and that is settled
+-----------------------------------------
+Everything reasonable was tried and failed:
 
-Ruled out so far
-----------------
-   weapon type        four pairs share base stats across different types and
-                      carry identical tracks
+   weapon type        four pairs sharing base stats across types match
    base attack        Bazelhawk 2327 and Snow Sisters 1903 take the same
-                      steps; Illusory Frilled at 1878 takes smaller ones than
-                      Snow Sisters at 1903
-   a fixed percentage of base attack            4.70% to 10.07%
-   a fixed percentage of base attack + element  1.39% to 2.46%
-   a fixed percentage of the 10-1 figures       1.41% to 3.02%
-   a share of the growth from 10-1 to 10-5      0.071 to 0.152
-   grade span         weapons spanning grades 5-10 take anything from 1.17%
-                      to 1.98% of base attack
-   the number after the weapon name             it counts position within a
-                      name block - Girros Hammer 1-4 for grades 2-5, then
-                      Malady's Fist 1-5 for grades 6-10 - so it carries no
-                      information the grade does not
+                      steps; Illusory at 1878 takes less than Snow Sisters
+                      at 1903
+   percentage of anything   of base attack 4.7% to 18.6%, of attack plus
+                      element 1.39% to 2.46%, of the 10-1 figures 1.41% to
+                      3.02%, of the growth between grades 0.071 to 0.152
+   grade span         weapons spanning grades 5-10 run from 1.17% to 1.98%
+   smooth banding     2103 and 2113 are TEN APART and give 352 and 392,
+                      while 2251, 2371 and 2658 all give 204
+   the number after the weapon name   it counts position within a name block,
+                      Girros Hammer 1-4 for grades 2-5 then Malady's Fist 1-5
+                      for grades 6-10, so it carries nothing the grade does
+                      not
 
-What the ratios DO look like is three loose bands - about 1.4-1.5%, 1.9-2.2%
-and 2.4-2.5% of base attack plus element - but nothing in the data sorts the
-weapons into them. Lagombi and Jyuratodus land in the top band and both start
-at a low grade, which is suggestive, while Sinister and Somnacanth both start
-at grade 4 and land in different bands, which kills it.
+Paolumu makes the point on its own: base 2113 draws 392 where Black Diablos
+at 2658 draws 204. A weaker weapon taking nearly double looks like a number
+set by hand to prop up the earlier sets, and the table above is simply how to
+look it up.
 
-AND PAOLUMU SETTLES IT. Lumu weapons have base 2113 and no element, and take
-392 at level 20. Black Diablos weapons have base 2658 and take 204. A weapon
-weaker by a fifth draws nearly DOUBLE the compensation, which no scaling of
-the base stats produces in either direction - Mizutsune at base 1363 takes
-only 64. It reads as a number set by hand per monster to prop up the earlier
-sets, and the search for a formula is closed.
-
-A CORRECTION to what is written above. The four pairs that "share base stats
-across different weapon types" are all two weapons of the SAME MONSTER:
-Sinister Set, Black Diablos Set, Mizutsune Set and Somnacanth Set. So what
-they show is narrower than first claimed - the track does not vary by weapon
-type WITHIN a set - and that is exactly what a per-monster hand-set number
-would look like.
-
-So it is a table, not a formula
---------------------------------
-The readings are held as a lookup in the suggester, and ticking "spend the
-three customisation stat slots" fills the attack and element boxes from it -
-a weapon customised far enough to have those slots is at the end of its
-track. Unticking takes the figures back out, but only the ones it put in, so
-a number typed by hand survives. A weapon that has not been read says so
-rather than filling in a guess.
-
-The lookup is keyed on SERIES AND BASE STATS, not on the weapon name. Since
-the track does not vary by weapon type within a set, reading one weapon
-covers every weapon of that monster built to the same stat line - which turns
-twelve readings into 100 of the 748 weapons on record. It is deliberately not
-keyed on base stats alone: Rathalos and Zinogre both make a 1463/1420 weapon
-and their tracks are 80/80 and 120/120.
-
-   Sinister Set        1817/516     100/40
-   Halloween Set       1912/417     100/40
-   Halloween Set       1463/1420     80/80
-   Black Diablos Set   2658/0       204/0
-   Paolumu Set         2113/0       392/0
-   Rathalos Set        1463/1420     80/80
-   Zinogre Set         1463/1420    120/120
-   Mizutsune Set       1363/1436     64/96
-   Lagombi Set         1903/785     184/80
-   Somnacanth Set      1878/516     144/52
-   Bazelgeuse Set      2327/309     184/44
-   Jyuratodus Set      1549/1131    156/104
-
-Extending it is now cheap: one weapon screen per monster, at any stat line
-that monster makes. No rule will come out of it, but the coverage will.
-
-SETTLED: THE TRACK FOLLOWS THE STAT LINE, NOT THE MONSTER
-----------------------------------------------------------
-Six cross-monster tests, none disagreeing:
-
-   1817/516     Sinister 100/40      Bishaten 100/40
-   1463/1420    Rathalos 80/80       Halloween 80/80     Legiana 80/80
-   2113/0       Paolumu 392/0        Bishaten 392/0      Banbaro 392/0
-   1579/1568    Bazelgeuse 128/100   Deviljho 128/100    Glavenus 128/100
-
-Element type does not enter into it either - Blast against Paralysis on the
-first line, Fire against Dragon on the last.
-
-ZINOGRE IS THE ONE EXCEPTION, giving 120/120 on 1463/1420 where three other
-monsters give 80/80. Legiana was the tiebreak and came down against it, so it
-is listed as an exception rather than explained; nothing in the data marks it
-out.
-
-The lookup is therefore keyed on BASE STATS ALONE with one override, which
-takes it from 100 to 217 of the 294 customisable weapons - 279 of all 748.
-
-There is still no formula. 1817/516 and 1912/417 both give 100/40 while
-1878/516, barely different from the first, gives 144/52. Read as a share of
-base attack the totals still run from 4.7% to 18.6%. It is a hand-set number
-per stat line, and the table is simply how to look it up.
-
-   base          track        read on
-   1363/1436     64/96        Mizutsune
-   1463/1420     80/80        Rathalos, Halloween, Legiana
-   1549/1131     156/104      Jyuratodus
-   1579/1568     128/100      Bazelgeuse, Deviljho, Glavenus
-   1817/516      100/40       Sinister, Bishaten
-   1878/516      144/52       Somnacanth
-   1903/785      184/80       Lagombi
-   1912/417      100/40       Halloween
-   2113/0        392/0        Paolumu, Bishaten, Banbaro
-   2327/309      184/44       Bazelgeuse
-   2658/0        204/0        Black Diablos
-   1463/1420     120/120      Zinogre ONLY
-
-Seven stat lines are still unread, and each needs one screen:
-
-   2251/0      18 weapons   Sinister, Rathian, Hope    e.g. Sinister Dreadvolley
-   1426/1131   14           Barioth                    e.g. Icicle Blizzard
-   2103/0      12           Barroth, Pukei, Radobaan   e.g. Rugged Anchor
-   2371/0      12           Diablos                    e.g. Diablos Coilbender
-   2015/752    10           Azure Rathalos             e.g. Azure Mightbow
-   1429/1134   10           Khezu                      e.g. Galvanized Core
-   2633/0       1           Rose Assault
-
-THE FIRST CROSS-MONSTER TEST, and it says the stat line governs
-----------------------------------------------------------------
-Summit's Grand Glow is a BISHATEN weapon, base 1817/516, and its track is
-100/40 - identical to the SINISTER weapons on the same base. Two different
-monsters, and two different elements, Paralysis against Blast, giving the
-same track. Element type does not enter into it either.
-
-Against that stands Zinogre, which on 1463/1420 gives 120/120 where Rathalos
-and Halloween both give 80/80.
-
-So the score is one confirmation and one refutation, and the refutation is
-the weapon the user already suspected of being special. That is not enough to
-re-key the table on base stats alone, because getting it wrong would fill the
-suggester's boxes with wrong numbers for a hundred weapons rather than
-leaving them blank. LEGIANA AT 1463/1420 IS THE TIEBREAK: if it gives 80/80
-then Zinogre is simply an exception and the table collapses to a stat-line
-lookup with one override; if it gives something else again, the monster
-matters and the table stays as it is.
-
-Also added: Bazel Typhoon, the Bazelgeuse Fire line at 1579/1568, giving
-128/100. That is a line Deviljho and Glavenus also build on, twenty-eight
-weapons between them, so it is another cross-monster test waiting to be made.
-
-Where to point the camera next
-------------------------------
-SIX STAT LINES ARE BUILT BY MORE THAN ONE MONSTER, and one monster on each is
-already read. Testing an untested monster on the same line answers the only
-question left - whether the track follows the STAT LINE or the MONSTER - and
-if it follows the line, 88 more of the 294 customisable weapons come with it.
-
-   base          known                              untested
-   1463/1420     Rathalos 80/80, Halloween 80/80,   Legiana        13 weapons
-                 Zinogre 120/120
-   2113/0        Paolumu 392/0                      Banbaro         8
-                                                    Bishaten        5
-   1549/1131     Jyuratodus 156/104                 Anjanath       12
-                                                    Kadachi        14
-   1912/417      Halloween 100/40                   Pukei           9
-                                                    Girros          5
-                                                    Radobaan        4
-   1817/516      Sinister 100/40                    Rathian         9
-                                                    Bishaten        1
-                                                    Summer 2026     1
-   1903/785      Lagombi 184/80                     Aknosom         7
-
-Legiana is the most useful single reading on the board: that line already
-disagrees with itself, Rathalos and Halloween giving 80/80 where Zinogre gives
-120/120, so a third monster says which of the two is normal. Banbaro or
-Bishaten is next, since Paolumu's 392 is the extreme value and worth a second
-opinion.
-
-SEVEN SERIES BUILD ON MORE THAN ONE STAT LINE, so one reading does not cover
-them. These are the second lines still unread:
-
-   Bazelgeuse   1579/1568  Fire         Bazel Typhoon
-   Bishaten     1817/516   Paralysis    Summit's Grand Glow
-   Pukei        2103/0     No Element   Datura Blaster
-   Radobaan     2103/0     No Element   Baan Roar
-   Rathian      2251/0     No Element   Queen's Farflier
-   Sinister     2251/0     No Element   Sinister Dreadvolley
-
-Note that 2103/0 is also Barroth's only line and 2251/0 is also Hope's, so
-either of those readings covers three monsters if the stat line governs.
-
-SIXTEEN SERIES ARE UNREAD AND BUILD ON ONE LINE ONLY, so a single screen
-covers each set outright: Aknosom, Anjanath, Azure Rathalos, Banbaro,
-Barioth, Barroth, Deviljho, Diablos, Girros, Glavenus, Hope, Kadachi, Khezu,
-Legiana, Rose Assault, Tropical Cannon.
+In the suggester
+----------------
+Ticking "spend the three customisation stat slots" fills the attack and
+element boxes from this table, a weapon customised far enough to have those
+slots being at the end of its track. Unticking takes the figures back out,
+but only the ones it put in, so a number typed by hand survives, and changing
+weapon re-fills for the new one. The panel under the weapon dropdown states
+the figure whether or not the box is ticked, which is how a Hope Set weapon
+reports its 38 with no box to tick.
