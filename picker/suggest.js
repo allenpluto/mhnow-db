@@ -78,7 +78,11 @@
   elFind.addEventListener('input', buildWeaponList);
   buildWeaponList();
 
-  var opts = { gems: false, damageOnly: true, multiplayer: false, statSlots: false };
+  // All four start off. "Damage only" used to default on, which quietly hid the
+  // utility weighting from anyone who never touched the box — and the ranked
+  // figure on screen is the utility-weighted one, so the default now matches
+  // what the table actually shows.
+  var opts = { gems: false, damageOnly: false, multiplayer: false, statSlots: false };
   var slotBox = null;
   [['damageOnly', 'Damage only (ignore utility weights)'],
    ['gems', 'Assume ideal driftgems'],
