@@ -172,6 +172,28 @@ case and puts the lapse at a long sword-to-axe transition. The two readings
 differ by only a few points on these runs - 74% against 81% - so nothing here
 turns on it.
 
+Two flaws in the banner detector, found in live hunts
+------------------------------------------------------
+THE DETECTOR CANNOT TELL WHICH SKILL FIRED. It finds a pale panel of the
+right width and calls it Burst. Three live hunts were decoded and the panels
+read "Rude Awakener" and "Special Partbreaker" - every proc announces itself
+the same way. Any Burst count that was not confirmed by reading the words is
+worthless. The dummy figures above survive because they were read: the
+Charge Blade banners at 14.8s, 41.8s, 51.2s and 55.1s all say Burst.
+
+BANNERS STACK, and the crop only saw the first row. In a live Charge Blade
+hunt with Burst 2 the first row carried Rude Awakener while BURST SAT IN THE
+SECOND ROW at y 325 to 371, invisible to a crop that stopped at y 310. The
+first pass therefore reported two Burst activations that were both Rude
+Awakener, and missed the one real Burst entirely.
+
+Widening the crop to both rows and reading it: in 37 seconds of a live hunt
+on a fast weapon, BURST ACTIVATED ONCE, at about 21s. That is the same order
+as the dummy runs, which first activated at 12.5s and 41.7s, so nothing
+contradicts the 50% the engine carries - but the live hit chain cannot be
+read, there being no damage counter in a hunt, so the uptime that follows
+from that activation is not measured either.
+
 Open items
 ----------
    - POWER PROLONGER is still a flat 5/10/15% guess across seven weapon
