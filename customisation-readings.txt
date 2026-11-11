@@ -144,3 +144,49 @@ and their tracks are 80/80 and 120/120.
 
 Extending it is now cheap: one weapon screen per monster, at any stat line
 that monster makes. No rule will come out of it, but the coverage will.
+
+Where to point the camera next
+------------------------------
+SIX STAT LINES ARE BUILT BY MORE THAN ONE MONSTER, and one monster on each is
+already read. Testing an untested monster on the same line answers the only
+question left - whether the track follows the STAT LINE or the MONSTER - and
+if it follows the line, 88 more of the 294 customisable weapons come with it.
+
+   base          known                              untested
+   1463/1420     Rathalos 80/80, Halloween 80/80,   Legiana        13 weapons
+                 Zinogre 120/120
+   2113/0        Paolumu 392/0                      Banbaro         8
+                                                    Bishaten        5
+   1549/1131     Jyuratodus 156/104                 Anjanath       12
+                                                    Kadachi        14
+   1912/417      Halloween 100/40                   Pukei           9
+                                                    Girros          5
+                                                    Radobaan        4
+   1817/516      Sinister 100/40                    Rathian         9
+                                                    Bishaten        1
+                                                    Summer 2026     1
+   1903/785      Lagombi 184/80                     Aknosom         7
+
+Legiana is the most useful single reading on the board: that line already
+disagrees with itself, Rathalos and Halloween giving 80/80 where Zinogre gives
+120/120, so a third monster says which of the two is normal. Banbaro or
+Bishaten is next, since Paolumu's 392 is the extreme value and worth a second
+opinion.
+
+SEVEN SERIES BUILD ON MORE THAN ONE STAT LINE, so one reading does not cover
+them. These are the second lines still unread:
+
+   Bazelgeuse   1579/1568  Fire         Bazel Typhoon
+   Bishaten     1817/516   Paralysis    Summit's Grand Glow
+   Pukei        2103/0     No Element   Datura Blaster
+   Radobaan     2103/0     No Element   Baan Roar
+   Rathian      2251/0     No Element   Queen's Farflier
+   Sinister     2251/0     No Element   Sinister Dreadvolley
+
+Note that 2103/0 is also Barroth's only line and 2251/0 is also Hope's, so
+either of those readings covers three monsters if the stat line governs.
+
+SIXTEEN SERIES ARE UNREAD AND BUILD ON ONE LINE ONLY, so a single screen
+covers each set outright: Aknosom, Anjanath, Azure Rathalos, Banbaro,
+Barioth, Barroth, Deviljho, Diablos, Girros, Glavenus, Hope, Kadachi, Khezu,
+Legiana, Rose Assault, Tropical Cannon.
