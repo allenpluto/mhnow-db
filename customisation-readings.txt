@@ -145,6 +145,55 @@ and their tracks are 80/80 and 120/120.
 Extending it is now cheap: one weapon screen per monster, at any stat line
 that monster makes. No rule will come out of it, but the coverage will.
 
+SETTLED: THE TRACK FOLLOWS THE STAT LINE, NOT THE MONSTER
+----------------------------------------------------------
+Six cross-monster tests, none disagreeing:
+
+   1817/516     Sinister 100/40      Bishaten 100/40
+   1463/1420    Rathalos 80/80       Halloween 80/80     Legiana 80/80
+   2113/0       Paolumu 392/0        Bishaten 392/0      Banbaro 392/0
+   1579/1568    Bazelgeuse 128/100   Deviljho 128/100    Glavenus 128/100
+
+Element type does not enter into it either - Blast against Paralysis on the
+first line, Fire against Dragon on the last.
+
+ZINOGRE IS THE ONE EXCEPTION, giving 120/120 on 1463/1420 where three other
+monsters give 80/80. Legiana was the tiebreak and came down against it, so it
+is listed as an exception rather than explained; nothing in the data marks it
+out.
+
+The lookup is therefore keyed on BASE STATS ALONE with one override, which
+takes it from 100 to 217 of the 294 customisable weapons - 279 of all 748.
+
+There is still no formula. 1817/516 and 1912/417 both give 100/40 while
+1878/516, barely different from the first, gives 144/52. Read as a share of
+base attack the totals still run from 4.7% to 18.6%. It is a hand-set number
+per stat line, and the table is simply how to look it up.
+
+   base          track        read on
+   1363/1436     64/96        Mizutsune
+   1463/1420     80/80        Rathalos, Halloween, Legiana
+   1549/1131     156/104      Jyuratodus
+   1579/1568     128/100      Bazelgeuse, Deviljho, Glavenus
+   1817/516      100/40       Sinister, Bishaten
+   1878/516      144/52       Somnacanth
+   1903/785      184/80       Lagombi
+   1912/417      100/40       Halloween
+   2113/0        392/0        Paolumu, Bishaten, Banbaro
+   2327/309      184/44       Bazelgeuse
+   2658/0        204/0        Black Diablos
+   1463/1420     120/120      Zinogre ONLY
+
+Seven stat lines are still unread, and each needs one screen:
+
+   2251/0      18 weapons   Sinister, Rathian, Hope    e.g. Sinister Dreadvolley
+   1426/1131   14           Barioth                    e.g. Icicle Blizzard
+   2103/0      12           Barroth, Pukei, Radobaan   e.g. Rugged Anchor
+   2371/0      12           Diablos                    e.g. Diablos Coilbender
+   2015/752    10           Azure Rathalos             e.g. Azure Mightbow
+   1429/1134   10           Khezu                      e.g. Galvanized Core
+   2633/0       1           Rose Assault
+
 THE FIRST CROSS-MONSTER TEST, and it says the stat line governs
 ----------------------------------------------------------------
 Summit's Grand Glow is a BISHATEN weapon, base 1817/516, and its track is
