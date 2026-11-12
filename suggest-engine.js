@@ -885,6 +885,16 @@ function styleVariants(weapon) {
     }
     out.push(make('stepping shot, even magazine use',
       { name: 'stepping shot', recoil: false, reload: true, primary: null }));
+    // Stepping shot parked on slicing is a DIFFERENT BUILD, not the same one
+    // scored differently: it wants Slicing Ammo Boost at nearly full value
+    // where even use gives it 1/n. Four live hunts show 96% of the hunt spent
+    // on the slicing magazine, so it is a real way the weapon is played and
+    // belongs in the search rather than being left for the player to notice.
+    if (has('SLICING')) {
+      out.push(make('stepping shot, parked on slicing',
+        { name: 'stepping shot', recoil: false, reload: true,
+          primary: 'SLICING', primaryShare: 0.96 }));
+    }
   } else {
     if (has('SPREAD') || has('WYVERN')) {
       out.push(make('guard reload',
@@ -1217,7 +1227,11 @@ function ammoShare(w, boost) {
   // every unstyled bowgun, fires evenly.
   const primaryType = w.style && w.style.primary;
   if (primaryType && w.ammo.indexOf(primaryType) >= 0) {
-    const primary = n <= 2 ? 0.90 : 0.80;
+    // A style may carry its own measured share. Stepping shot parked on
+    // slicing does: four live hunts spent 96% of their length on the 3-round
+    // magazine (68.5/71.3, 76.3/80.5, 83.8/86.5), read off the HUD rather
+    // than assumed. Otherwise the sliding-reload figures stand.
+    const primary = w.style.primaryShare || (n <= 2 ? 0.90 : 0.80);
     if (!boost) return primary;
     const onPrimary = boost.types.indexOf(primaryType) >= 0;
     if (onPrimary) return primary;

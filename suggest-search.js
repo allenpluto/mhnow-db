@@ -94,7 +94,23 @@
   function run(armour, weapon, opts) {
     opts = opts || {};
     var variants = E.styleVariants(weapon);
-    if (variants.length < 2) return runOne(armour, variants[0].weapon, opts);
+    // A player who has committed to a style wants the best set FOR IT, not the
+    // best set overall — the suggester otherwise answers a question they did
+    // not ask, and on a bowgun the styles are different builds entirely.
+    if (opts.style) {
+      var want = String(opts.style).toLowerCase();
+      var only = variants.filter(function (v) {
+        return v.label && v.label.toLowerCase().indexOf(want) >= 0;
+      });
+      if (only.length) variants = only;
+    }
+    if (variants.length < 2) {
+      var one = runOne(armour, variants[0].weapon, opts);
+      // Still name the style when one was asked for, so the output says which
+      // build it is reporting rather than going silent.
+      if (variants[0].label) one.results.forEach(function (r) { r.style = variants[0].label; });
+      return one;
+    }
 
     var merged = [], first = null;
     variants.forEach(function (v) {

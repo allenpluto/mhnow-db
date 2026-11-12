@@ -170,6 +170,7 @@ const TOP = Number(val('--top', 5));
 const t0 = Date.now();
 const out = S.run(ARMOUR, W, {
   gems: GEMS, damageOnly: DAMAGE_ONLY, own: own, top: TOP, gemmable: GEMMABLE,
+  style: val('--style', null),
 });
 console.log('  search space: ' + S.SLOTS.map((s) => out.bundles[s].length).join(' x ') +
   ' = ' + out.space.toLocaleString() + ' sets   (' + ((Date.now() - t0) / 1000).toFixed(1) + 's)');
