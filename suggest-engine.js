@@ -703,14 +703,15 @@ function handlingTable(w, which) {
       let after, shots = cap;
       if (which === 'evade') {
         // Fires only on an empty magazine, so it replaces the reload and
-        // nothing else. Each dodge is a fresh roll at chance p, so the wait
-        // is geometric: one dodge to spend, then 1/p more on average. Capped
-        // at the ladder, since a magazine that comes up faster by hand would
-        // be reloaded by hand - which is also why a fast magazine gains
-        // nothing from the skill.
-        const p = EVADE_RELOAD_CHANCE[lv] || 0;
-        const evade = p > 0 ? DODGE_SECONDS * (1 + 1 / p) : Infinity;
-        after = (cap - 1) * shot0 + Math.min(load0, evade);
+        // nothing else. A cycle is 1/p dodges waiting plus one dodge per
+        // round it gave, and the magazine's own reload never enters it.
+        // Never worse than reloading by hand, because a player whose magazine
+        // comes up faster by hand simply reloads by hand.
+        const e = EVADE_RELOAD[lv];
+        const L = e ? Math.min(e.load, cap) : 0;
+        shots = L || cap;
+        after = L ? (1 / e.p + L) * shot0 : before;
+        if (shots / after < cap / before) { shots = cap; after = before; }
       } else if (which === 'spare') {
         // A chance not to consume the round stretches the magazine, so more
         // shots come out of one reload rather than each shot coming sooner.
@@ -777,9 +778,41 @@ const SPARE_SHOT_CHANCE = { 1: 0.10, 2: 0.20, 3: 0.30 };
  * ladder now has a THRESHOLD in it: below about Lv3 the expected wait is
  * longer than a Slow reload, so the skill does nothing on such a magazine.
  */
-const EVADE_RELOAD_CHANCE = {        // Lv5 from the skill's own text; rest scaled
-  1: 0.19, 2: 0.33, 3: 0.47, 4: 0.61, 5: 0.70,
+/* The skill's own text, all five levels. It is TWO numbers, not one: a chance
+ * per dodge, and how many rounds that roll puts in. Both climb, and they climb
+ * alternately, which is why the ladder has flat spots in it.
+ *
+ *    Lv1   30% to load 1      Lv4   70% to load 2
+ *    Lv2   50% to load 1      Lv5   70% to load 3
+ *    Lv3   50% to load 2
+ *
+ * The rounds loaded are CAPPED BY THE MAGAZINE, and that is where the flat
+ * spots bite: on a 2-round slicing magazine Lv5's third round goes nowhere, so
+ * Lv4 and Lv5 are exactly the same skill. An earlier version of this modelled
+ * every level as a full refill, which made Lv5 look better than it is on small
+ * magazines and Lv1-3 far better than they are on any.
+ */
+const EVADE_RELOAD = {
+  1: { p: 0.30, load: 1 },
+  2: { p: 0.50, load: 1 },
+  3: { p: 0.50, load: 2 },
+  4: { p: 0.70, load: 2 },
+  5: { p: 0.70, load: 3 },
 };
+
+/**
+ * Rounds per second on one magazine under the evade loop.
+ *
+ * From empty: dodge until a roll lands, which takes 1/p dodges on average,
+ * then fire the rounds it gave you, one per dodge. So a cycle is 1/p + L
+ * dodges for L rounds, and the magazine's own reload never enters it.
+ */
+function evadeRate(cap, lvl, dodge) {
+  const e = EVADE_RELOAD[lvl];
+  if (!e) return 0;
+  const L = Math.min(e.load, cap);
+  return L / ((1 / e.p + L) * dodge);
+}
 
 
 /**
@@ -831,10 +864,10 @@ function evadeMinLevel(w) {
   if (!type) return 1;
   const r = (w.rounds || []).filter((x) => x.type === type)[0];
   if (!r || STEP[r.reload] === undefined) return 1;
-  const ladder = reloadSeconds(r, w.style, 0);
+  const cap = magazineSize(r, w.style);
+  const plain = cap / ((cap - 1) * shotSeconds(r, w.style, 0) + reloadSeconds(r, w.style, 0));
   for (let lv = 1; lv <= 5; lv++) {
-    const p = EVADE_RELOAD_CHANCE[lv] || 0;
-    if (p > 0 && DODGE_SECONDS * (1 + 1 / p) < ladder) return lv;
+    if (evadeRate(cap, lv, shotSeconds(r, w.style, 0)) > plain) return lv;
   }
   return 99;                      // no level of it can hold this magazine
 }

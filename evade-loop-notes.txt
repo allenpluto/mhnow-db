@@ -342,3 +342,56 @@ skill that was doing nothing. It now takes Evading Reload 4 and pays for it:
    Frost Blitz, 75s, parked      score 11895 -> 10808
    and the set is Slicing Ammo Boost 3 with Evading Reload 4, no handling
    skill at all, which is the build being played.
+
+
+THE REAL LADDER: IT IS TWO NUMBERS, NOT ONE
+===========================================
+From the skill's own text, all five levels:
+
+   Lv1   30% to load 1      Lv4   70% to load 2
+   Lv2   50% to load 1      Lv5   70% to load 3
+   Lv3   50% to load 2
+
+A CHANCE AND AN AMOUNT, climbing alternately. Every model here before this
+assumed a full refill at every level, which made Lv1-3 far better than they
+are and Lv5 better than it is on a small magazine.
+
+THE ROUNDS ARE CAPPED BY THE MAGAZINE, and that is where it bites. On a
+2-round slicing magazine Lv5's third round goes nowhere, so LV4 AND LV5 ARE
+THE SAME SKILL.
+
+The cycle, from empty: dodge until a roll lands, 1/p dodges on average, then
+fire what it gave you, one round per dodge. So
+
+   rounds per second = L / ((1/p + L) x DODGE),  L = min(load, capacity)
+
+and the magazine's own reload never enters it. Never worse than reloading by
+hand, because a player whose magazine comes up faster by hand would do that.
+
+   3-round slicing, Slow 3.30s        2-round slicing, Normal 2.85s
+      by hand           0.577            by hand           0.526
+      Lv1 30%x1         0.243  worse     Lv1 30%x1         0.243  worse
+      Lv2 50%x1         0.351  worse     Lv2 50%x1         0.351  worse
+      Lv3 50%x2         0.526  worse     Lv3 50%x2         0.526  exactly ties
+      Lv4 70%x2         0.614            Lv4 70%x2         0.614
+      Lv5 70%x3         0.713            Lv5 70%x3 -> 2    0.614  SAME AS LV4
+
+Lv5 at 0.713 r/s against the dummy's measured 0.703 - 1.4% out, and the
+measurement is untouched by this change because on a 3-round magazine Lv5
+loads the full magazine, which is what the old model assumed.
+
+Through the engine, as the utility figure on the parked variant:
+
+   Rose Assault  slicing 2:  Lv1-3 0.0%   Lv4 16.0%   Lv5 16.4%
+   Frost Blitz   slicing 3:  Lv1-3 0.0%   Lv4  6.2%   Lv5 22.8%
+
+Rose Assault's Lv4 and Lv5 differ by 0.4%, not 0: that residue is the 4% of
+shots spent on its pierce magazine, which holds 4 and so can use Lv5's third
+round. On the slicing magazine itself they are identical, as the text says.
+
+Frost Blitz is the opposite shape and worth noticing: Lv4 is barely worth
+anything there (6.2%) while Lv5 is worth 22.8%, because the step from 2
+rounds to 3 is the step from two thirds of that magazine to all of it. THE
+SKILL IS NOT SMOOTH IN ITS LEVELS - what it is worth depends on where the
+load amount falls against the magazine size, so it must be priced per weapon
+and cannot be a flat ladder. That is now what the engine does.
