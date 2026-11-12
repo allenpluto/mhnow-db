@@ -425,35 +425,27 @@
       }
 
       if (weapon.category === 'Light Bowgun' && (weapon.ammo || []).indexOf('SLICING') >= 0) {
-        var sliceMag = rounds.filter(function (x) { return x.type === 'SLICING'; })[0];
-        out.push('THIS WEAPON HAS A BUILD THE MODEL DOES NOT SEE, and it is worth about ' +
-          'two and a half times what is ranked above. Under stepping shot the shot IS ' +
-          'the dodge, fired at a measured 0.975s whatever the recoil — and Evading ' +
-          'Reload triggers on a dodge. So every shot rolls Evading Reload for free, ' +
-          'which is the highest trigger rate it can physically have. Park on the ' +
-          'slicing magazine and never reload by hand: if the refill chance reaches ' +
-          '1 in ' + (sliceMag ? sliceMag.capacity : 3) + ' per dodge — one over the ' +
-          'magazine size — the magazine never runs dry, every gap in the cycle is a ' +
-          'dodge, and the gun fires 1.03 rounds a second forever, REGARDLESS OF ' +
-          'MAGAZINE SIZE. That is x2.5 the unstyled slicing rate. Parking also lifts ' +
-          'Slicing Ammo Boost off its shared fraction to its full +100%. Together ' +
-          'that is about x5 the bare weapon where this page books about x1.8.');
-        out.push('If you play that build, READ THE RANKING ABOVE BACKWARDS in one ' +
-          'respect: Reload Speed shortens a reload you never take, so it is dead ' +
-          'weight, while Spare Shot is the skill that gets you over the threshold — ' +
-          'a round it saves is a round the refill need not supply, which drops the ' +
-          'chance needed from 1/' + (sliceMag ? sliceMag.capacity : 3) + ' to ' +
-          '0.7/' + (sliceMag ? sliceMag.capacity : 3) + ' at Lv3 — and worth nothing ' +
-          'once you are over it. Recoil Down is already nothing under stepping shot. ' +
-          'What is missing is the refill chance itself, which has never been measured; ' +
-          'see evade-loop-notes.txt.');
+        out.push('EVADING RELOAD IS MEASURED, on stepping shot, and it is worth more on ' +
+          'a slicing magazine than anywhere else. Recorded on Nifl Mist at Lv5: it ' +
+          'fires about two times in three and brings the magazine up in 2.05s against ' +
+          'the 3.30s a Slow slicing magazine costs, which took the cycle from 0.571 to ' +
+          'a measured 0.703 rounds a second — 4874 damage per second on the dummy. The ' +
+          'same recording confirmed stepping shot\'s cadence a second time: 0.957s ' +
+          'between shots on a magazine whose native interval is 2.056s.');
+        out.push('IT ONLY FIRES ON AN EMPTY MAGAZINE — all fifteen refills in seven ' +
+          'magazines began at zero rounds, so it shortens the wait at the end of a ' +
+          'magazine rather than stretching one. There is no endless-fire loop, and ' +
+          'Spare Shot is not a threshold skill. What the ranking above still does not ' +
+          'know is that parking on the slicing magazine lifts Slicing Ammo Boost off ' +
+          'its 1-in-' + ((weapon.ammo || []).length || 3) + ' share to its full +100% ' +
+          'at Lv3, which this page does not credit. See evade-loop-notes.txt.');
       }
 
       out.push('Still soft here: sliding reload was timed one shot at a time, so some of ' +
         'its 2.52s is the player rather than the game; the reload figures carry a ' +
         'per-weapon offset of a few tenths, and only the gaps between tiers are firm; ' +
-        'and Evading Reload is still a guess, since no recording has caught an evade ' +
-        'refilling a magazine.');
+        'and Evading Reload is now measured at Lv5 only, the lower levels being the old ' +
+        'shape rescaled to meet it.');
       return out;
     }
 

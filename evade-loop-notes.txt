@@ -1,151 +1,119 @@
-The slicing evade loop: stepping shot + Evading Reload + Slicing Ammo Boost
-===========================================================================
+Evading Reload on stepping shot: MEASURED
+=========================================
+Nifl Mist 5, training dummy, 2026-11-12. Attack 1411, affinity 20%, Water
+1508. Stepping Shot. Skills: Evading Reload 5, Slicing Ammo Boost 3, Attack
+Boost 2, Recoil Down 2, Defense Boost 1, Evade Extender 1, Last Stand 1,
+Artful Dodger 1, Peak Performance 1. No Spare Shot. The slicing loop runs from
+12.45s to 40.05s of the recording: seven magazines, twenty-one shots.
 
-The playstyle, as described by the player
------------------------------------------
-Light Bowgun, style-selectable, carrying slicing. Open on normal or pierce,
-switch to the slicing magazine, and then NEVER actively reload again. Keep
-dodging to shoot, and when the magazine runs dry the dodges themselves have a
-chance to reload it.
+Method: the three magazine icons in the centre of the HUD were read frame by
+frame at a constant 20fps, each icon thresholded on its own. That times every
+shot and every refill directly, with no inference. The hit counter was tried
+first and is unusable on this recording - the panel is translucent and the
+slicing effects wash it out - which is why the magazine icons were used
+instead. They are a better signal anyway: they show reloads as well as shots.
 
-The suggester does not know this build exists, and understates it by roughly
-two and a half to three times. The reason is not a wrong number anywhere - it
-is that the engine prices three things separately that are ONE EVENT in play.
+WHAT WAS PREDICTED, AND WHAT HAPPENED
+-------------------------------------
+Predicted here before the recording: that Evading Reload would top the
+magazine up as it drained, that the magazine would never run dry, and that the
+gun would fire one round every 0.975s indefinitely - 1.026 rounds/s,
+independent of magazine size. A threshold was derived, p x cap >= 1.
 
-The identity the engine is missing
-----------------------------------
-UNDER STEPPING SHOT, THE SHOT IS THE DODGE. Stepping shot replaces the shot
-with a dodge and fires at a fixed 0.975s whatever the recoil - measured. And
-Evading Reload triggers on a dodge. So every shot rolls Evading Reload, and
-the trigger rate is not merely high, it is the highest it can physically be:
-one roll per 0.975s, for free, with no action spent on it.
+THAT IS WRONG, and the recording kills it outright.
 
-This is the same shape as the Fighting Spirit / Elemental Release identity
-already in the engine - two skills keyed to the same instant - and it is
-handled the same way: derive it from the timeline instead of guessing.
+IT ONLY EVER FIRES ON AN EMPTY MAGAZINE. All fifteen refill events across
+seven magazines began at zero rounds. Not once in roughly fourteen
+opportunities did a dodge top up a partial magazine. The skill does not
+stretch a magazine; it shortens the wait at the end of one. So there is no
+self-sustaining loop, the p x cap >= 1 threshold is the wrong model, and
+Spare Shot is not the threshold skill it was argued to be.
 
-The engine instead holds:
-   - stepping shot's cycle as (capacity - 1) dodges PLUS a real reload off the
-     reload ladder
-   - Evading Reload as a flat 4/7/10/13/15% of damage, a guess that carries a
-     comment saying it is a guess
-   - Slicing Ammo Boost at 1/n of its value, n being the number of magazines,
-     because stepping shot is assumed to fire its magazines evenly
+THE NUMBERS
+-----------
+WITHIN a magazine, shot to shot, 14 gaps:
+   0.95 1.00 0.90 0.95 0.90 0.95 0.95 1.00 1.00 0.90 0.95 0.95 1.00 1.00
+   mean 0.957s
 
-All three are wrong for this build, and they are wrong in the same direction.
+That is an independent confirmation of stepping shot's fixed cadence, measured
+before at 0.975s off a different weapon, and it holds on a Very high recoil
+magazine whose native interval is 2.056s. Stepping shot more than halves the
+interval on slicing, exactly as modelled.
 
-The arithmetic, from the measured dodge
----------------------------------------
-Treat Evading Reload as a chance p of refilling the magazine on each dodge,
-which is how the player describes it. In steady state each dodge consumes one
-round and supplies p x cap rounds, so
+RELOAD, last shot of a magazine to first shot of the next, 6 gaps:
+   2.05 2.05 2.05 3.00 3.05 2.00     mean 2.367s
+   against the 3.30s this weapon's Slow slicing magazine costs on the ladder
 
-      SUSTAINABLE  <=>  p x cap >= 1  <=>  p >= 1 / cap
+Four landed at 2.02s and two at 3.02s. Read that as the skill firing about two
+times in three at Lv5, and the reload costing about 2.05s when it does. 2.05s
+is the same figure guard reload was measured at, which suggests it is the
+game's own floor for getting a magazine up rather than a coincidence.
 
-Above that threshold the magazine never runs dry, no reload is ever taken, and
-EVERY gap in the cycle is one dodge - the reload gaps included. The cadence is
-therefore the dodge's own:
+CYCLE, three rounds: 4.00 3.90 3.90 4.95 4.95 3.90, mean 4.267s
+   = 0.703 rounds per second
 
-      CEILING = 1 / 0.975 = 1.026 rounds per second
+   no style, reloading normally      0.405 r/s
+   stepping shot, as modelled        0.571 r/s
+   MEASURED with Evading Reload 5    0.703 r/s   +23% over stepping shot alone
+   the "endless loop" predicted      1.026 r/s   NEVER APPROACHED
 
-AND IT DOES NOT DEPEND ON MAGAZINE SIZE. That is the whole trick. A 2-round
-slicing magazine fires exactly as fast as a 10-round one, because capacity
-only ever mattered as the thing that set how often you paid a reload.
+DAMAGE, read off the Total Damage panel at both ends of the window:
+   7829 at 12.30s, 7 HIT  ->  150631 at 41.60s, 99 HIT
+   142,802 damage and 92 hits in 29.30s, over 21 slicing shots
 
-Below the threshold, fire is supply-limited at p x cap rounds per dodge, and a
-player would reload by hand instead of dodging on an empty gun - so the real
-rate is the better of the two.
+   4874 DAMAGE PER SECOND
+   6800 damage per slicing round, 4.4 hits per round
 
-The threshold is low, because slicing magazines are small
----------------------------------------------------------
-   Devil's Madness, Glavenus Blitz, Frost Blitz, Nifl Mist,
-   Rathbuster, Lightning Blitz      3 slicing rounds   needs p >= 33%
-   Rose Assault                     2 slicing rounds   needs p >= 50%
+That is the first absolute damage-per-second figure in this project for any
+bowgun. Everything before it was a rate or a ratio.
 
-Rounds per second on the slicing magazine, against reloading by hand, where
-* marks the evade loop being ahead:
+WHAT THE ENGINE DOES NOW
+------------------------
+Evading Reload was a flat guess of 4/7/10/13/15% of damage with a comment
+admitting it. It is now worked out per weapon by handlingTable(w, 'evade'),
+the same way Recoil Down, Reload Speed and Spare Shot are: with chance p the
+magazine comes up in 2.05s instead of what the cycle costs, and never slower,
+so a magazine already faster than 2.05s gains nothing from it.
 
-   3-round magazines   native 0.405   stepping shot alone 0.571
-      p = 10%   0.571     20%   0.615*    30%   0.923*
-      p = 15%   0.571     25%   0.769*    33%+  1.026*  ceiling
-   Rose Assault        native 0.408   stepping shot alone 0.523
-      p = 25%   0.523     33%   0.684*    50%+  1.026*  ceiling
-      p = 30%   0.615*    40%   0.821*
+   EVADE_RELOAD_FAST   = 2.05s                      measured
+   EVADE_RELOAD_CHANCE = .18 .31 .44 .58 .67        Lv5 measured at 4 of 6,
+                                                    lower levels keep the old
+                                                    shape rescaled to meet it
 
-What it is worth, at the ceiling, on the slicing magazine:
+Checked against the recording: the model gives 0.680 r/s on this magazine
+against 0.703 measured, 3.3% low - the residue is the 0.957s measured interval
+against the 0.975s the engine carries.
 
-   against no style, reloading normally        x2.52
-   against stepping shot alone                x1.79  (x1.96 on Rose Assault)
+Applied ONLY under stepping shot, which is where it was measured. The skill
+fires on a dodge, and under stepping shot the dodge is the shot, so the
+trigger is free and constant. Off that style a dodge is an action spent
+instead of attacking, and this engine has no way to price that, so the old
+flat guess still stands there and is still marked as a guess.
 
-SPARE SHOT IS THE THRESHOLD SKILL, AND RELOAD SPEED IS DEAD
------------------------------------------------------------
-This is the part that changes what to wear, and it inverts the suggester's
-current advice.
+A COINCIDENCE WORTH NOT BEING FOOLED BY: averaged over Nifl Mist's three
+magazines the new figure for Lv5 is 15.5%, against the old flat guess of 15%.
+The guess was accidentally right in the average and wrong in the detail - the
+gain is concentrated almost entirely on the slow slicing magazine and is worth
+far less on the fast normal one.
 
-A round Spare Shot saves is a round the refill does not have to supply, so
-demand per dodge is (1 - spare chance) and the condition becomes
-
-      p x cap >= 1 - spare
-
-                     refill chance needed to sustain endless fire
-   magazine    Spare 0   Spare 1   Spare 2   Spare 3
-   2 rounds        50%       45%       40%       35%
-   3 rounds        33%       30%       27%       23%
-
-So Spare Shot is the skill that gets you OVER the threshold - and is worth
-exactly nothing once you are over it. Reload Speed is the precise opposite: it
-shortens a reload this build never takes. Recoil Down was already worth
-nothing under stepping shot, which the engine does know.
-
-The suggester's current answer for Rose Assault at 75s is
-   Reload Speed 3, Spare Shot 1, Slicing Ammo Boost 2
-Reload Speed 3 is the single largest piece of that and it is dead weight for
-this playstyle, while Slicing Ammo Boost is left at 2 because the engine
-believes half its value leaks into the pierce magazine.
-
-The combined size of the gap
+WHAT STILL HOLDS FROM BEFORE
 ----------------------------
-Slicing magazine, against the bare weapon, at the ceiling:
+The ammo-share point is untouched and still a real gap. Parked on slicing,
+Slicing Ammo Boost is worth its full +100% at Lv3, where the engine books 1/n
+of it - a third on this three-magazine weapon. That is x1.5 on the damage and
+is not in the ranking.
 
-   weapon              the loop   suggester books   understated by
-   Devil's Madness       x5.07         x1.74            x2.9
-   Glavenus Blitz        x5.07         x2.06            x2.5
-   Frost Blitz           x5.07         x1.65            x3.1
-   Nifl Mist             x5.07         x1.80            x2.8
-   Rathbuster            x5.07         x1.65            x3.1
-   Lightning Blitz       x5.07         x1.89            x2.7
-   Rose Assault          x5.03         x1.96            x2.6
+And stepping shot itself is confirmed twice over: a fixed 0.957s between shots
+on a magazine whose native interval is 2.056s.
 
-Two thirds of that is the firing rate and one third is the ammo boost coming
-off its shared fraction: parking on slicing makes Slicing Ammo Boost 3 worth
-its full +100% instead of +50% on a two-magazine gun or +33% on a three.
-
-WHAT IS NOT KNOWN, AND THE ONE MEASUREMENT THAT SETTLES IT
-----------------------------------------------------------
-p. Everything above is a function of the refill chance per dodge, and that
-chance has never been measured - it is the open item already recorded in
-recoil-readings.txt, where the note says an evade's refill was never caught on
-video. What has changed is that the OTHER half of that open item is now
-answered: "how often is an evade available" is no longer unknown, because
-under stepping shot an evade is available on literally every shot.
-
-One recording settles it, by the method already used for the recoil ladder:
-stepping shot on a slicing magazine, firing continuously, decoding the hit
-counter frame by frame. The share of dodges that produce a hit IS p x cap
-directly, with no modelling in between. A run long enough to see twenty
-reloads would pin p to a few percent.
-
-Until then the honest statement is a conditional, not a number: IF Evading
-Reload's refill chance reaches 1/capacity - 33% on six of these seven weapons,
-and less with Spare Shot - then the loop fires one slicing round every 0.975s
-indefinitely, and the build is worth about x5 the bare weapon where the
-suggester books about x1.8.
-
-And one thing this cannot say
------------------------------
-An absolute damage-per-second figure. Nothing in this project has ever
-measured a bowgun's damage per round - the recoil work timed the hit counter,
-not the damage panel, and the only dmg/s measurements on file are Dual Blades.
-So the rate is exact and the multipliers are exact, but turning x5.03 into a
-number of damage per second would need a dummy recording of the slicing
-magazine, which has not been taken.
+STILL OPEN
+----------
+   - Evading Reload at Lv1-4. Only Lv5 was measured; the ladder below it is
+     the old shape rescaled, which is a guess with a measurement at one end.
+   - Whether the 2.05s quick reload is a fixed floor or this weapon's own
+     number. Guard reload measured 2.05s on a different weapon, which hints at
+     a floor, but two weapons is not a ladder.
+   - Whether "only on empty" is the skill's rule or an artefact of a 3-round
+     magazine emptying faster than the chance could land. A recording on a
+     5-round magazine would separate those: fourteen opportunities missed is
+     suggestive, but a longer magazine would make it conclusive.

@@ -286,10 +286,9 @@ const UTILITY = {
   'Recoil Down': { 1: 0.10, 2: 0.20, 3: 0.28 },
   'Reload Speed': { 1: 0.05, 2: 0.10, 3: 0.15 },
 
-  // Refills ammo on an evade, which covers much of what Reload Speed does —
-  // so unlike Reload Speed it stays useful on a style-selectable bowgun, where
-  // sliding and guard reload have already taken that job. Anchored to the same
-  // 15% as Reload Speed at its own max of 5; that anchor is assumed.
+  // MEASURED at Lv5 — see evade-loop-notes.txt. This flat row is now only the
+  // fallback for a weapon whose magazines are not known; handlingTable(w,
+  // 'evade') works it out from the weapon's own reload instead.
   'Evading Reload': { 1: 0.04, 2: 0.07, 3: 0.10, 4: 0.13, 5: 0.15 },
 
   // A 10/20/30% chance a shot does not consume ammo, so a magazine of n yields
@@ -680,7 +679,8 @@ function handlingTable(w, which) {
   const span = weight.reduce((a, b) => a + b, 0) || 1;
 
   const out = {};
-  for (let lv = 1; lv <= 3; lv++) {
+  const maxLv = which === 'evade' ? 5 : 3;
+  for (let lv = 1; lv <= maxLv; lv++) {
     let sum = 0;
     rounds.forEach((r, i) => {
       const cap = magazineSize(r, w.style);
@@ -689,7 +689,16 @@ function handlingTable(w, which) {
       const before = (cap - 1) * shot0 + load0;
 
       let after, shots = cap;
-      if (which === 'spare') {
+      if (which === 'evade') {
+        // Fires only on an empty magazine, so it shortens the reload and
+        // nothing else. With chance p the magazine comes up in the measured
+        // 2.05s instead of whatever the cycle already costs; it can never be
+        // slower than that cycle, so a magazine already faster than 2.05s
+        // gains nothing.
+        const p = EVADE_RELOAD_CHANCE[lv] || 0;
+        const fast = Math.min(load0, EVADE_RELOAD_FAST);
+        after = (cap - 1) * shot0 + (p * fast + (1 - p) * load0);
+      } else if (which === 'spare') {
         // A chance not to consume the round stretches the magazine, so more
         // shots come out of one reload rather than each shot coming sooner.
         shots = cap / (1 - SPARE_SHOT_CHANCE[lv]);
@@ -708,6 +717,36 @@ function handlingTable(w, which) {
 // The chance a shot does not consume ammo, from the skill's own text.
 const SPARE_SHOT_CHANCE = { 1: 0.10, 2: 0.20, 3: 0.30 };
 
+/* ------------------------------------------------- Evading Reload ----
+ * MEASURED, 2026-11-12, Nifl Mist on stepping shot with Evading Reload 5,
+ * firing its 3-round Slicing Water magazine on a training dummy. The magazine
+ * icons were read frame by frame at 20fps, so every shot and every refill is
+ * timed directly rather than inferred. See evade-loop-notes.txt.
+ *
+ * TWO THINGS CAME OUT OF IT, and the first killed a model this engine briefly
+ * carried.
+ *
+ * IT ONLY EVER FIRES ON AN EMPTY MAGAZINE. Every one of the fifteen refill
+ * events in seven magazines began at zero rounds. Not once did a dodge top up
+ * a partial magazine, across roughly fourteen opportunities. So the skill does
+ * not stretch a magazine, it shortens the wait at the end of one - and the
+ * "endless fire" loop derived before this was measured does not exist.
+ *
+ * WHAT IT DOES. Six reloads were timed last-shot to next-shot: 2.05 2.05 2.05
+ * 3.00 3.05 2.00. Four landed at 2.02s and two at 3.02s, against the 3.30s
+ * this weapon's Slow magazine costs on the ladder. So at Lv5 it fires about
+ * two times in three, and when it fires the reload costs about 2.05s - which
+ * is the same 2.05s guard reload was measured at, and is likely the game's
+ * own floor for getting a magazine up rather than a coincidence.
+ *
+ * Only Lv5 was measured. The lower levels keep the shape of the old flat
+ * guess, rescaled to meet the measurement at the top, and are marked as such.
+ */
+const EVADE_RELOAD_FAST = 2.05;      // measured
+const EVADE_RELOAD_CHANCE = {        // Lv5 measured at 4 of 6; the rest scaled
+  1: 0.18, 2: 0.31, 3: 0.44, 4: 0.58, 5: 0.67,
+};
+
 
 /**
  * The utility ladder for one skill on one weapon.
@@ -721,6 +760,14 @@ function utilityTable(name, w) {
   if (name === 'Recoil Down') return handlingTable(w, 'recoil') || UTILITY[name];
   if (name === 'Reload Speed') return handlingTable(w, 'reload') || UTILITY[name];
   if (name === 'Spare Shot') return handlingTable(w, 'spare') || UTILITY[name];
+  // Measured at Lv5 on stepping shot. It fires on a dodge, and under stepping
+  // shot the shot IS the dodge, so the trigger is free and constant there.
+  // Off that style a dodge is an action spent instead of attacking, which this
+  // engine cannot price, so the measured figure is only applied where it was
+  // measured and the old flat guess stands elsewhere.
+  if (name === 'Evading Reload' && w.style && w.style.name === 'stepping shot') {
+    return handlingTable(w, 'evade') || UTILITY[name];
+  }
   // Power Prolonger lengthens a different thing on each Dual Blades style,
   // and on one of them lengthens something you should not be using.
   if (name === 'Power Prolonger' && w.style && w.style.blades) {
