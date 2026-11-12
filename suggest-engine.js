@@ -890,10 +890,24 @@ function styleVariants(weapon) {
     // where even use gives it 1/n. Four live hunts show 96% of the hunt spent
     // on the slicing magazine, so it is a real way the weapon is played and
     // belongs in the search rather than being left for the player to notice.
+    // AND IT REQUIRES EVADING RELOAD, because an ordinary reload does not
+    // refill the magazine - it SWITCHES to the next one. That is recorded in
+    // recoil-readings.txt as the basis of the whole reload ladder ("a bowgun
+    // reloads by switching magazines") and it means reloading normally walks
+    // you around all three magazines whether you want it or not. Only Evading
+    // Reload puts the same magazine back up.
+    //
+    // Confirmed on the dummy run: across seven reloads in 29 seconds, the
+    // 5-round magazine never appeared, in 578 of 580 frames. A reload that
+    // switched would have brought it up every third time. The two odd frames
+    // are 0.05s each and isolated - reader noise, not a magazine in use.
+    //
+    // So a set without Evading Reload cannot hold this build at all, and is
+    // scored as nothing here; the even-use variant above is what covers it.
     if (has('SLICING')) {
       out.push(make('stepping shot, parked on slicing',
         { name: 'stepping shot', recoil: false, reload: true,
-          primary: 'SLICING', primaryShare: 0.96 }));
+          primary: 'SLICING', primaryShare: 0.96, primaryNeeds: 'Evading Reload' }));
     }
   } else {
     if (has('SPREAD') || has('WYVERN')) {
@@ -1437,6 +1451,13 @@ function knownSkills(weapon) {
 /** Roll a set's skill totals into one damage figure. */
 function score(totals, w) {
   const lv = (n) => totals[n] || 0;
+  // A style may need a skill to be playable at all — stepping shot parked on
+  // one magazine needs Evading Reload, since an ordinary reload switches
+  // magazines rather than refilling. Without it the build does not exist and
+  // the even-use variant is what covers this set.
+  if (w.style && w.style.primaryNeeds && !lv(w.style.primaryNeeds)) {
+    return { dmg: 0, util: 0, total: 0, statSlots: null, stance: null };
+  }
   const elemental = ELEMENTS.indexOf(w.element) >= 0;
 
   let atk = w.atk;
@@ -1643,12 +1664,16 @@ function makeScorer(w, damageOnly) {
   const iEvadeUtil = evadeTakesOverReload(w) ? I('Evading Reload') : -1;
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
+  // Mirrors score(): a style that needs a skill scores nothing without it.
+  const iNeeds = w.style && w.style.primaryNeeds ? I(w.style.primaryNeeds) : -1;
+  const needsMissing = !!(w.style && w.style.primaryNeeds) && iNeeds < 0;
   // Constant for the whole search: the style's own firing rate, and the ways
   // the three stat slots can be split.
   const sRate = styleRate(w);
   const slots = statSlotChoices(w) || NO_SLOTS;
 
   function scoreVec(v) {
+    if (needsMissing || (iNeeds >= 0 && !v[iNeeds])) return 0;
     let atk = w.atk;
     let ele = elemental ? w.ele : 0;
     let aff = w.aff;

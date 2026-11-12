@@ -240,3 +240,52 @@ which is the thing stepping shot exists to avoid.
 
 Checked: score() and the search's own scorer agree to the last digit on 4400
 random sets across six weapons and every style variant.
+
+
+WHY THE PARKED BUILD NEEDS EVADING RELOAD, NOT JUST PREFERS IT
+==============================================================
+The suggester first offered the parked-on-slicing build with RELOAD SPEED 3
+and no Evading Reload at all, which scored better than the real build. That
+is impossible in the game, and the reason is one already written down in
+recoil-readings.txt as the basis of the entire reload ladder:
+
+   A BOWGUN RELOADS BY SWITCHING MAGAZINES.
+
+So an ordinary reload does not put the slicing magazine back up - it walks
+you to the next one. Reload Speed makes you cycle through all three magazines
+FASTER; it cannot keep you on one. Only Evading Reload refills the magazine
+you are holding. The two are not competing ways to do the same job, which is
+how the engine was treating them.
+
+CONFIRMED ON THE DUMMY RUN. Across seven reloads in 29 seconds the 5-round
+magazine never appeared - 578 of 580 frames showed the 3-slot layout, and the
+two that did not are isolated single frames of 0.05s, reader noise rather
+than a magazine in use. A reload that switched would have brought the 5-round
+magazine up every third time. It never came.
+
+So the parked variant now REQUIRES Evading Reload: a set without it scores
+nothing there, and the even-use variant is what covers that set. Both scoring
+paths agree on 6800 random sets over 17 variants, 1957 of which correctly
+scored nothing.
+
+What it does to the ranking on Frost Blitz at 75s:
+
+   stepping shot, even use                      9670
+   stepping shot, parked - the free ride       13804   NOT REACHABLE
+   stepping shot, parked - needing the skill   11895
+   sliding reload, around normal ammo          14368
+
+The 13804 was the engine getting the slicing ammo share without paying for
+the skill that makes it possible. 11895 is the honest figure, and the build
+it names carries Evading Reload 2 with Slicing Ammo Boost 3 and no handling
+skill at all - which is the build being played, allowing that the engine
+prefers to spend the remaining armour on damage rather than on Evading
+Reload 4 and 5.
+
+THE REMAINING GAP TO SLIDING RELOAD, 11895 against 14368, is the one this
+engine cannot close by measurement, because it is the same blind spot as
+everywhere else here: sliding reload and stepping shot both exist to let you
+keep moving, and nothing in this model knows what being hit costs. The live
+hunts put a number on the half of it that IS visible - 34% of cycle time lost
+to interruption - but that is the cost of the monster, not the benefit of the
+style.
