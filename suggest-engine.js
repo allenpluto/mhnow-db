@@ -528,7 +528,19 @@ function bandAfter(tier, levels) {
  * because what guard reload really buys is not being hit, which nothing here
  * can price.
  */
-const DODGE_SECONDS = 0.975;      // measured; what an evade costs
+/* Stepping shot's fixed interval, now measured three times on three weapons:
+ *
+ *   0.975s   Anja Buster, dummy, the original stepping-shot recording
+ *   0.957s   Nifl Mist, dummy, 14 gaps on a Very high recoil slicing magazine
+ *   0.926s   Frost Blitz, four live Brachydios hunts, 27 clean gaps
+ *
+ * They agree to within 5% across weapons whose native intervals differ by more
+ * than two to one, which is the strongest evidence yet that the interval is
+ * the dodge's and not the ammo's. 0.95 is the pooled figure, leaning on the
+ * two dummy readings because the live one is read off a 10-pixel HUD icon
+ * through muzzle flash and floating damage numbers and may run slightly fast.
+ */
+const DODGE_SECONDS = 0.95;
 const SLIDE_RELOAD_SECONDS = 2.52;   // measured, same basis as the ladder
 const GUARD_RELOAD_SECONDS = 2.05;   // measured directly
 const CROUCH_OPEN = 0.60;         // measured, whatever the ammo

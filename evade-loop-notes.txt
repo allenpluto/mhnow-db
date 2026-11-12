@@ -117,3 +117,80 @@ STILL OPEN
      magazine emptying faster than the chance could land. A recording on a
      5-round magazine would separate those: fourteen opportunities missed is
      suggestive, but a longer magazine would make it conclusive.
+
+
+LIVE HUNTS: DOES ANY OF IT SURVIVE A REAL MONSTER?
+==================================================
+Frost Blitz 5 (attack 1483, affinity 0%, Ice 1448; Freeze 5 / Spread Ice 4 /
+Slicing Ice 3), four recordings of 4-player Brachydios hunts, 2026-11-12.
+Same skills as the dummy run bar one: Evading Reload 5, Slicing Ammo Boost 3,
+Attack Boost 2, Recoil Down 2, Divine Blessing 2, Defense Boost 1, Evade
+Extender 1, Last Stand 1, Peak Performance 1. Player's own account of the
+build: open on freeze, switch through spread to slicing, and from then on
+never reload by hand - only slide to trigger Evading Reload.
+
+READING THEM WAS THE HARD PART, and two approaches failed first:
+   - The hit counter and the Total Damage panel do not exist in a group hunt,
+     and the monster's health bar falls to four players' damage, so neither
+     can time one player's shots.
+   - The audio track is SILENT in all five recordings, so gunshot onsets -
+     which would have been immune to all of this - are not available.
+   - Reading the magazine icons by colour fails: they are pale blue-white over
+     a scene that swings pink to dark to orange. By darkness alone it fails
+     too, because a dark scene makes every box look like an icon.
+
+What works: an icon is a DARK OUTLINE around a BRIGHT BODY. A loaded bullet
+puts its outline at row 5 of the box with a body over 130 luminance; an empty
+slot puts its outline at row 12 or below; dark scenery has an outline at row 0
+and a dark body. And because the indicator is CENTRED, a 5-round freeze
+magazine and a 4-round spread magazine sit at different pixels from the
+3-round slicing one, so guard boxes where only the wider layouts reach mark
+those frames and drop them. Finally, only a level that HOLDS for 0.3s counts,
+so a single bad frame can never invent a shot.
+
+POOLED RESULT, 22 cycles over four hunts
+
+   WITHIN a magazine, shot to shot (27 clean gaps)
+      mean 0.926s, median 0.900s
+      against 0.957s on the dummy and 0.975s on the original recording
+
+   THE CADENCE SURVIVES. Three weapons, three recordings, a dummy and a live
+   monster, native intervals differing by more than two to one: 0.975, 0.957,
+   0.926. Stepping shot's interval is the dodge's, not the ammo's, and that is
+   now about as well established as anything in this project. DODGE_SECONDS is
+   0.95 as the pooled figure.
+
+   EMPTY to the next shot (22)
+      14 uninterrupted ones   mean 2.400s
+      8 interrupted ones      4.5 5.2 5.3 6.0 6.3 6.9 9.3 19.7s
+
+   THE EVADING RELOAD MODEL SURVIVES TOO, and this is the real test, because
+   the model was fitted on Nifl Mist and Frost Blitz is a different weapon:
+      engine predicts   0.67 x 2.05 + 0.33 x 3.30 = 2.462s
+      live measured                                 2.400s   2.5% out
+      dummy measured                                2.367s   4% out
+
+   CYCLE, three rounds (22)
+      uninterrupted only, 15 of 22   4.790s = 0.626 rounds/s
+      ALL cycles                     7.300s = 0.411 rounds/s
+      dummy                          4.267s = 0.703 rounds/s
+
+WHAT THE LIVE HUNTS ADD THAT THE DUMMY CANNOT
+----------------------------------------------
+Interruption, and it is the biggest single number here. Seven of twenty-two
+cycles were interrupted - the player dodging an attack rather than to shoot,
+repositioning, or losing the line - and 34% of all cycle time went to it.
+Even the uninterrupted live cycles run 12% longer than the dummy's.
+
+So a live hunt realises about 58% of the dummy's throughput on this build, or
+89% if you only count the cycles that were not interrupted. That gap is not a
+property of the weapon, the style or the skill; it is the monster. Nothing in
+this engine prices it, and nothing in it should - but it is the right thing to
+remember when a dummy figure like 4874 damage per second is quoted.
+
+CAVEAT ON THE LIVE NUMBERS. The icons are 10 pixels wide in a 480x1046
+recording and are regularly covered by floating damage numbers. The plateau
+rule makes a false shot very unlikely but a MISSED one is still possible, so
+the live shot counts are a floor and the cycle figures could be slightly slow.
+The within-magazine interval is the most reliable of them, since it only uses
+consecutive clean single-round drops; the interruption share is the least.
