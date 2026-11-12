@@ -289,3 +289,56 @@ keep moving, and nothing in this model knows what being hit costs. The live
 hunts put a number on the half of it that IS visible - 34% of cycle time lost
 to interruption - but that is the cost of the monster, not the benefit of the
 style.
+
+
+THE WAIT IS GEOMETRIC, NOT A COIN FLIP - CORRECTED MODEL
+========================================================
+The first model said the reload costs p x 2.05s + (1-p) x ladder. That fitted
+the one weapon it was built on and was WRONG IN STRUCTURE.
+
+The skill's own rule is a chance per dodge of refilling the magazine outright
+- 70% at Lv5. A failed roll does not fall back to an ordinary reload; you
+simply dodge again and roll again. So:
+
+   expected dodges until it fires  = 1 / p
+   expected gap, last shot to next = DODGE x (1 + 1/p)
+
+capped at the ladder, since a magazine that comes up faster by hand would be
+reloaded by hand. THE RELOAD TIER DROPS OUT ENTIRELY once the skill is
+working, which the old shape could not express - it kept letting the ladder
+back in, and it had no way to say "try again".
+
+THE 70% CHECKS OUT against the refill delays, independently of the skill
+text. Seven magazines: five refilled on the first dodge, two on the second,
+none on a third. At p = 0.70 expect 4.9, 1.5 and 0.6. Maximum likelihood on
+this run is 7 successes in 9 dodges, 78%, and 70% sits well inside that.
+
+   model, Lv5                  2.307s
+   dummy, Nifl Mist, 6 gaps    2.367s     2.5% out
+   live, Frost Blitz, 14 gaps  2.400s     3.9% out
+
+   model cycle   4.207s = 0.713 rounds/s
+   dummy         4.267s = 0.703 rounds/s     1.4% out, against 3.3% before
+
+A THRESHOLD FALLS OUT OF IT, which the old shape hid completely:
+
+   Lv    p      raw wait    on a Slow 3.30s magazine
+    1   0.19     5.95s        no gain, the ladder is quicker
+    2   0.33     3.83s        no gain
+    3   0.47     2.97s
+    4   0.61     2.51s
+    5   0.70     2.31s
+
+BELOW LV3 THE SKILL DOES NOTHING on a Slow magazine - and more than nothing
+is at stake, because the parked build is not a choice made once. It holds
+only while waiting beats reloading by hand, since an ordinary reload moves
+you off the magazine. So the parked variant now requires the lowest level
+that actually beats the ladder for that weapon's magazine, not merely Lv1.
+
+Before this, the search took Evading Reload 2 - the cheapest level that
+satisfied a "carries the skill" test - and got the parked ammo share for a
+skill that was doing nothing. It now takes Evading Reload 4 and pays for it:
+
+   Frost Blitz, 75s, parked      score 11895 -> 10808
+   and the set is Slicing Ammo Boost 3 with Evading Reload 4, no handling
+   skill at all, which is the build being played.

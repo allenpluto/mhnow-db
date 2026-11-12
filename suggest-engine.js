@@ -702,14 +702,15 @@ function handlingTable(w, which) {
 
       let after, shots = cap;
       if (which === 'evade') {
-        // Fires only on an empty magazine, so it shortens the reload and
-        // nothing else. With chance p the magazine comes up in the measured
-        // 2.05s instead of whatever the cycle already costs; it can never be
-        // slower than that cycle, so a magazine already faster than 2.05s
-        // gains nothing.
+        // Fires only on an empty magazine, so it replaces the reload and
+        // nothing else. Each dodge is a fresh roll at chance p, so the wait
+        // is geometric: one dodge to spend, then 1/p more on average. Capped
+        // at the ladder, since a magazine that comes up faster by hand would
+        // be reloaded by hand - which is also why a fast magazine gains
+        // nothing from the skill.
         const p = EVADE_RELOAD_CHANCE[lv] || 0;
-        const fast = Math.min(load0, EVADE_RELOAD_FAST);
-        after = (cap - 1) * shot0 + (p * fast + (1 - p) * load0);
+        const evade = p > 0 ? DODGE_SECONDS * (1 + 1 / p) : Infinity;
+        after = (cap - 1) * shot0 + Math.min(load0, evade);
       } else if (which === 'spare') {
         // A chance not to consume the round stretches the magazine, so more
         // shots come out of one reload rather than each shot coming sooner.
@@ -744,19 +745,40 @@ const SPARE_SHOT_CHANCE = { 1: 0.10, 2: 0.20, 3: 0.30 };
  * not stretch a magazine, it shortens the wait at the end of one - and the
  * "endless fire" loop derived before this was measured does not exist.
  *
- * WHAT IT DOES. Six reloads were timed last-shot to next-shot: 2.05 2.05 2.05
- * 3.00 3.05 2.00. Four landed at 2.02s and two at 3.02s, against the 3.30s
- * this weapon's Slow magazine costs on the ladder. So at Lv5 it fires about
- * two times in three, and when it fires the reload costs about 2.05s - which
- * is the same 2.05s guard reload was measured at, and is likely the game's
- * own floor for getting a magazine up rather than a coincidence.
+ * WHAT IT DOES. The skill's rule is a CHANCE PER DODGE of refilling the
+ * magazine outright - 70% at Lv5, which fails 30% of the time and is simply
+ * rolled again on the next dodge. The wait is therefore GEOMETRIC, not a coin
+ * flip between a fast reload and a slow one, and an ordinary reload never
+ * enters it at all:
  *
- * Only Lv5 was measured. The lower levels keep the shape of the old flat
- * guess, rescaled to meet the measurement at the top, and are marked as such.
+ *    expected dodges until it fires  = 1 / p
+ *    expected gap, last shot to next = DODGE x (1 + 1/p)
+ *
+ * The leading 1 is the dodge that fired the last shot; every dodge after it
+ * is a fresh roll. CAPPED AT THE LADDER, since a player whose magazine comes
+ * up faster by hand would just reload by hand.
+ *
+ * THE RELOAD TIER DROPS OUT ENTIRELY once the skill is working, which is the
+ * whole point of it, and is why it is worth so much on a Very slow magazine
+ * and nothing on a fast one.
+ *
+ * An earlier version of this modelled it as p x 2.05s + (1-p) x ladder, which
+ * fitted the one weapon it was built on and was wrong in structure: it let
+ * the reload tier back in, and it had no way to express "try again".
+ *
+ * The refill delays settle the chance independently of the skill's text.
+ * Seven magazines on the dummy: five refilled on the first dodge, two on the
+ * second, none on a third. At p = 0.70 the expectation is 4.9, 1.5 and 0.6.
+ * The maximum-likelihood estimate is 7 successes in 9 dodges, 78%, and 70%
+ * sits comfortably inside that on seven events.
+ *
+ * Only Lv5 is known. The lower levels keep the shape of the old flat guess,
+ * rescaled to meet 0.70 at the top, and are marked as such. Note that the
+ * ladder now has a THRESHOLD in it: below about Lv3 the expected wait is
+ * longer than a Slow reload, so the skill does nothing on such a magazine.
  */
-const EVADE_RELOAD_FAST = 2.05;      // measured
-const EVADE_RELOAD_CHANCE = {        // Lv5 measured at 4 of 6; the rest scaled
-  1: 0.18, 2: 0.31, 3: 0.44, 4: 0.58, 5: 0.67,
+const EVADE_RELOAD_CHANCE = {        // Lv5 from the skill's own text; rest scaled
+  1: 0.19, 2: 0.33, 3: 0.47, 4: 0.61, 5: 0.70,
 };
 
 
@@ -790,6 +812,31 @@ const EVADE_RELOAD_CHANCE = {        // Lv5 measured at 4 of 6; the rest scaled
  */
 function evadeTakesOverReload(w) {
   return !!(w.style && w.style.name === 'stepping shot');
+}
+
+/**
+ * The lowest Evading Reload that actually keeps you on one magazine.
+ *
+ * Parking is not a choice the player makes once; it is a consequence of never
+ * taking an ordinary reload, because an ordinary reload SWITCHES magazines.
+ * So the build only holds while waiting for the skill beats reloading by
+ * hand. Below that level a player would reload - and be moved off the
+ * magazine they were parked on.
+ *
+ * Returns 1 when the weapon's magazines are not known, so the requirement
+ * degrades to "carries the skill at all" rather than to nothing.
+ */
+function evadeMinLevel(w) {
+  const type = w.style && w.style.primary;
+  if (!type) return 1;
+  const r = (w.rounds || []).filter((x) => x.type === type)[0];
+  if (!r || STEP[r.reload] === undefined) return 1;
+  const ladder = reloadSeconds(r, w.style, 0);
+  for (let lv = 1; lv <= 5; lv++) {
+    const p = EVADE_RELOAD_CHANCE[lv] || 0;
+    if (p > 0 && DODGE_SECONDS * (1 + 1 / p) < ladder) return lv;
+  }
+  return 99;                      // no level of it can hold this magazine
 }
 
 function utilityTable(name, w) {
@@ -1455,7 +1502,8 @@ function score(totals, w) {
   // one magazine needs Evading Reload, since an ordinary reload switches
   // magazines rather than refilling. Without it the build does not exist and
   // the even-use variant is what covers this set.
-  if (w.style && w.style.primaryNeeds && !lv(w.style.primaryNeeds)) {
+  if (w.style && w.style.primaryNeeds &&
+      lv(w.style.primaryNeeds) < evadeMinLevel(w)) {
     return { dmg: 0, util: 0, total: 0, statSlots: null, stance: null };
   }
   const elemental = ELEMENTS.indexOf(w.element) >= 0;
@@ -1666,6 +1714,7 @@ function makeScorer(w, damageOnly) {
   const g = (v, i) => (i < 0 ? 0 : v[i]);
   // Mirrors score(): a style that needs a skill scores nothing without it.
   const iNeeds = w.style && w.style.primaryNeeds ? I(w.style.primaryNeeds) : -1;
+  const needsLevel = w.style && w.style.primaryNeeds ? evadeMinLevel(w) : 0;
   const needsMissing = !!(w.style && w.style.primaryNeeds) && iNeeds < 0;
   // Constant for the whole search: the style's own firing rate, and the ways
   // the three stat slots can be split.
@@ -1673,7 +1722,7 @@ function makeScorer(w, damageOnly) {
   const slots = statSlotChoices(w) || NO_SLOTS;
 
   function scoreVec(v) {
-    if (needsMissing || (iNeeds >= 0 && !v[iNeeds])) return 0;
+    if (needsMissing || (iNeeds >= 0 && v[iNeeds] < needsLevel)) return 0;
     let atk = w.atk;
     let ele = elemental ? w.ele : 0;
     let aff = w.aff;
