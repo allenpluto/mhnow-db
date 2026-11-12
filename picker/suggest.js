@@ -410,6 +410,20 @@
           'different handling skill and a different ammo boost.');
       }
 
+      if (weapon.category === 'Light Bowgun' && styled.length > 1) {
+        out.push('TREAT THE STYLE CHOICE AS UNDECIDED ON THIS WEAPON. The six slides ' +
+          'timed for sliding reload ran 2.05s to 3.00s, and that 0.95s spread is wider ' +
+          'than the gap between the two styles on every Light Bowgun. Priced at the best ' +
+          'slide, sliding reload beats stepping shot on 16 of the 17 LBGs that are offered ' +
+          'both; at the mean, 9 of 17; at the worst, none. The engine carries the mean, so ' +
+          'the style named above is the mean\'s answer and nothing stronger. The spread is ' +
+          'mostly the player — the quick slides re-aimed cleanly and the slow ones ' +
+          'hesitated — so sliding reload is better if you play it well and worse if you ' +
+          'do not. Either way it is a few percent: an LBG\'s styles are worth x0.98 to ' +
+          'x1.18 against no style, where a Heavy Bowgun\'s crouching shot is worth x1.48 ' +
+          'to x1.91. Pick the one you can hold a line with.');
+      }
+
       out.push('Still soft here: sliding reload was timed one shot at a time, so some of ' +
         'its 2.52s is the player rather than the game; the reload figures carry a ' +
         'per-weapon offset of a few tenths, and only the gaps between tiers are firm; ' +

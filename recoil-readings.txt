@@ -337,3 +337,114 @@ The suggester still searches both styles on those 9 weapons and will keep
 reporting crouching shot, which is correct but means the guard reload branch
 costs search time for nothing. It is left in because the weapon screen offers
 it and the comparison is worth showing rather than hiding.
+
+
+THE GUARD RELOAD BLOCK BOOST, AND WHY IT DOES NOT RESCUE THE STYLE
+==================================================================
+Player report, not measured here: blocking under guard reload boosts the
+damage of the rounds ALREADY in the magazine - 10% on the first block, 35% on
+the second. The defensive load that comes with the block adds new rounds, and
+those new rounds do NOT carry the boost. The order is: boost what is loaded,
+then load.
+
+That ordering is the whole problem, and it is self-defeating by construction:
+
+   block with the magazine nearly EMPTY - which is when you want the reload -
+      and there is almost nothing in hand to boost. The rounds you then fire
+      are the new, unboosted ones.
+   block with the magazine nearly FULL, so the boost lands on something,
+      and you have thrown away the reload the style exists for, on a magazine
+      that was already half-size.
+
+So the boosted share of shots cannot be driven high without wasting the
+reloads, and the two halves of the style fight each other.
+
+Priced anyway, at the CEILING - every single shot at the full +35%, as if the
+second-block boost were permanently up and free:
+
+   weapon                  crouch   guard   guard, all shots +35%
+   Flammenkanone            1.674   1.288   1.739   guard ahead
+   Water Cannon             1.479   1.173   1.583   guard ahead
+   Loyal Thunder            1.770   1.233   1.664
+   Dark Devourer            1.716   1.256   1.695
+   Queen's Farflier         1.727   1.205   1.627
+   Sinister Dreadvolley     1.680   1.146   1.547
+   Kadachi Lion             1.596   1.022   1.380
+   Baan Roar                1.801   1.109   1.497
+   Icicle Assault           1.799   1.008   1.361
+
+SEVEN OF THE NINE still lose with a free permanent +35% on every shot. The
+share of shots that would have to be boosted to merely tie:
+
+   Water Cannon     75%        Loyal Thunder        124%   impossible
+   Flammenkanone    86%        Queen's Farflier     124%   impossible
+                               Dark Devourer        105%   impossible
+                               Sinister Dreadvolley 133%   impossible
+                               Kadachi Lion         161%   impossible
+                               Baan Roar            178%   impossible
+                               Icicle Assault       224%   impossible
+
+Only Water Cannon and Flammenkanone are even reachable, and they need 75% and
+86% of all shots fired under the second-block boost - which the boost-then-load
+ordering above makes unattainable in a real hunt, since the rounds a block
+hands you are exactly the ones it does not boost.
+
+THE MANUAL-FIRE COST is real but lands elsewhere than expected. Guard reload
+fires a click at a time rather than held. The fastest interval the ladder
+knows is 0.603s (Low recoil), which is comfortably tappable, so the CADENCE
+is not what tapping threatens - consistency is. And it bites hardest on
+exactly the two weapons above: Water Cannon and Kadachi Lion are the only
+guard-reload HBGs with a 0.603s magazine, Water Cannon being one of the two
+that could theoretically have won. Every other one of the nine is 0.862s at
+its fastest, where tapping is not the binding constraint.
+
+Verdict unchanged, and now from three directions: the rate loses by 26-78%,
+the block boost cannot close it even at a free ceiling, and the ordering of
+boost-then-load means the ceiling is not approachable. Guard reload stays a
+defensive choice, which is a thing this engine cannot price, not a damage one.
+
+
+IS SLIDING RELOAD WORTH CHOOSING? A COMPLETELY DIFFERENT ANSWER
+===============================================================
+Guard reload loses by miles. Sliding reload is a coin flip THAT THE
+MEASUREMENT CANNOT DECIDE, and that is the honest answer rather than a dodge.
+
+Six slides were timed on Anja Buster: 2.05 2.35 2.50 2.50 2.90 3.00, mean
+2.52s. The engine carries the mean. Repricing every style-selectable Light
+Bowgun across that spread, against stepping shot:
+
+   sliding reload ahead on   16 of 17 weapons at 2.05s
+                              9 of 17          at 2.52s
+                              0 of 17          at 3.00s
+
+With the handling skill each style keeps, at level 3 - sliding reload keeps
+Recoil Down, stepping shot keeps Reload Speed:
+
+                              13 of 17 at 2.05s
+                               5 of 17 at 2.52s
+                               0 of 17 at 3.00s
+
+The verdict is therefore decided entirely by the slide figure, and the slide
+figure is the least certain number in this file: the 0.95s spread between the
+best and worst slide is bigger than the gap between the two styles on every
+weapon. The engine's answer is the mean's answer, and it should not be read as
+more than that.
+
+Note also that the spread IS the player. The 2.05s slide is the one that
+re-aimed cleanly; the 3.00s slides are hesitation. So the honest reading is
+not "sliding reload is 9/17" but "sliding reload wins if you play it well and
+loses if you do not" - which is a different kind of claim from a stat.
+
+AND THE WHOLE QUESTION BARELY MATTERS ON A LIGHT BOWGUN, which is the finding
+worth taking away. Against no style at all:
+
+   Light Bowgun     stepping shot  0.981 to 1.175
+                    sliding reload 1.052 to 1.078
+   Heavy Bowgun     crouching shot 1.479 to 1.906
+                    guard reload   1.008 to 1.288
+
+An HBG's style choice is worth 50-90% of its damage rate. An LBG's is worth a
+few percent either way, and on Barroth Shot and Lumu Typhon stepping shot is
+WORSE THAN NO STYLE AT ALL (0.981 and 1.000). A Light Bowgun player should
+pick the style they can hold a line with; a Heavy Bowgun player should take
+crouching shot and not think about it.
