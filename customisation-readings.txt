@@ -119,3 +119,55 @@ but only the ones it put in, so a number typed by hand survives, and changing
 weapon re-fills for the new one. The panel under the weapon dropdown states
 the figure whether or not the box is ticked, which is how a Hope Set weapon
 reports its 38 with no box to tick.
+
+
+TWO READINGS FROM THE EQUIPMENT-LIST POPUP, 2026-11-12
+-------------------------------------------------------
+These came off the compact popup in the Equipment list - the one with no
+weapon image and no green bracket - rather than the full weapon screen the
+rest of this file was read from. So they give the black figure only, and the
+addition has to be taken as the difference against the database.
+
+   weapon         database 10-5      popup              difference
+   Nifl Mist      1363/1436/20%      1411/1508/20%      +48/+72/0%
+   Frost Blitz    1463/1420/0%       1483/1448/0%       +20/+28/0%
+
+AFFINITY MATCHES EXACTLY ON BOTH, which confirms the database base on both
+weapons and says neither had an affinity stat slot. Both differences are too
+small for a stat slot of any kind (+100/+100/+10%), so both are partially
+run customisation tracks and nothing else.
+
+Nifl Mist's line, 1363/1436, is the Mizutsune line, whose full track is
+recorded above as 64/96. +48/+72 is exactly 75% of that in BOTH stats, which
+fits three of the four blocks run and is a neat independent check on the
+table.
+
+Frost Blitz's line, 1463/1420, is recorded above as 80/80. +20/+28 is not a
+clean fraction of that in both stats at once, so it is a track stopped
+part-way through a block rather than on a block boundary.
+
+AN OPEN QUESTION THIS RAISES, and it matters more than the two readings do.
+The player reports that this popup shows the FINAL stat, including static
+skill boosts such as Ice Attack and raw attack, excluding only dynamic ones
+like Vital Ice and Peak Performance. The method recorded above says the
+opposite - that black minus green is the database base, with the green
+bracket holding only the track and the stat slots, no skills.
+
+Both builds above carry ATTACK BOOST 2, which this engine books at +100
+attack. The entire attack difference is +20 on Frost Blitz and +48 on Nifl
+Mist. So one of two things is true and they cannot both be:
+
+   either the popup does NOT include skills, and these differences are pure
+      customisation - which is what the rest of this file assumes
+   or it DOES, and ATTACK_BOOST = {1:50, 2:100, 3:150, 4:200, 5:300} is badly
+      wrong, since Attack Boost 2 alone would have to fit inside +20
+
+The two screenshots cannot separate them, because both builds carry the same
+Attack Boost level, so the skill and the track are confounded. ONE SCREENSHOT
+SETTLES IT: the same weapon's popup with the armour swapped for a set at a
+different Attack Boost level. If the figure moves, the popup includes skills
+and the attack table needs rebuilding; if it does not, it is the track alone
+and nothing here changes.
+
+Until then the engine is unchanged, since every other weapon read in this
+file reconciled on the no-skills reading.
