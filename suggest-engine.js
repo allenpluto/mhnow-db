@@ -1300,14 +1300,26 @@ function latentUptime() {
  *    element         1508          1708        +200
  *    affinity          20%            6%        -14%
  *
- * The attack side is confirmed exactly, and the same reading confirms
- * ELEM_ATTACK at Lv3 exactly. THE AFFINITY COST IS 14, NOT 15 - the only
- * figure of the three that was wrong, and the only one that had never been
- * checked against the game. Only Lv3 is measured; the rest of the ladder is
- * still the original assumption and is marked as such.
+ * The -14% looked like a correction to a -15% that had never been checked.
+ * IT IS NOT. A driftsmelt slot carries an extra stat bonus on top of the
+ * skill it grants - attack 1-20, OR defence 1-20, OR affinity 1-2% - and that
+ * bonus lands in the Status screen. So the reading is -15% from Raw Power
+ * plus +1% from a drift slot, and the table was right all along.
+ *
+ * The attack column proves it rather than merely allowing it: it comes to
+ * +300 EXACTLY. Had a drift slot rolled attack instead of affinity the total
+ * would have been 301 to 320. So on this build the drift bonus is affinity,
+ * which leaves Raw Power's attack clean at +300 and explains the one point of
+ * affinity. Both constants stand, and ELEM_ATTACK at Lv3 is confirmed exactly
+ * too, since no drift bonus touches element.
+ *
+ * THE LESSON FOR ANY FUTURE READING OFF THE STATUS SCREEN: a build with
+ * driftsmelt slots filled carries up to 20 attack or 2% affinity per slot
+ * that belongs to no skill. Measure constants on a build with EMPTY drift
+ * slots, or expect to be out by exactly this much.
  */
-const RAW_ATK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };
-const RAW_AFF = { 1: 5, 2: 10, 3: 14, 4: 20, 5: 30 };   // Lv3 measured
+const RAW_ATK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };   // Lv3 confirmed
+const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
 
 /** Every skill this engine understands, so the rest can be reported as ignored. */
 /**

@@ -191,7 +191,31 @@ Three constants fell out of the difference, and this is the first time any of
 them has been checked against the game rather than assumed:
    Raw Power 3       +300 attack        confirmed exactly
    Water Attack 3    +200 element       confirmed exactly
-   Raw Power 3       -14% affinity      WRONG, the engine assumed -15%
+   Raw Power 3       -14% affinity      ... but see below
+
+A DRIFTSMELT SLOT CARRIES AN EXTRA STAT BONUS ON TOP OF ITS SKILL
+------------------------------------------------------------------
+Attack 1-20, OR defence 1-20, OR affinity 1-2%, per slot. It is not a skill
+and belongs to no skill, and it lands in the Status screen.
+
+That is the whole of the -14%: Raw Power's -15% plus +1% from a drift slot.
+The table was right and the "correction" to 14 was a confound, now reverted.
+
+THE ATTACK COLUMN PROVES IT rather than merely allowing it. It comes to +300
+EXACTLY. Had a slot rolled attack instead of affinity the total would have
+been 301 to 320. So on this build the drift bonus is affinity, which leaves
+Raw Power's attack clean and explains the single point of affinity. Element is
+untouched either way, since no drift bonus rolls element.
+
+THE SIZE OF IT. Five slots at up to 20 attack is +100 attack, or at up to 2%
+each, +10% affinity - neither of which this engine prices. It models a drift
+slot only as the skill it grants, which --gems assumes is ideal. The stat
+bonus is rolled, not chosen, so it is not something a build can be optimised
+around; but it is real, and on a fully slotted set it is not small.
+
+THE LESSON FOR EVERY FUTURE READING OFF THE STATUS SCREEN: measure constants
+on a build with EMPTY driftsmelt slots, or expect to be out by exactly this
+much. This one nearly wrote a wrong number into the engine.
 
 One caveat on the weapon popup, which does not undermine any of the above but
 is worth knowing: it DOES reflect skills in the RECOIL AND RELOAD TIERS, even
