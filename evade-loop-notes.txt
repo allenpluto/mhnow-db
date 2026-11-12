@@ -194,3 +194,49 @@ rule makes a false shot very unlikely but a MISSED one is still possible, so
 the live shot counts are a floor and the cycle figures could be slightly slow.
 The within-magazine interval is the most reliable of them, since it only uses
 consecutive clean single-round drops; the interruption share is the least.
+
+
+RELOAD SPEED IS WORTH NOTHING ON THIS BUILD, AND SO IS RECOIL DOWN
+==================================================================
+Two exclusions, one already modelled and one that was not.
+
+RECOIL DOWN was already correct. Stepping shot fires at a fixed interval
+whatever the recoil, so the skill has nothing to shorten. The engine has held
+that since the style was first measured.
+
+RELOAD SPEED WAS NOT. Evading Reload puts the magazine up by a different
+route, so the reload ladder that Reload Speed shortens is not on the path at
+all. The engine was pricing the two as independent skills, which let a set
+collect both on the same reloads.
+
+The open question was whether an ordinary reload ever still completes. At Lv5
+Evading Reload fires about two times in three, so a third of reloads might
+have been ordinary ones, and Reload Speed would then be worth a third of its
+usual value rather than nothing.
+
+IT IS NOTHING, and the dummy recording already answered it. The seven refills
+came 0.70 0.75 0.80 1.80 1.75 0.75 0.75 seconds after the magazine emptied,
+against the 3.30s that magazine's Slow reload costs. EVERY ONE IS FAR UNDER
+IT. No standing reload ever finished. The 1.75-1.80 pair is a second dodge
+before the skill fired, not a reload completing - which also means the "two
+times in three" is a chance per dodge, not a chance of avoiding an otherwise
+ordinary reload. Hold the slide and the ordinary reload never happens.
+
+So a stepping-shot build carrying Evading Reload wants NEITHER handling
+skill, and the engine now says so in both scoring paths:
+
+   Frost Blitz, stepping shot, Slicing Ammo Boost 3
+      bare                                      utility   0.00%
+      + Reload Speed 3                                   27.66%
+      + Evading Reload 5                                 14.58%
+      + Evading Reload 5 AND Reload Speed 3              14.58%   no stacking
+      + Evading Reload 5 AND Recoil Down 3               14.58%   no stacking
+
+Note the first two lines: Reload Speed alone is worth MORE than Evading
+Reload alone on this weapon, 27.66% against 14.58%. The build is not choosing
+the stronger skill, it is choosing the one that fits the style - and it is
+right to, because Reload Speed's 27.66% assumes standing still to reload,
+which is the thing stepping shot exists to avoid.
+
+Checked: score() and the search's own scorer agree to the last digit on 4400
+random sets across six weapons and every style variant.

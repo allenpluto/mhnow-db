@@ -768,6 +768,30 @@ const EVADE_RELOAD_CHANCE = {        // Lv5 measured at 4 of 6; the rest scaled
  * out of the weapon's own magazines and is measured rather than assumed, so
  * the flat entry is only a fallback for a weapon whose rounds are not known.
  */
+/**
+ * Does Evading Reload take Reload Speed's job away entirely?
+ *
+ * Yes, under stepping shot, and MEASURED rather than argued. Evading Reload
+ * puts the magazine up by a different route, so the reload ladder Reload Speed
+ * shortens is not on the path at all. The question was only whether a normal
+ * reload ever still completes - at Lv5 the skill fires about two times in
+ * three, so a third of reloads might have been ordinary ones.
+ *
+ * They are not. The seven refills timed on the Nifl Mist dummy came 0.70 0.75
+ * 0.80 1.80 1.75 0.75 0.75 seconds after the magazine emptied, against the
+ * 3.30s that magazine's Slow reload costs. Every one is far under it, so no
+ * standing reload ever finished; the 1.75-1.80 pair is a second dodge before
+ * the skill fired, not a reload completing. Hold the slide and the ordinary
+ * reload never happens.
+ *
+ * So on a stepping-shot build carrying Evading Reload, Reload Speed is worth
+ * exactly nothing - as Recoil Down already is, the style's interval being
+ * fixed. Such a build wants neither handling skill.
+ */
+function evadeTakesOverReload(w) {
+  return !!(w.style && w.style.name === 'stepping shot');
+}
+
 function utilityTable(name, w) {
   if (name === 'Recoil Down') return handlingTable(w, 'recoil') || UTILITY[name];
   if (name === 'Reload Speed') return handlingTable(w, 'reload') || UTILITY[name];
@@ -1511,6 +1535,9 @@ function score(totals, w) {
   Object.keys(UTILITY).forEach((n) => {
     if (!lv(n)) return;
     if (!utilityApplies(n, w)) return;
+    // Evading Reload reloads by another route, so it removes the ladder that
+    // Reload Speed shortens rather than stacking with it.
+    if (n === 'Reload Speed' && lv('Evading Reload') && evadeTakesOverReload(w)) return;
     const table = utilityTable(n, w);
     const max = Math.max.apply(null, Object.keys(table).map(Number));
     util += table[Math.min(lv(n), max)] || 0;
@@ -1593,9 +1620,13 @@ function makeScorer(w, damageOnly) {
     if (!utilityApplies(n, w)) return;
     if (I(n) < 0) return;
     const table = utilityTable(n, w);
-    util.push({ i: I(n), table: table,
+    util.push({ i: I(n), table: table, name: n,
       max: Math.max.apply(null, Object.keys(table).map(Number)) });
   });
+  // Mirrors score(): under stepping shot a candidate carrying Evading Reload
+  // gets nothing from Reload Speed, since the ladder is off the path.
+  const iReloadUtil = util.map((x) => x.name).indexOf('Reload Speed');
+  const iEvadeUtil = evadeTakesOverReload(w) ? I('Evading Reload') : -1;
 
   const g = (v, i) => (i < 0 ? 0 : v[i]);
   // Constant for the whole search: the style's own firing rate, and the ways
@@ -1693,7 +1724,9 @@ function makeScorer(w, damageOnly) {
 
     if (damageOnly) return dmg;
     let u = 0;
+    const noReloadSpeed = iEvadeUtil >= 0 && v[iEvadeUtil] > 0;
     for (let k = 0; k < util.length; k++) {
+      if (noReloadSpeed && k === iReloadUtil) continue;
       const lvl = v[util[k].i];
       // Capped at each skill's own max, not a blanket 3 — Focus runs to 5.
       if (lvl) u += util[k].table[lvl > util[k].max ? util[k].max : lvl] || 0;
