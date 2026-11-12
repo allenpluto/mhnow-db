@@ -1288,9 +1288,26 @@ function latentUptime() {
   var up = (ASSUME.huntSeconds - ASSUME.latentPowerStart) / ASSUME.huntSeconds;
   return up < 0 ? 0 : up > 1 ? 1 : up;
 }
-// Raw Power: flat attack bought with affinity.
+/* Raw Power: flat attack bought with affinity.
+ *
+ * MEASURED at Lv3, 2026-11-12, by reading one build on both screens. The
+ * weapon panel shows base plus customisation and NO skills; the Status screen
+ * shows the total. Nifl Mist 5 with Water Attack 3, Raw Power 3, Defense
+ * Boost 2:
+ *
+ *                 weapon panel    Status     difference
+ *    attack          1411          1711        +300
+ *    element         1508          1708        +200
+ *    affinity          20%            6%        -14%
+ *
+ * The attack side is confirmed exactly, and the same reading confirms
+ * ELEM_ATTACK at Lv3 exactly. THE AFFINITY COST IS 14, NOT 15 - the only
+ * figure of the three that was wrong, and the only one that had never been
+ * checked against the game. Only Lv3 is measured; the rest of the ladder is
+ * still the original assumption and is marked as such.
+ */
 const RAW_ATK = { 1: 100, 2: 200, 3: 300, 4: 400, 5: 500 };
-const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
+const RAW_AFF = { 1: 5, 2: 10, 3: 14, 4: 20, 5: 30 };   // Lv3 measured
 
 /** Every skill this engine understands, so the rest can be reported as ignored. */
 /**

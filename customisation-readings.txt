@@ -169,5 +169,33 @@ different Attack Boost level. If the figure moves, the popup includes skills
 and the attack table needs rebuilding; if it does not, it is the track alone
 and nothing here changes.
 
-Until then the engine is unchanged, since every other weapon read in this
-file reconciled on the no-skills reading.
+SETTLED, the same day, by two screenshots of ONE build on BOTH screens.
+
+Nifl Mist 5 wearing Water Attack 3, Raw Power 3, Defense Boost 2:
+
+                   weapon popup    Status screen    difference
+      attack          1411            1711            +300
+      element         1508            1708            +200
+      affinity          20%              6%            -14%
+
+THE WEAPON POPUP DOES NOT INCLUDE SKILLS. It reads 1411/20%/1508 with those
+three skills equipped, which is exactly what it read without them. The
+no-skills reading recorded in this file is correct and the attack table is
+not in question. The Status screen is the one that totals everything.
+
+SO THERE ARE TWO SCREENS AND THEY ANSWER DIFFERENT QUESTIONS:
+   the weapon popup    base + customisation track + stat slots
+   the Status screen   that, plus every static skill
+
+Three constants fell out of the difference, and this is the first time any of
+them has been checked against the game rather than assumed:
+   Raw Power 3       +300 attack        confirmed exactly
+   Water Attack 3    +200 element       confirmed exactly
+   Raw Power 3       -14% affinity      WRONG, the engine assumed -15%
+
+One caveat on the weapon popup, which does not undermine any of the above but
+is worth knowing: it DOES reflect skills in the RECOIL AND RELOAD TIERS, even
+though it does not reflect them in attack, element or affinity. The same
+weapon's Water Ammo reads Low under Recoil Down 2 and Average without it,
+which is the step the engine already models. So the popup is skill-free for
+the three stats and skill-aware for the two tiers.
