@@ -265,6 +265,13 @@ Still open
      differences between tiers are solid.
    - Crouching shot's magazine size is taken from the game's own published
      bonus per ammo family, not from a recording. The cadence is measured.
+   - Evading Reload is still a guess, but HALF of this item is now answered.
+     "How often is an evade available" is not unknown on a stepping-shot
+     bowgun: the shot IS the dodge, so an evade happens on every shot and the
+     skill rolls once every 0.975s for free. Only the refill itself is still
+     unmeasured, and the whole slicing evade-loop build turns on it - see
+     evade-loop-notes.txt for the threshold (refill chance >= 1/capacity) and
+     for the one recording that would settle it.
    - Evading Reload is still a guess. The dodge is now measured at 0.975s,
      which is what an evade costs, so a reload replaced by an evade saves
      between 1.5s and 3.9s depending on the tier. If the skill replaced every

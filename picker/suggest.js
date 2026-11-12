@@ -424,6 +424,31 @@
           'to x1.91. Pick the one you can hold a line with.');
       }
 
+      if (weapon.category === 'Light Bowgun' && (weapon.ammo || []).indexOf('SLICING') >= 0) {
+        var sliceMag = rounds.filter(function (x) { return x.type === 'SLICING'; })[0];
+        out.push('THIS WEAPON HAS A BUILD THE MODEL DOES NOT SEE, and it is worth about ' +
+          'two and a half times what is ranked above. Under stepping shot the shot IS ' +
+          'the dodge, fired at a measured 0.975s whatever the recoil — and Evading ' +
+          'Reload triggers on a dodge. So every shot rolls Evading Reload for free, ' +
+          'which is the highest trigger rate it can physically have. Park on the ' +
+          'slicing magazine and never reload by hand: if the refill chance reaches ' +
+          '1 in ' + (sliceMag ? sliceMag.capacity : 3) + ' per dodge — one over the ' +
+          'magazine size — the magazine never runs dry, every gap in the cycle is a ' +
+          'dodge, and the gun fires 1.03 rounds a second forever, REGARDLESS OF ' +
+          'MAGAZINE SIZE. That is x2.5 the unstyled slicing rate. Parking also lifts ' +
+          'Slicing Ammo Boost off its shared fraction to its full +100%. Together ' +
+          'that is about x5 the bare weapon where this page books about x1.8.');
+        out.push('If you play that build, READ THE RANKING ABOVE BACKWARDS in one ' +
+          'respect: Reload Speed shortens a reload you never take, so it is dead ' +
+          'weight, while Spare Shot is the skill that gets you over the threshold — ' +
+          'a round it saves is a round the refill need not supply, which drops the ' +
+          'chance needed from 1/' + (sliceMag ? sliceMag.capacity : 3) + ' to ' +
+          '0.7/' + (sliceMag ? sliceMag.capacity : 3) + ' at Lv3 — and worth nothing ' +
+          'once you are over it. Recoil Down is already nothing under stepping shot. ' +
+          'What is missing is the refill chance itself, which has never been measured; ' +
+          'see evade-loop-notes.txt.');
+      }
+
       out.push('Still soft here: sliding reload was timed one shot at a time, so some of ' +
         'its 2.52s is the player rather than the game; the reload figures carry a ' +
         'per-weapon offset of a few tenths, and only the gaps between tiers are firm; ' +
