@@ -263,8 +263,8 @@ Still open
      this does not matter unless a skill reaches level 4 or more.
    - The reload figures carry a per-weapon offset of a few tenths. Only the
      differences between tiers are solid.
-   - Sliding reload and guard reload have never been timed.
-   - Crouching shot's magazine size is unknown; only its cadence is modelled.
+   - Crouching shot's magazine size is taken from the game's own published
+     bonus per ammo family, not from a recording. The cadence is measured.
    - Evading Reload is still a guess. The dodge is now measured at 0.975s,
      which is what an evade costs, so a reload replaced by an evade saves
      between 1.5s and 3.9s depending on the tier. If the skill replaced every
@@ -272,3 +272,68 @@ Still open
      behind a Normal reload - far above the 15% assumed for it. What is not
      known is how much of a magazine one evade refills, and how often an evade
      is available, so no number is taken from this yet.
+
+
+IS GUARD RELOAD EVER THE RIGHT STYLE ON A HEAVY BOWGUN?
+=======================================================
+No. Not on one of them.
+
+Of the 18 style-selectable Heavy Bowguns in the data, guard reload is only
+offered on the 9 that carry spread or wyvern ammo, and crouching shot beats it
+on every one of those by 26% to 78% in damage rate:
+
+   weapon                  ammo                    guard  crouch   crouch by
+   Water Cannon            NORMAL/WYVERN            1.173   1.479      +26%
+   Flammenkanone           SPREAD/CLUSTER           1.288   1.674      +30%
+   Dark Devourer           SPREAD/WYVERN/STICKY     1.256   1.716      +37%
+   Queen's Farflier        NORMAL/SPREAD/CLUSTER    1.205   1.727      +43%
+   Loyal Thunder           SPREAD/WYVERN            1.233   1.770      +44%
+   Sinister Dreadvolley    SPREAD/SLICING/CLUSTER   1.146   1.680      +47%
+   Kadachi Lion            NORMAL/WYVERN/PIERCING   1.022   1.596      +56%
+   Baan Roar               PIERCING/NORMAL/WYVERN   1.109   1.801      +62%
+   Icicle Assault          PIERCING/WYVERN          1.008   1.799      +78%
+
+Both figures are against no style at all, so guard reload IS a gain - it is
+just the smaller of the two gains every time.
+
+Where the gap comes from, on Loyal Thunder's spread magazine (7 rounds,
+Average recoil, Very slow reload), as rounds per second over a full cycle:
+
+   no style             mag  7   0.862s between shots   4.83s reload   0.700
+   guard reload         mag  4   0.862s                 2.05s          0.863
+   crouching shot       mag 11   0.405s                 4.83s          1.239
+
+Guard reload buys a quick reload and pays half the magazine for it, so it
+cycles more often but gets less out of each cycle. Crouching shot attacks the
+other half of the equation, and that half is bigger: it holds the slow reload
+but adds 4 rounds and more than doubles the firing speed. On a Very slow
+magazine the reload is only a third of the cycle, so halving the shooting beats
+halving the reload.
+
+THE GAP DOES NOT CLOSE under any of the things that might shrink it:
+
+   - the handling skill each style keeps. Guard reload keeps Recoil Down,
+     crouching shot keeps Reload Speed. At level 3 each, guard reload reaches
+     1.04 rounds/s and crouching shot 1.50. Crouching shot's kept skill is
+     worth MORE, because its untouched reload is the thing still in its way.
+   - the half-magazine reading, which is the most uncertain part of the model.
+     Even granting guard reload a full magazine it reaches 0.969 rounds/s
+     against crouching shot's 1.239.
+   - the crouching-shot cadence, which came off one cold burst and so
+     understates continuous fire. It would have to average 0.792s between
+     shots to merely TIE guard reload. It was measured at 0.405s, and 0.792s
+     is almost the native interval - the style would have to not accelerate at
+     all, which the recording rules out twice over.
+
+WHAT THIS DOES NOT SAY. The engine ranks damage and has no notion of being
+hit. Guard reload's whole point is that the magazine comes up from behind a
+block, in a position where a standing reload would be punished - the same
+limit already recorded above for sliding reload. So the honest statement is
+that guard reload is never the damage answer on a Heavy Bowgun, by a margin
+far too wide for the measurements to be hiding, and that whether it is the
+right answer anyway is a question about survival that nothing here can price.
+
+The suggester still searches both styles on those 9 weapons and will keep
+reporting crouching shot, which is correct but means the guard reload branch
+costs search time for nothing. It is left in because the weapon screen offers
+it and the comparison is worth showing rather than hiding.

@@ -518,6 +518,16 @@ function bandAfter(tier, levels) {
  * in 2.05s from its last shot to the next, against the 4.83s its pierce
  * magazine costs unaided. So it is a Fast reload on a Very slow magazine, at
  * the price of half the capacity.
+ *
+ * It never wins. Checked on all 18 style-selectable Heavy Bowguns: guard
+ * reload is offered on the 9 carrying spread or wyvern and crouching shot
+ * beats it on every one, by 26% to 78%. Halving the magazine to shorten a
+ * reload that is only a third of the cycle cannot match doubling the firing
+ * speed, and the margin survives granting guard reload a full magazine, its
+ * Recoil Down at 3, and crouching shot's cadence being understated — see
+ * recoil-readings.txt. The branch stays because the game offers it and
+ * because what guard reload really buys is not being hit, which nothing here
+ * can price.
  */
 const DODGE_SECONDS = 0.975;      // measured; what an evade costs
 const SLIDE_RELOAD_SECONDS = 2.52;   // measured, same basis as the ladder
