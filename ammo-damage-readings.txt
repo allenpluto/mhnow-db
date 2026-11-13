@@ -102,3 +102,68 @@ ammo family for every bowgun, and there is exactly one weapon's worth of data.
 Inventing the rest would be worse than admitting the gap, so the suggester now
 says plainly, on any bowgun carrying cluster or sticky, that its ranking
 treats every round alike and is not to be trusted on the choice of magazine.
+
+
+WHAT THE EXPLOSION DOES AND DOES NOT TAKE
+=========================================
+Player test, following the readings above: the explosion benefits from FIRE
+ATTACK 3 (a flat element value) and from SNEAK ATTACK 1 (a percentage), and
+ignores affinity in BOTH directions - a negative affinity does not hurt it and
+a positive one does not help.
+
+That is a complete enough rule to model, and it needed no new constant. The
+engine's damage function already returns exactly (attack + element) x the
+multipliers when affinity is zero, because at zero affinity no hits crit and
+the crit terms vanish. So "ignores affinity" is implemented by passing zero
+affinity, and everything else follows on its own:
+
+   crit skills fall out WITHOUT BEING LISTED. Critical Boost and Critical
+      Element multiply crits that never happen; Critical Eye, Weakness
+      Exploit and Latent Power buy affinity that is never read; Critical
+      Ferocity is paid on negative affinity that no longer exists.
+   flat skills still work. Attack Boost and Fire Attack add to the two
+      values that are still being summed.
+   multipliers still work. Sneak Attack, Elemental Release, Meditation,
+      Fighting Spirit all multiply what is left.
+
+Measured on the engine, Bazel Typhoon parked on cluster, each skill alone
+against a base of 3925:
+
+   Critical Boost 3      3925   nothing      Attack Boost 5    4299   +374
+   Critical Eye 5        3925   nothing      Fire Attack 5     4549   +624
+   Weakness Exploit 5    3925   nothing      Raw Power 5       4549   +624
+   Critical Ferocity 5   3925   nothing      Sneak Attack 5    4867   +942
+
+RAW POWER IS THE ONE WORTH SAYING OUT LOUD. It buys flat attack with
+affinity, and on explosive ammo the affinity is free - so it becomes a pure
++500 attack at Lv5, exactly matching Fire Attack 5's +500 element, which is
+also the clearest confirmation that attack and element are interchangeable
+here. On every other build in this engine Raw Power is a trade. On this one
+it is a gift.
+
+And the weapon's own -30% affinity, which the ranking has always treated as a
+handicap, costs this build nothing at all.
+
+HOW IT IS MODELLED
+------------------
+Parking is no longer slicing-only. Any magazine can be parked on, and the two
+explosive ones carry a flag that zeroes the affinity:
+
+   stepping shot, parked on slicing     normal damage rules
+   stepping shot, parked on cluster     no affinity
+   stepping shot, parked on sticky      no affinity
+
+All of them still require Evading Reload at a level that actually beats
+reloading by hand, because an ordinary reload switches magazines and would
+move you off the one you are parked on.
+
+WHAT IS STILL NOT MODELLED, and it is the important one: HOW MUCH a cluster
+round hits for against a normal one. The engine can now rank armour correctly
+WITHIN a cluster build, which is the question a player who has chosen that
+build is asking. It still cannot tell you to choose it, because that needs a
+damage figure per ammo family for every bowgun and there is one weapon's
+worth of data. For Bazel Typhoon the measured answer is that cluster is 6.4x
+normal ammo, so on that weapon the choice is not close.
+
+Checked: score() and the search's own scorer agree to the last digit on 7600
+random sets over 19 style variants across six weapons.

@@ -984,11 +984,16 @@ function styleVariants(weapon) {
     //
     // So a set without Evading Reload cannot hold this build at all, and is
     // scored as nothing here; the even-use variant above is what covers it.
-    if (has('SLICING')) {
-      out.push(make('stepping shot, parked on slicing',
-        { name: 'stepping shot', recoil: false, reload: true,
-          primary: 'SLICING', primaryShare: 0.96, primaryNeeds: 'Evading Reload' }));
-    }
+    // Any magazine can be parked on, not just slicing. The two explosive ones
+    // are marked as such: their damage takes no affinity at all, measured, so
+    // every crit skill is worth nothing on them and a negative-affinity weapon
+    // stops being penalised. See ammo-damage-readings.txt.
+    [['SLICING', false], ['CLUSTER', true], ['STICKY', true]].forEach((p) => {
+      if (!has(p[0])) return;
+      out.push(make('stepping shot, parked on ' + p[0].toLowerCase(),
+        { name: 'stepping shot', recoil: false, reload: true, primary: p[0],
+          primaryShare: 0.96, primaryNeeds: 'Evading Reload', explosive: p[1] }));
+    });
   } else {
     if (has('SPREAD') || has('WYVERN')) {
       out.push(make('guard reload',
@@ -1635,9 +1640,14 @@ function score(totals, w) {
     const a = atk + s.atk;
     const e = elemental ? (ele + s.ele) * (1 + elePct) : 0;
     const scale = blastBonus ? (a + blastBonus) / a : 1;
-    const onWeakPoint = critDamage(a, e, aff + s.aff + wexAff, m, ce, cf) *
+    // Explosive ammo ignores affinity entirely — measured, see
+    // ammo-damage-readings.txt — so every crit skill falls out on its own
+    // rather than needing to be listed, and a negative-affinity weapon stops
+    // being penalised. Multipliers like Sneak Attack still apply.
+    const noAff = !!(w.style && w.style.explosive);
+    const onWeakPoint = critDamage(a, e, noAff ? 0 : aff + s.aff + wexAff, m, ce, cf) *
       mult * buildupWeak * scale;
-    const fromBehind = critDamage(a, e, aff + s.aff, m, ce, cf) * mult *
+    const fromBehind = critDamage(a, e, noAff ? 0 : aff + s.aff, m, ce, cf) * mult *
       (1 + sneakMult) * buildupBehind * scale;
     const d = onWeakPoint >= fromBehind ? onWeakPoint : fromBehind;
     if (d > dmg) {
@@ -1748,6 +1758,7 @@ function makeScorer(w, damageOnly) {
   // Mirrors score(): a style that needs a skill scores nothing without it.
   const iNeeds = w.style && w.style.primaryNeeds ? I(w.style.primaryNeeds) : -1;
   const needsLevel = w.style && w.style.primaryNeeds ? evadeMinLevel(w) : 0;
+  const noAffinity = !!(w.style && w.style.explosive);
   const needsMissing = !!(w.style && w.style.primaryNeeds) && iNeeds < 0;
   // Constant for the whole search: the style's own firing rate, and the ways
   // the three stat slots can be split.
@@ -1835,8 +1846,9 @@ function makeScorer(w, damageOnly) {
       const a = atk + slots[s].atk;
       const e = elemental ? (ele + slots[s].ele) * (1 + elePct) : 0;
       const base = aff + slots[s].aff;
-      let d = critDamage(a, e, base + wexAff, m, ce, cf) * dmg * buildupWeak;
-      const b = critDamage(a, e, base, m, ce, cf) * dmg * sneakMult * buildupBehind;
+      // Mirrors score(): explosive ammo takes no affinity at all.
+      let d = critDamage(a, e, noAffinity ? 0 : base + wexAff, m, ce, cf) * dmg * buildupWeak;
+      const b = critDamage(a, e, noAffinity ? 0 : base, m, ce, cf) * dmg * sneakMult * buildupBehind;
       if (b > d) d = b;
       if (blastBonus) d *= (a + blastBonus) / a;
       if (d > best) best = d;
