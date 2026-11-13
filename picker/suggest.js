@@ -441,6 +441,23 @@
           'at Lv3, which this page does not credit. See evade-loop-notes.txt.');
       }
 
+      if ((weapon.ammo || []).indexOf('CLUSTER') >= 0 || (weapon.ammo || []).indexOf('STICKY') >= 0) {
+        out.push('THIS RANKING SCORES EVERY ROUND THE SAME, AND ON THIS WEAPON THAT IS ' +
+          'BADLY WRONG. Measured on Bazel Typhoon with no damage skills at all: a ' +
+          'normal round does 1088, a sticky round 3341, a cluster round 8501. At each ' +
+          'magazine\'s best firing rate that is 818, 2051 and 5220 damage per second — ' +
+          'cluster is 6.4x normal ammo. The model knows magazine size, recoil and ' +
+          'reload, so it gets the RATE right, but it has no notion of one round hitting ' +
+          'harder than another, so it cannot tell you which magazine to build around.');
+        out.push('Two things follow that the ranking also cannot show. A sticky or ' +
+          'cluster round lands a small impact and then a large explosion, and only the ' +
+          'impact takes affinity — four cluster readings on a -30% affinity weapon ' +
+          'agreed to 0.14%. So affinity and every crit skill reach about 1% of a cluster ' +
+          'round, where this page applies them to all of it. And stepping shot is worth ' +
+          '+26% on those 2-round magazines, whose native interval is 2.056s, while being ' +
+          'a LOSS on normal ammo at 0.862s. See ammo-damage-readings.txt.');
+      }
+
       out.push('Still soft here: sliding reload was timed one shot at a time, so some of ' +
         'its 2.52s is the player rather than the game; the reload figures carry a ' +
         'per-weapon offset of a few tenths, and only the gaps between tiers are firm; ' +

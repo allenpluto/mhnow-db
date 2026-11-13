@@ -1,0 +1,104 @@
+Damage per round by ammo type: the first measurement
+====================================================
+Bazel Typhoon 5, Light Bowgun, Fire. Status screen: attack 2007, affinity
+-30%, element 1668. Equipment skills: Defense Boost 2, Earplugs 2, Evading
+Reload 2 (the weapon's own), Health Boost 1, Divine Blessing 1, Lock On 1,
+Tremor Resistance 1, Special Insurance 1 - NO DAMAGE SKILLS AT ALL, which is
+what makes the numbers comparable. Four training-dummy recordings,
+2026-11-13, one magazine of each ammo type per recording.
+
+WHY THIS WAS WORTH MEASURING
+----------------------------
+This engine scores every round the same. It knows a magazine's size, its
+recoil and its reload, and from those it works out how FAST you can fire -
+but it has always assumed each round is worth the same damage. On a bowgun
+carrying normal, sticky and cluster that assumption is not slightly wrong.
+
+READING THEM
+------------
+The magazine icons are fire-orange on this weapon, so the blue-weapon reader
+does not apply; the discriminator is BRIGHT orange (R>210, R-B>120, G<170),
+which keeps the loaded icon and drops the dark brown border an empty slot
+leaves behind. The three magazines separate by geometry and fill:
+
+   normal    5 slots, and the outer two boxes are reached by nothing else
+   sticky    2 slots, narrow icons   about 36 bright pixels per round
+   cluster   2 slots, FAT icons      about 105 per round
+
+The Total Damage panel RESETS after a few seconds of no damage, which is the
+trap in this recording set - and also the thing that made the reading
+possible, because it separated the impact from the explosion.
+
+THE READINGS
+------------
+   NORMAL    5282 / 5 HIT       5593 / 5 HIT          5 shots each
+   STICKY      84 / 2 HIT         84 / 2 HIT    96 / 2 HIT
+             6594 / 4 HIT *     6690 / 4 HIT
+   CLUSTER   8493 / 4 HIT       8505 / 4 HIT          one shot
+            16998 / 8 HIT      17010 / 8 HIT          two shots
+
+   * read after the impact numbers had already reset away, leaving the two
+     explosions alone - and 6594 / 2 is 3297, exactly the explosion figure
+     the 6690 reading gives. The two agree to the unit.
+
+DAMAGE PER ROUND
+   normal     1088      one hit per shot
+   sticky     3341      = 3297 explosion + 44 impact, two hits per shot
+   cluster    8501      four hits per shot
+
+A SHOT IS NOT A HIT, AND THE TWO PARTS BEHAVE DIFFERENTLY
+---------------------------------------------------------
+The player's account is confirmed exactly. A sticky or cluster round lands a
+small IMPACT first and a large EXPLOSION after a delay, and they are not the
+same kind of damage:
+
+   the impact is 2 digits - 84, 84, 96 for two rounds, so 42 to 48 each -
+      and it SCATTERS, because it is affinity-affected and this weapon sits
+      at -30%
+   the explosion is CONSISTENT. Four cluster readings give 8493, 8505, 8499
+      and 8505: a spread of 0.14%. On a weapon where 30% of hits should be
+      landing at 75%, that is not scatter at all, so the explosion does not
+      take affinity.
+
+Normal ammo behaves the opposite way, as it should: 1056 and 1119 per round
+on the two runs, a 6% swing between two five-shot samples, which is the
+affinity scatter showing through.
+
+SO ON THIS BUILD, AFFINITY AND EVERY CRIT SKILL REACH ABOUT 1% OF A CLUSTER
+ROUND'S DAMAGE - the impact only. The engine applies them to all of it.
+
+DAMAGE PER SECOND, using the engine's own firing rates
+------------------------------------------------------
+                     no style     stepping shot   stepping + Evading Reload 4
+      normal            863             818                       818
+      sticky           1248            1572                      2051
+      cluster          3174            4000                      5220
+
+CLUSTER IS 6.4x NORMAL AMMO at their respective bests, on the weapon the
+suggester currently ranks as a normal-ammo gun.
+
+Note what stepping shot does here, and does not. It is worth +26% on the
+2-round magazines, whose native interval is 2.056s, and it is a LOSS on
+normal ammo, whose native 0.862s is quicker than the 0.95s dodge. Mixing
+them is the worst of both.
+
+WHAT THIS DOES NOT SETTLE
+-------------------------
+   - One weapon. The per-round figures are Bazel Typhoon's, and nothing here
+     says how they scale with attack, or whether the ratio between ammo types
+     holds on another bowgun.
+   - Whether the explosion scales with attack at all. It plainly does not
+     scale with affinity; if it is flat damage, then attack skills are worth
+     far less on a cluster build than the engine thinks, and the right
+     comparison changes again. One more recording at a very different attack
+     value would settle it, and it is the single most valuable thing left to
+     measure here.
+   - A dummy has no hitzones and no element resistance. Sticky and cluster
+     are usually fixed damage that ignores hitzones, which would make them
+     BETTER on a real monster than this comparison suggests, not worse.
+
+NOT MODELLED, DELIBERATELY. Pricing this properly needs a damage figure per
+ammo family for every bowgun, and there is exactly one weapon's worth of data.
+Inventing the rest would be worse than admitting the gap, so the suggester now
+says plainly, on any bowgun carrying cluster or sticky, that its ranking
+treats every round alike and is not to be trusted on the choice of magazine.
