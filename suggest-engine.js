@@ -203,7 +203,13 @@ const ASSUME = {
   // near the end that it barely contributes. In a group the picture inverts:
   // other players' procs land stacks almost immediately and the cap is held for
   // most of the fight.
+  // THE ANCHOR, not a fixed answer: 5 detonations in a 75s solo hunt at the
+  // 33% base proc chance. The count is now derived from it for any other hunt
+  // length and proc chance — see blastDetonations(). The anchor itself has
+  // never been measured and one counted hunt would replace it.
   blastSoloProcs: 5,
+  blastAnchorSeconds: 75,
+  blastAnchorProcChance: 0.33,
   blastThresholdGrowth: 1.3,
   blastGroupEarlyStacks: 4,     // from other players, almost at once
   blastGroupCapShare: 0.75,     // share of a long fight spent at the 10 cap
@@ -1382,20 +1388,59 @@ function poisonUptime() {
  * In a group, other players' procs land several stacks almost immediately and
  * the 10 cap is reached early, so the average is close to the cap.
  */
-function blastAverageStacks() {
+/**
+ * How many times blast detonates in a solo hunt.
+ *
+ * It was a flat 5, which made the model blind to the two things that most
+ * obviously drive it: a longer hunt lands more buildup, and a build that
+ * inflicts buildup more often lands it faster. A 150s hunt scored exactly as
+ * a 75s one, and a set with Status Sneak Attack 5 at a near-certain proc
+ * scored its Blast Exploit the same as a set at the 33% base.
+ *
+ * Buildup accrues in proportion to hunt length times the chance a hit
+ * inflicts it. The nth threshold is 1.3x the (n-1)th, so the buildup needed
+ * for n detonations is the geometric sum, and inverting it gives
+ *
+ *    n = log(1 + (g-1) k T p) / log(g)
+ *
+ * with k fixed by the anchor. Fractional n is kept rather than rounded, so
+ * the answer moves smoothly with hunt length instead of in steps.
+ *
+ * THE ANCHOR IS STILL AN ASSUMPTION. What this changes is that the model now
+ * RESPONDS correctly to hunt length and proc chance; where it sits overall
+ * still rests on 5 detonations in 75s at 33%, which no recording has checked.
+ */
+function blastDetonations(procChance) {
+  const g = ASSUME.blastThresholdGrowth;
+  const sum = (x) => (Math.pow(g, x) - 1) / (g - 1);
+  const k = sum(ASSUME.blastSoloProcs) /
+    (ASSUME.blastAnchorSeconds * ASSUME.blastAnchorProcChance);
+  const accrued = k * ASSUME.huntSeconds * (procChance > 0 ? procChance : 0);
+  const n = Math.log(1 + (g - 1) * accrued) / Math.log(g);
+  return n < 0 ? 0 : n > BLAST_EXPLOIT_CAP ? BLAST_EXPLOIT_CAP : n;
+}
+
+function blastAverageStacks(procChance) {
   if (ASSUME.multiplayer) {
     const ramp = (ASSUME.blastGroupEarlyStacks + BLAST_EXPLOIT_CAP) / 2;
     return BLAST_EXPLOIT_CAP * ASSUME.blastGroupCapShare +
            ramp * (1 - ASSUME.blastGroupCapShare);
   }
-  const n = Math.min(ASSUME.blastSoloProcs, BLAST_EXPLOIT_CAP);
-  let total = 0;
-  for (let i = 0; i < n; i++) total += Math.pow(ASSUME.blastThresholdGrowth, i);
+  const g = ASSUME.blastThresholdGrowth;
+  const n = blastDetonations(procChance === undefined
+    ? ASSUME.blastAnchorProcChance : procChance);
+  const whole = Math.floor(n), frac = n - whole;
+  if (n <= 0) return 0;
+  // Total buildup the hunt delivers, so each threshold can be expressed as the
+  // share of the hunt elapsed when it is crossed.
+  const total = (Math.pow(g, n) - 1) / (g - 1);
   let elapsed = 0, held = 0;
-  for (let i = 0; i < n; i++) {
-    elapsed += Math.pow(ASSUME.blastThresholdGrowth, i) / total;
+  for (let i = 0; i < whole; i++) {
+    elapsed += Math.pow(g, i) / total;
     held += 1 - elapsed;          // this stack is held for the rest of the hunt
   }
+  // The last threshold is only partly reached; credit it in proportion.
+  if (frac > 0) held += frac * (1 - elapsed);
   return held;
 }
 
@@ -1624,7 +1669,12 @@ function score(totals, w) {
     // Blast Exploit is flat attack per proc, stacking. Stacks accumulate
     // through the hunt, so the average held is about half the final count.
     if (w.element === 'Blast' && lv('Blast Exploit')) {
-      blastBonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) * blastAverageStacks();
+      // How fast the stacks arrive depends on how often a hit inflicts
+      // buildup, so the detonation count takes the same proc chance Buildup
+      // Boost is priced on. The behind-stance figure is used, because a set
+      // carrying Status Sneak Attack is a set built to be played from behind.
+      blastBonus = (BLAST_EXPLOIT_ATK[lv('Blast Exploit')] || 0) *
+        blastAverageStacks(procChance(lv('Status Sneak Attack'), exLv, powder));
     }
   }
   mult *= styleRate(w);
@@ -1827,7 +1877,10 @@ function makeScorer(w, damageOnly) {
       buildupWeak = 1 + bb * procChance(0, exLv, powder);
       if (exTable) dmg *= 1 + (exBase + (exTable[g(v, iExploit)] || 0)) * exUptime;
       if (iBlastEx >= 0 && g(v, iBlastEx)) {
-        blastBonus = (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) * blastAverageStacks();
+        // Mirrors score(): the detonation count takes the behind-stance proc
+        // chance, since that is what drives how fast buildup accrues.
+        blastBonus = (BLAST_EXPLOIT_ATK[g(v, iBlastEx)] || 0) *
+          blastAverageStacks(procChance(g(v, iSSA), exLv, powder));
       }
     }
 
@@ -1878,6 +1931,7 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   fightingSpiritUptime: fightingSpiritUptime,
   meditationUptime: meditationUptime,
   specialCount: specialCount,
+  blastAverageStacks: blastAverageStacks, blastDetonations: blastDetonations,
   styleRate: styleRate, shotSeconds: shotSeconds,
   reloadSeconds: reloadSeconds, magazineSize: magazineSize,
   statSlotChoices: statSlotChoices,
