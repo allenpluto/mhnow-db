@@ -1223,6 +1223,19 @@ const FIGHT_SPIRIT = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.35 };
 const MEDITATION = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.25, 5: 0.35 };
 const BURST = { 1: 0.05, 2: 0.10, 3: 0.15, 4: 0.20, 5: 0.30 };
 const ADV_BURST = { 1: 0.05, 2: 0.10 };
+/* Combo Master: "increase damage dealt by x% after performing an action
+ * multiple times", 10 / 20 / 35. The source calls it POWER_BURST, the same
+ * family as Burst (BURST) and Advanced Burst (BURST_SECRET), and the text has
+ * the same shape - a condition you ramp into and then hold.
+ *
+ * So it takes the same uptime as Burst, which is the honest choice and also a
+ * lucky one: burstUptime was measured off GLAIVE recordings, and the glaive is
+ * where this skill keeps turning up.
+ *
+ * IT IS A BIG SKILL AND IT WAS SCORED AS ZERO. Lv3 at 35% beats Burst at its
+ * own Lv5 of 30%, and reaches it in three levels rather than five.
+ */
+const COMBO_MASTER = { 1: 0.10, 2: 0.20, 3: 0.35 };
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
@@ -1524,7 +1537,7 @@ const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
 function knownSkills(weapon) {
   const s = new Set(['Attack Boost', 'Advanced Attack Boost', 'Critical Eye', 'Weakness Exploit',
     'Critical Boost', 'Critical Ferocity', 'Valor', 'Peak Performance', 'Burst',
-    'Advanced Burst', 'Latent Power', 'Offensive Guard', 'Heroics',
+    'Advanced Burst', 'Combo Master', 'Latent Power', 'Offensive Guard', 'Heroics',
     // Trades affinity for flat attack, which makes it a real option on a
     // negative-affinity weapon and a partner for Critical Ferocity. Omitting it
     // meant the optimiser scored it zero and never considered that build.
@@ -1631,6 +1644,7 @@ function score(totals, w) {
   // stat slots are split, so they are worked out once and applied after.
   let mult = 1;
   mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
+  mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.burstUptime;
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
@@ -1764,6 +1778,7 @@ function makeScorer(w, damageOnly) {
   const iCEye = I('Critical Eye'), iWEx = I('Weakness Exploit'), iLat = I('Latent Power');
   const iCF = I('Critical Ferocity'), iCB = I('Critical Boost'), iCE = I('Critical Element');
   const iBurst = I('Burst'), iAB2 = I('Advanced Burst'), iOG = I('Offensive Guard');
+  const iCombo = I('Combo Master');
   const iRaw = I('Raw Power'), iTide = I('Rising Tide');
   const isStatusW = STATUS.indexOf(w.element) >= 0;
   const iSneak = I('Sneak Attack'), iSSA = I('Status Sneak Attack');
@@ -1854,6 +1869,7 @@ function makeScorer(w, damageOnly) {
     // Everything that does not depend on how the stat slots are split.
     let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
+    dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.burstUptime;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
