@@ -1282,6 +1282,18 @@ const ATTACK_EFFICACY = { 1: 0.10, 2: 0.15, 3: 0.25 };
  * hits. That is the share, directly, and it needs no modelling in between.
  */
 const SKYWARD = { 1: 0.15, 2: 0.20, 3: 0.25, 4: 0.30, 5: 0.40 };
+/* WHICH WEAPONS IT REACHES, from the player: it pays while you are in the
+ * air, so it is worth MOST on the Insect Glaive, whose damage is largely
+ * airborne, and NOTHING AT ALL on every ranged weapon, the Charge Blade and
+ * the Great Sword.
+ *
+ * That leaves a middle group - melee weapons with some aerial attacks but no
+ * aerial game - which this list deliberately excludes. Their real share is
+ * small but not zero, so the engine UNDERSTATES the skill there rather than
+ * guessing a second number on top of the first. The zero it reports on a
+ * Charge Blade or a bowgun is correct; the zero on, say, Dual Blades is a
+ * floor, not a verdict.
+ */
 const AERIAL_WEAPONS = ['Insect Glaive'];
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
