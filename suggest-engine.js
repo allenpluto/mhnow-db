@@ -103,8 +103,9 @@ const ASSUME = {
    * multiplier on the whole is 1 + x times (aerial damage / total damage).
    * The Spiral Slash figure beside it is a damage share for the same reason.
    *
-   * MEASURED AS A FLOOR, from one glaive hunt the player marked up window by
-   * window: a 104s fight with 51s spent airborne, so a 49.0% TIME share.
+   * ANCHORED, then rounded by the player's own call to 50%. One glaive hunt
+   * was marked up window by window: a 104s fight with 51s spent airborne, a
+   * 49.0% TIME share, and the damage share sits above that.
    *
    * The damage share is higher than that, for two reasons that compound:
    *   - 7 of those 51 seconds produced almost nothing - a missed Special and
@@ -116,11 +117,16 @@ const ASSUME = {
    * So 0.49 is a lower bound standing in for a damage share nobody has
    * counted, and the skill is understated by whatever the density is worth.
    * Better than the 0.40 invented before it, and still not measured. */
-  aerialShare: 0.49,
+  aerialShare: 0.50,
 
   /* Spiral Slash's airborne share, DERIVED from the dual-blades recordings
    * rather than guessed - two slashes agree at 33.3% and 33.6%. */
   spiralAerialShare: 0.333,
+
+  /* Every other melee weapon - some aerial attacks, no aerial game. The
+   * player's estimate, and the one derived figure beside it agrees: Spiral
+   * Slash measured 33.3% against this 30% assumed. */
+  otherAerialShare: 0.30,
 
   /* Elemental Release is not a free-floating uptime. The skill gives element
    * +100% for a stated 20 seconds after each Special Skill, so the uptime is
@@ -1356,12 +1362,21 @@ const AERIAL_WEAPONS = ['Insect Glaive'];
  * also qualify. None of those is measured and all are small next to the
  * airborne slash, so they are left at zero and the skill is understated there.
  */
+const NO_AERIAL = ['Light Bowgun', 'Heavy Bowgun', 'Bow', 'Charge Blade', 'Great Sword'];
+
 function aerialShare(w) {
+  // The glaive, where the air IS the weapon.
   if (AERIAL_WEAPONS.indexOf(w.category) >= 0) return ASSUME.aerialShare;
+  // Nothing at all on the ranged weapons, the Charge Blade or the Great Sword.
+  if (NO_AERIAL.indexOf(w.category) >= 0) return 0;
+  // Spiral Slash is the one middle case with a MEASURED share, so it keeps it
+  // rather than taking the group default - 33.3% derived against 30% assumed,
+  // which is also a fair check on the assumption.
   if (w.category === 'Dual Blades' && w.style && w.style.name === 'spiral slash') {
     return ASSUME.spiralAerialShare;
   }
-  return 0;
+  // Every other melee weapon: some aerial attacks, no aerial game.
+  return ASSUME.otherAerialShare;
 }
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
