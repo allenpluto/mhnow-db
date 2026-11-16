@@ -108,7 +108,10 @@ if (W.statSlots && !W.styleSelectable) {
 }
 
 // Hunt length drives Latent Power's uptime and how far Rising Tide ramps.
-// 75s is a standard hunt, a base defence runs about 150.
+// 75s is a standard hunt, a base defence runs about 150. NOTE that a base
+// defence is not a flat fight: it has three shielded stretches and three
+// windows at x1.25, x1.50 and x2.00, so every uptime here is an average over
+// a shape the engine does not model - see base-defence-notes.txt.
 E.ASSUME.huntSeconds = Number(val('--hunt', E.ASSUME.huntSeconds));
 
 // Blast stacking depends enormously on whether other players are also procing.

@@ -1,0 +1,78 @@
+What a base defence actually is, and why the model's flat hunt is wrong
+=======================================================================
+Player account, 2026-11-17. None of this was recorded anywhere in the
+project, which knew only that "a base defence runs about 150s".
+
+THE SHAPE OF THE FIGHT
+----------------------
+The monster opens SHIELDED. All damage is reduced, the numbers on screen are
+small, and they appear under a hive-like icon that stands for the shield.
+
+Break the shield and "NOW IS YOUR CHANCE!" appears. The monster takes extra
+damage and the numbers get much bigger. Then the shield comes back and the
+whole thing repeats. THREE TIMES.
+
+Each break states its own amplification, and they climb:
+
+   first break    +25%
+   second break   +50%
+   third break    +100%
+
+So a base defence is not one damage environment, it is at least six: three
+shielded stretches at a reduction never yet measured, and three windows at
+x1.25, x1.50 and x2.00.
+
+THE DAMAGE COUNTER
+------------------
+The number shown with "Now is your chance" is the PLAYER'S OWN damage, not
+the team's. That is worth more than it sounds: it was taken as settled
+earlier in this project that a group hunt gives no way to measure one
+player's damage, and that the health bar falls to four people's hits. It
+does give one, on this fight type.
+
+IT EXCLUDES EXPLOSIVE AND POISON DAMAGE. Those are added back at the scoring
+stage instead. So on a blast or poison build the counter UNDERSTATES what you
+did, and any future measurement read off it has to account for that.
+
+THE FINAL SCORE, in order:
+   damage score                      the screen pauses here
+   + explosive and/or poison damage  the screen pauses again
+   x event featured weapon boost     30% or 60% for the event's chosen
+                                     weapon, nothing for the others
+
+WHAT THIS MEANS FOR THE MODEL
+-----------------------------
+The engine prices one average hit across a flat hunt. Every uptime in it -
+burstUptime, latentUptime, the Special Gauge timeline, Rising Tide's ramp -
+is a fraction of hunt length with no notion of WHEN inside the hunt.
+
+On a base defence, when is most of the question.
+
+   A SKILL THAT RAMPS AND THEN HOLDS is worth more than modelled, because
+   the windows come later in the fight and the amplification climbs. Burst,
+   Combo Master, Latent Power and Rising Tide all ramp; all of them are
+   therefore understated here, and the x2.00 window at the end is where a
+   held skill pays most.
+
+   A SKILL THAT IS UP FROM THE START AND FALLS OFF is worth less than
+   modelled, for the same reason in reverse.
+
+   NERGIGANTE AVIDITY GETS WORSE AGAIN. Its cost is the Specials you never
+   fire - and a Special landing inside the x2.00 window is worth twice one
+   landing while shielded. avidityCost() values them all the same, so the
+   12 seconds in ASSUME.specialWorthSeconds is, on this fight type, an
+   understatement of what is given up.
+
+NONE OF IT IS MODELLED, and it should not be until the shielded reduction is
+measured - without that the six phases cannot be weighted. What the engine
+reports for a 150s hunt is an average over a fight whose real shape it does
+not know, and that is a different kind of wrong from a mis-set constant.
+
+WHAT WOULD SETTLE IT. One base defence recording, reading the damage numbers
+in a shielded stretch against the same attack in a window. That gives the
+reduction, and with the three amplifications already known from the screen,
+the whole phase profile follows.
+
+A NOTE ON WHICH RECORDINGS ARE WHICH. Not every live fight is a base defence:
+an elder dragon boss fight has no shield phases at all, so it is a flat
+environment and is useful for uptime work but not for any of the above.
