@@ -102,6 +102,10 @@ const ASSUME = {
    * least supported number in this file. One glaive video would replace it. */
   aerialShare: 0.40,
 
+  /* Spiral Slash's airborne share, DERIVED from the dual-blades recordings
+   * rather than guessed - two slashes agree at 33.3% and 33.6%. */
+  spiralAerialShare: 0.333,
+
   /* Elemental Release is not a free-floating uptime. The skill gives element
    * +100% for a stated 20 seconds after each Special Skill, so the uptime is
    * 20s times how many Specials a hunt yields, over its length — and the
@@ -1295,6 +1299,35 @@ const SKYWARD = { 1: 0.15, 2: 0.20, 3: 0.25, 4: 0.30, 5: 0.40 };
  * floor, not a verdict.
  */
 const AERIAL_WEAPONS = ['Insect Glaive'];
+
+/**
+ * Share of a build's damage landed in the air, which is all this skill pays on.
+ *
+ * DUAL BLADES ARE NOT ZERO, and on Spiral Slash the share is DERIVED rather
+ * than guessed - out of measurements already in dual-blades-readings.txt,
+ * taken long before this skill was known about.
+ *
+ *    airborne slash   8422 damage in 2.60s
+ *    normal stance    896 dmg/s on the ground
+ *    whole cycle      1180 dmg/s with one slash a window
+ *
+ * One slash a window means 1180 W = 8422 + 896 (W - 2.60), so the window is
+ * 21.45s and holds 25313 damage, of which 8422 is airborne: 33.3%. The second,
+ * shorter slash gives 33.6% the same way on a 13.5s window. Two independent
+ * slashes agreeing to a third of a point is as good as this file gets.
+ *
+ * THE OTHER TWO STYLES ARE A FLOOR, NOT A VERDICT. The player reports that No
+ * style's Special and the forward dash on both Spiral Slash and Feral Demon
+ * also qualify. None of those is measured and all are small next to the
+ * airborne slash, so they are left at zero and the skill is understated there.
+ */
+function aerialShare(w) {
+  if (AERIAL_WEAPONS.indexOf(w.category) >= 0) return ASSUME.aerialShare;
+  if (w.category === 'Dual Blades' && w.style && w.style.name === 'spiral slash') {
+    return ASSUME.spiralAerialShare;
+  }
+  return 0;
+}
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
@@ -1711,9 +1744,7 @@ function score(totals, w) {
   let mult = 1;
   mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.burstUptime;
-  if (AERIAL_WEAPONS.indexOf(w.category) >= 0) {
-    mult *= 1 + (SKYWARD[lv('Skyward Striker')] || 0) * ASSUME.aerialShare;
-  }
+  mult *= 1 + (SKYWARD[lv('Skyward Striker')] || 0) * aerialShare(w);
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
@@ -1841,7 +1872,7 @@ function makeScorer(w, damageOnly) {
   const iAB = I('Attack Boost'), iAAB = I('Advanced Attack Boost');
   const iValor = I('Valor'), iPeak = I('Peak Performance'), iHero = I('Heroics');
   const iAE = I('Attack Efficacy'), iSky = I('Skyward Striker');
-  const aerial = AERIAL_WEAPONS.indexOf(w.category) >= 0;
+  const airShare = aerialShare(w);
   const iEA = elemental ? I(w.element + ' Attack') : -1;
   const iAEA = elemental ? I('Advanced ' + w.element + ' Attack') : -1;
   const iVital = elemental ? I('Vital ' + w.element) : -1;
@@ -1942,7 +1973,7 @@ function makeScorer(w, damageOnly) {
     let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.burstUptime;
-    if (aerial) dmg *= 1 + (SKYWARD[g(v, iSky)] || 0) * ASSUME.aerialShare;
+    if (airShare) dmg *= 1 + (SKYWARD[g(v, iSky)] || 0) * airShare;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
