@@ -1268,6 +1268,18 @@ const COMBO_MASTER = { 1: 0.10, 2: 0.20, 3: 0.35 };
  * screenshot with and without it would confirm both.
  */
 const ATTACK_EFFICACY = { 1: 0.10, 2: 0.15, 3: 0.25 };
+/* Shared Sword: "increases attack power by x during a group hunt", x = 80 per
+ * level, so +400 at Lv5. Source kind MULTI_ATTACK_BOOST.
+ *
+ * Flat attack like Attack Boost, not a multiplier, and gated on something this
+ * engine already knows: ASSUME.multiplayer, which --group sets. Solo it is
+ * worth exactly nothing, which is not a limitation of the model - it is the
+ * skill.
+ *
+ * It is big where it applies. Skullwhistle carries Lv3 on the weapon itself,
+ * +240 attack on a 1912 base, and nothing is spent on it.
+ */
+const SHARED_SWORD_PER_LEVEL = 80;
 /* Skyward Striker: "Increases the damage of aerial attacks by x%", 15 / 20 /
  * 25 / 30 / 40. The source calls it AIRBORNE.
  *
@@ -1682,7 +1694,7 @@ function knownSkills(weapon) {
   const s = new Set(['Attack Boost', 'Advanced Attack Boost', 'Critical Eye', 'Weakness Exploit',
     'Critical Boost', 'Critical Ferocity', 'Valor', 'Peak Performance', 'Burst',
     'Advanced Burst', 'Combo Master', 'Attack Efficacy', 'Latent Power',
-    'Skyward Striker',
+    'Skyward Striker', 'Shared Sword',
     'Offensive Guard', 'Heroics',
     // Trades affinity for flat attack, which makes it a real option on a
     // negative-affinity weapon and a partner for Critical Ferocity. Omitting it
@@ -1767,6 +1779,7 @@ function score(totals, w) {
   // — which makes it weaker than its headline on an elemental weapon and
   // exactly its headline on a raw one. Applied after the flat skills, the
   // reading the Status screen would show; see ATTACK_EFFICACY.
+  if (ASSUME.multiplayer) atk += SHARED_SWORD_PER_LEVEL * lv('Shared Sword');
   atk *= 1 + (ATTACK_EFFICACY[lv('Attack Efficacy')] || 0);
 
   if (elemental) {
@@ -1925,6 +1938,7 @@ function makeScorer(w, damageOnly) {
   const iAB = I('Attack Boost'), iAAB = I('Advanced Attack Boost');
   const iValor = I('Valor'), iPeak = I('Peak Performance'), iHero = I('Heroics');
   const iAE = I('Attack Efficacy'), iSky = I('Skyward Striker');
+  const iShared = I('Shared Sword');
   const airShare = aerialShare(w);
   const iEA = elemental ? I(w.element + ' Attack') : -1;
   const iAEA = elemental ? I('Advanced ' + w.element + ' Attack') : -1;
@@ -1998,6 +2012,7 @@ function makeScorer(w, damageOnly) {
     atk += tideAttack(g(v, iTide), ASSUME.huntSeconds);
     atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
     atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
+    if (ASSUME.multiplayer) atk += SHARED_SWORD_PER_LEVEL * g(v, iShared);
     atk *= 1 + (ATTACK_EFFICACY[g(v, iAE)] || 0);
 
     if (elemental) {
