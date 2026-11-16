@@ -97,6 +97,11 @@ const ASSUME = {
    */
   burstUptime: 0.50,
 
+  /* Share of a glaive's hits landed in the air, which is all that Skyward
+   * Striker pays on. GUESSED - no recording has counted it, and it is the
+   * least supported number in this file. One glaive video would replace it. */
+  aerialShare: 0.40,
+
   /* Elemental Release is not a free-floating uptime. The skill gives element
    * +100% for a stated 20 seconds after each Special Skill, so the uptime is
    * 20s times how many Specials a hunt yields, over its length — and the
@@ -1236,6 +1241,48 @@ const ADV_BURST = { 1: 0.05, 2: 0.10 };
  * own Lv5 of 30%, and reaches it in three levels rather than five.
  */
 const COMBO_MASTER = { 1: 0.10, 2: 0.20, 3: 0.35 };
+/* Attack Efficacy: "Attack power increases by x%", 10 / 15 / 25. The source
+ * calls it POWERHOUSE. Unlike Burst and Combo Master it carries NO CONDITION
+ * at all, so it is held for the whole hunt rather than an uptime share - which
+ * is why 25% here beats Combo Master's 35% at half uptime.
+ *
+ * It lifts ATTACK POWER, not damage, so it does not touch element. On a raw
+ * weapon that distinction vanishes and it is worth its full headline; on an
+ * elemental one it is worth less, in proportion to how much of the damage is
+ * element.
+ *
+ * TWO THINGS ASSUMED, both settleable from the Status screen, which includes
+ * static skills: that it applies to the attack AFTER the flat skills rather
+ * than to the weapon's base, and that "attack power" excludes element. One
+ * screenshot with and without it would confirm both.
+ */
+const ATTACK_EFFICACY = { 1: 0.10, 2: 0.15, 3: 0.25 };
+/* Skyward Striker: "Increases the damage of aerial attacks by x%", 15 / 20 /
+ * 25 / 30 / 40. The source calls it AIRBORNE.
+ *
+ * THIS IS THE SOFTEST NUMBER IN THE FILE, and it is worth saying so plainly.
+ * The skill pays only on AERIAL attacks, and this engine has never had a
+ * notion of an attack mix - it prices one average hit. Charge Master was left
+ * off every weapon but the bow for exactly this reason: "other weapons charge
+ * only some attacks, and this model has no notion of an attack mix, so they
+ * are left out rather than guessed at."
+ *
+ * The same logic would leave this at zero everywhere. But the Insect Glaive
+ * is not "some attacks" - the vault and the aerial loop are the weapon's
+ * whole identity, and BOTH top-ranking glaive players read in this session
+ * build around the air: one carries this skill, the other an Aerial Bonus
+ * kinsect and Descending Thrust. Scoring it zero on a glaive is more clearly
+ * wrong than scoring it with a flagged guess.
+ *
+ * So it applies to Insect Glaive only, at ASSUME.aerialShare - a number with
+ * NO measurement behind it at all, unlike burstUptime which at least has one
+ * recording. Treat any set it changes with suspicion until it is measured.
+ *
+ * TO MEASURE IT: one glaive recording, counting aerial hits against ground
+ * hits. That is the share, directly, and it needs no modelling in between.
+ */
+const SKYWARD = { 1: 0.15, 2: 0.20, 3: 0.25, 4: 0.30, 5: 0.40 };
+const AERIAL_WEAPONS = ['Insect Glaive'];
 const LATENT = { 1: 20, 2: 30, 3: 40, 4: 50, 5: 60 };
 const OFF_GUARD = { 1: 0.10, 2: 0.15, 3: 0.20, 4: 0.30, 5: 0.40 };
 const HEROICS = { 1: 0.10, 2: 0.20, 3: 0.30, 4: 0.40, 5: 0.50 };
@@ -1537,7 +1584,9 @@ const RAW_AFF = { 1: 5, 2: 10, 3: 15, 4: 20, 5: 30 };
 function knownSkills(weapon) {
   const s = new Set(['Attack Boost', 'Advanced Attack Boost', 'Critical Eye', 'Weakness Exploit',
     'Critical Boost', 'Critical Ferocity', 'Valor', 'Peak Performance', 'Burst',
-    'Advanced Burst', 'Combo Master', 'Latent Power', 'Offensive Guard', 'Heroics',
+    'Advanced Burst', 'Combo Master', 'Attack Efficacy', 'Latent Power',
+    'Skyward Striker',
+    'Offensive Guard', 'Heroics',
     // Trades affinity for flat attack, which makes it a real option on a
     // negative-affinity weapon and a partner for Critical Ferocity. Omitting it
     // meant the optimiser scored it zero and never considered that build.
@@ -1617,6 +1666,11 @@ function score(totals, w) {
   atk += tideAttack(lv('Rising Tide'), ASSUME.huntSeconds);
   atk += (VALOR[lv('Valor')] || 0) * ASSUME.valorUptime;
   atk += (PEAK[lv('Peak Performance')] || 0) * ASSUME.peakPerformanceUptime;
+  // Attack Efficacy lifts ATTACK POWER, not damage, so it is kept off element
+  // — which makes it weaker than its headline on an elemental weapon and
+  // exactly its headline on a raw one. Applied after the flat skills, the
+  // reading the Status screen would show; see ATTACK_EFFICACY.
+  atk *= 1 + (ATTACK_EFFICACY[lv('Attack Efficacy')] || 0);
 
   if (elemental) {
     ele += ELEM_ATTACK[lv(w.element + ' Attack')] || 0;
@@ -1645,6 +1699,9 @@ function score(totals, w) {
   let mult = 1;
   mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.burstUptime;
+  if (AERIAL_WEAPONS.indexOf(w.category) >= 0) {
+    mult *= 1 + (SKYWARD[lv('Skyward Striker')] || 0) * ASSUME.aerialShare;
+  }
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
@@ -1771,6 +1828,8 @@ function makeScorer(w, damageOnly) {
   const elemental = ELEMENTS.indexOf(w.element) >= 0;
   const iAB = I('Attack Boost'), iAAB = I('Advanced Attack Boost');
   const iValor = I('Valor'), iPeak = I('Peak Performance'), iHero = I('Heroics');
+  const iAE = I('Attack Efficacy'), iSky = I('Skyward Striker');
+  const aerial = AERIAL_WEAPONS.indexOf(w.category) >= 0;
   const iEA = elemental ? I(w.element + ' Attack') : -1;
   const iAEA = elemental ? I('Advanced ' + w.element + ' Attack') : -1;
   const iVital = elemental ? I('Vital ' + w.element) : -1;
@@ -1843,6 +1902,7 @@ function makeScorer(w, damageOnly) {
     atk += tideAttack(g(v, iTide), ASSUME.huntSeconds);
     atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
     atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
+    atk *= 1 + (ATTACK_EFFICACY[g(v, iAE)] || 0);
 
     if (elemental) {
       ele += ELEM_ATTACK[g(v, iEA)] || 0;
@@ -1870,6 +1930,7 @@ function makeScorer(w, damageOnly) {
     let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.burstUptime;
+    if (aerial) dmg *= 1 + (SKYWARD[g(v, iSky)] || 0) * ASSUME.aerialShare;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
