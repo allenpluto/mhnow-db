@@ -141,6 +141,13 @@ const ASSUME = {
   specialRefillSeconds: 52,      // measured in a real fight
   openWithSpecial: true,         // you can enter a hunt on a full gauge
 
+  /* What one Special activation is worth, in seconds of ordinary attacking.
+   * NOT MEASURED. Set just above the largest burst this project has measured
+   * (Spiral Slash's airborne slash, 9.4s) and just below Avidity 3's
+   * break-even of 15s. It decides Avidity 1 and 2 outright - see
+   * avidityCost() - so it is the next thing worth recording. */
+  specialWorthSeconds: 12,
+
   // Threshold skills. An average of 60% health means full health and sub-29%
   // health are both occasional, so these are weighted at a tenth of nominal
   // rather than being deleted or taken at face value.
@@ -1456,6 +1463,51 @@ function ammoShare(w, boost) {
 // outside this model entirely. On a build that leans on its Special, this skill
 // is worth less than the number here suggests.
 const AVIDITY = { 1: 0.10, 2: 0.15, 3: 0.20 };
+
+/**
+ * What Nergigante Avidity COSTS, which was never priced.
+ *
+ * Part of the cost already was: the gauge not refilling cuts Elemental
+ * Release, Fighting Spirit and Meditation, and specialCount() has always
+ * handled that. What was missing is the Special attack's OWN damage - the
+ * thing you give up by never firing it again.
+ *
+ * The specials lost are known exactly. specialRefillSeconds is 52, measured
+ * in a real fight, so a 150s hunt loses two of them - which is also what the
+ * player reports from play, independently.
+ *
+ * THE BREAK-EVEN IS THEREFORE CLEAN, and needs no assumption at all. Avidity
+ * gives level% across the whole hunt, so in seconds-equivalent of ordinary
+ * attacking it gains level% x hunt and loses (specials lost) x (what one
+ * Special is worth):
+ *
+ *    hunt    lost    Av1      Av2      Av3     seconds a Special must be
+ *      75s      1    7.5s    11.3s    15.0s    worth for it to break even
+ *     150s      2    7.5s    11.3s    15.0s
+ *     225s      4    5.6s     8.4s    11.3s
+ *     300s      5    6.0s     9.0s    12.0s
+ *
+ * For scale: the largest burst this project has ever measured is Spiral
+ * Slash's airborne slash, 8422 damage against 896 dmg/s on the ground, worth
+ * 9.4 SECONDS of ordinary attacking. A Special is a bigger and rarer event
+ * than a style move, so 12s below is deliberately set just above that
+ * measured burst and just below Avidity 3's break-even.
+ *
+ * THAT 12 IS NOT MEASURED. It decides the answer for Lv1 and Lv2 outright,
+ * so it is the number to attack next: one recording of a Special, compared
+ * against the seconds either side of it, replaces it entirely.
+ *
+ * What it says as it stands is that Avidity 1 - the level the suggester kept
+ * reaching for, and the one with the LOWEST break-even at 7.5s - is a loss.
+ * Which is what the top-ranking players appear to have concluded.
+ */
+function avidityCost(avidityLevel, valorLevel) {
+  if (!avidityLevel) return 0;
+  const lost = specialCount(0, valorLevel) - specialCount(avidityLevel, valorLevel);
+  if (lost <= 0) return 0;
+  const share = lost * ASSUME.specialWorthSeconds / ASSUME.huntSeconds;
+  return share > 0.9 ? 0.9 : share;      // never price it as losing the hunt
+}
 const STATUS_BUILDUP = { 1: 50, 2: 75, 3: 100, 4: 125, 5: 150 };
 
 /**
@@ -1749,6 +1801,7 @@ function score(totals, w) {
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
   mult *= 1 + (HEROICS[lv('Heroics')] || 0) * ASSUME.heroicsUptime;
   mult *= 1 + (AVIDITY[lv('Nergigante Avidity')] || 0);
+  mult *= 1 - avidityCost(lv('Nergigante Avidity'), lv('Valor'));
   mult *= 1 + (FIGHT_SPIRIT[lv('Fighting Spirit')] || 0) *
     fightingSpiritUptime(lv('Nergigante Avidity'), lv('Valor'));
   mult *= 1 + (MEDITATION[lv('Meditation')] || 0) * meditationUptime();
@@ -1978,6 +2031,7 @@ function makeScorer(w, damageOnly) {
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
     dmg *= 1 + (HEROICS[g(v, iHero)] || 0) * ASSUME.heroicsUptime;
     dmg *= 1 + (AVIDITY[g(v, iAvidity)] || 0);
+    dmg *= 1 - avidityCost(g(v, iAvidity), g(v, iValor));
     dmg *= 1 + (FIGHT_SPIRIT[g(v, iFS)] || 0) *
       fightingSpiritUptime(g(v, iAvidity), g(v, iValor));
     dmg *= 1 + (MEDITATION[g(v, iMed)] || 0) * medUp;
