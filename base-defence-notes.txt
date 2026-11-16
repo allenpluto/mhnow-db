@@ -76,3 +76,70 @@ the whole phase profile follows.
 A NOTE ON WHICH RECORDINGS ARE WHICH. Not every live fight is a base defence:
 an elder dragon boss fight has no shield phases at all, so it is a flat
 environment and is useful for uptime work but not for any of the above.
+
+
+FIRST READING OF THE PHASE PROFILE
+==================================
+The counter is readable in BOTH phases - during a window it is the large
+figure under "Now is your chance", and while shielded it is small text under
+the shield icon. So the whole fight is measurable from one recording, which
+the previous section wrongly assumed it was not.
+
+Video 3, Thanatos Glaive, Riftcharged Zinogre, fight starts at 20s:
+
+      22s      1,147   shielded
+      28s      8,243   25% window
+      34s     28,639
+      40s     45,229
+      46s     74,807
+      52s     74,807   NO CHANGE
+      58s     99,493   shielded
+      64s    157,781   "BREAK - Dimensional Barrier weakened"
+      72s    207,217   50% window
+      80s    221,321
+      88s    286,387
+      96s    324,520   shielded
+     104s    345,584   100% window
+     112s    499,742
+     120s    551,013
+
+THE 52s READING IS THE METHOD CHECKING ITSELF. The counter does not move
+between 46s and 52s, and the player's own window-by-window markup of this
+same fight says 50-52s was a Special attack that MISSED and did no damage.
+Two independent records of the same two seconds agreeing on nothing
+happening is a better validation than any number here.
+
+RATES WITHIN EACH WINDOW, end to end:
+
+      25% window   28-46s     3,698/s
+      50% window   72-88s     4,948/s    x1.34 of the first
+     100% window  104-120s   12,839/s    x3.47 of the first
+
+If the stated amplification were the whole story those would be x1.20 and
+x1.60. The 50% window is close. THE 100% WINDOW IS MORE THAN TWICE WHAT
+AMPLIFICATION ALONE PREDICTS.
+
+Something else is happening late. The candidates, none yet separated:
+   - the skills have ramped. Burst, Combo Master and Latent Power all climb
+     and hold, which is exactly the compounding this file predicted before
+     any of it was measured
+   - the "BREAK" at 64s weakens a barrier, and whatever that does may persist
+   - a monster that is downed or staggered takes more
+
+THE SHIELDED REDUCTION, first look: 1,147 in the first two seconds of the
+fight is 574/s, against 3,698/s in the window that follows. A FACTOR OF 6.4.
+That is far more severe than "damage reduced" suggested, and if it holds it
+means a base defence is overwhelmingly decided inside the three windows.
+
+TREAT ALL OF THIS AS A FIRST LOOK, NOT A RESULT. The samples are 6 to 8
+seconds apart, so every phase boundary is uncertain by that much and the
+rates at the edges are contaminated by the neighbouring phase. The opening
+figure rests on a single two-second interval. Nothing here is fit to go into
+the engine yet; what it establishes is that the measurement is POSSIBLE, and
+roughly where the answer lies.
+
+WHAT WOULD MAKE IT A RESULT: the same read at 1-second spacing, which pins
+the boundaries, plus one fight recorded with NO ramping skills at all so the
+amplification can be separated from the skill stack. The second is the one
+that matters - as it stands, skill ramp and amplification are confounded and
+the x3.47 cannot be attributed.
