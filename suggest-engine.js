@@ -97,10 +97,26 @@ const ASSUME = {
    */
   burstUptime: 0.50,
 
-  /* Share of a glaive's hits landed in the air, which is all that Skyward
-   * Striker pays on. GUESSED - no recording has counted it, and it is the
-   * least supported number in this file. One glaive video would replace it. */
-  aerialShare: 0.40,
+  /* Share of a glaive's DAMAGE dealt in the air, which is all that Skyward
+   * Striker pays on. It must be a damage share and not a time share, because
+   * the skill lifts aerial damage: total = ground + aerial x (1+x), so the
+   * multiplier on the whole is 1 + x times (aerial damage / total damage).
+   * The Spiral Slash figure beside it is a damage share for the same reason.
+   *
+   * MEASURED AS A FLOOR, from one glaive hunt the player marked up window by
+   * window: a 104s fight with 51s spent airborne, so a 49.0% TIME share.
+   *
+   * The damage share is higher than that, for two reasons that compound:
+   *   - 7 of those 51 seconds produced almost nothing - a missed Special and
+   *     a stretch spent fainted from a roar. Dead air drags a time share down
+   *     and does not touch a damage share at all. Productive air is 42.3%.
+   *   - the player reports most of the damage is done up there, so aerial
+   *     hits are denser or harder than ground ones.
+   *
+   * So 0.49 is a lower bound standing in for a damage share nobody has
+   * counted, and the skill is understated by whatever the density is worth.
+   * Better than the 0.40 invented before it, and still not measured. */
+  aerialShare: 0.49,
 
   /* Spiral Slash's airborne share, DERIVED from the dual-blades recordings
    * rather than guessed - two slashes agree at 33.3% and 33.6%. */
