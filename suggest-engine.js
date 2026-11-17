@@ -63,10 +63,22 @@ const ASSUME = {
   // that measurement rounded down a notch, keeping this entry on the
   // understating side as it was always meant to be.
   //
-  // ONE ROAR, ONE FIGHT. The figure is a property of the monster's behaviour
-  // rather than the player's, so it will move between monsters and between
-  // fight lengths - a longer fight pushes it up, never down.
-  valorUptime: 0.75,
+  // SO IT IS A FIXED DELAY, NOT A FIXED FRACTION, and storing it as a
+  // percentage was the error. The roar lands a set number of seconds in; what
+  // share of the hunt that leaves depends entirely on how long the hunt is.
+  //
+  //    uptime = (huntSeconds - valorRoarSeconds) / huntSeconds
+  //
+  // 37.5s is the delay that fits BOTH figures the player reports - 75% on a
+  // base defence and 50% on a short hunt - and no other value fits both.
+  valorRoarSeconds: 37.5,
+  //
+  // THE FLOOR IS A SEPARATE CLAIM. On a short hunt the formula gives 50%, but
+  // a short hunt is normally solo, and a monster under less pressure roars
+  // SOONER - which raises the uptime rather than lowering it. The player puts
+  // that at 60% pending a recording, so it is a floor on the formula and not
+  // a different delay. It is the one part of this with nothing behind it.
+  valorMinUptime: 0.60,
 
   // Set by the user rather than measured â€” none of these can be read off
   // anything, and the earlier figures were my guesses. They were deliberately
@@ -1677,6 +1689,18 @@ function procChance(ssaLevel, blastExploitLevel, powderOrVenomistLevel) {
 }
 
 // Latent Power's share of the hunt, from when it starts to the end.
+/**
+ * Share of the hunt Valor is up: it fires once, on the monster's first roar,
+ * and holds to the end. A FIXED DELAY rather than a fixed fraction - see
+ * ASSUME.valorRoarSeconds for the two readings that pin it, and
+ * ASSUME.valorMinUptime for the floor on a short solo hunt.
+ */
+function valorUptime() {
+  const u = (ASSUME.huntSeconds - ASSUME.valorRoarSeconds) / ASSUME.huntSeconds;
+  if (u < ASSUME.valorMinUptime) return ASSUME.valorMinUptime;
+  return u > 1 ? 1 : u;
+}
+
 function latentUptime() {
   var up = (ASSUME.huntSeconds - ASSUME.latentPowerStart) / ASSUME.huntSeconds;
   return up < 0 ? 0 : up > 1 ? 1 : up;
@@ -1815,7 +1839,7 @@ function score(totals, w) {
   if (lv('Attack Boost') >= 5) atk += ADV_ATTACK[lv('Advanced Attack Boost')] || 0;
   atk += RAW_ATK[lv('Raw Power')] || 0;
   atk += tideAttack(lv('Rising Tide'), ASSUME.huntSeconds);
-  atk += (VALOR[lv('Valor')] || 0) * ASSUME.valorUptime;
+  atk += (VALOR[lv('Valor')] || 0) * valorUptime();
   atk += (PEAK[lv('Peak Performance')] || 0) * ASSUME.peakPerformanceUptime;
   // Attack Efficacy lifts ATTACK POWER, not damage, so it is kept off element
   // — which makes it weaker than its headline on an elemental weapon and
@@ -2052,7 +2076,7 @@ function makeScorer(w, damageOnly) {
     if (g(v, iAB) >= 5) atk += ADV_ATTACK[g(v, iAAB)] || 0;
     atk += RAW_ATK[g(v, iRaw)] || 0;
     atk += tideAttack(g(v, iTide), ASSUME.huntSeconds);
-    atk += (VALOR[g(v, iValor)] || 0) * ASSUME.valorUptime;
+    atk += (VALOR[g(v, iValor)] || 0) * valorUptime();
     atk += (PEAK[g(v, iPeak)] || 0) * ASSUME.peakPerformanceUptime;
     if (ASSUME.multiplayer) atk += SHARED_SWORD_PER_LEVEL * g(v, iShared);
     atk *= 1 + (ATTACK_EFFICACY[g(v, iAE)] || 0);
@@ -2163,6 +2187,7 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   meditationUptime: meditationUptime,
   specialCount: specialCount,
   blastAverageStacks: blastAverageStacks, blastDetonations: blastDetonations,
+  valorUptime: valorUptime,
   styleRate: styleRate, shotSeconds: shotSeconds,
   reloadSeconds: reloadSeconds, magazineSize: magazineSize,
   statSlotChoices: statSlotChoices,
