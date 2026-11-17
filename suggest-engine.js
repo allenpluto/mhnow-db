@@ -52,32 +52,35 @@ const ASSUME = {
   hpFraction: 0.60,
   baseHp: 100,             // before Health Boost
   // Valor fires once per hunt, on the first roar, and lasts the rest of it.
-  // The mechanic was assumed here before it was confirmed; the player has now
-  // confirmed it holds to the end, and ONE FIGHT HAS BEEN TIMED:
-  //
-  //    video 3, fight 20s to 124s, first roar at 45s
-  //    -> (124 - 45) / 104 = 76% uptime
-  //
-  // So the old 0.60, which implied the first roar landing 40% of the way in,
-  // was the pessimism it said it was: the roar actually came 24% in. 0.75 is
-  // that measurement rounded down a notch, keeping this entry on the
-  // understating side as it was always meant to be.
-  //
-  // SO IT IS A FIXED DELAY, NOT A FIXED FRACTION, and storing it as a
-  // percentage was the error. The roar lands a set number of seconds in; what
-  // share of the hunt that leaves depends entirely on how long the hunt is.
+  // So it is a FIXED DELAY, not a fixed fraction: the roar lands a set number
+  // of seconds in, and what share of the hunt that leaves depends entirely on
+  // how long the hunt is.
   //
   //    uptime = (huntSeconds - valorRoarSeconds) / huntSeconds
   //
-  // 37.5s is the delay that fits BOTH figures the player reports - 75% on a
-  // base defence and 50% on a short hunt - and no other value fits both.
-  valorRoarSeconds: 37.5,
+  // TWO FIGHTS ARE NOW TIMED, both Riftcharged Zinogre base defences:
   //
-  // THE FLOOR IS A SEPARATE CLAIM. On a short hunt the formula gives 50%, but
-  // a short hunt is normally solo, and a monster under less pressure roars
-  // SOONER - which raises the uptime rather than lowering it. The player puts
-  // that at 60% pending a recording, so it is a floor on the formula and not
-  // a different delay. It is the one part of this with nothing behind it.
+  //    16 Nov   fight 20s to 124s, first roar at 45s   ->  25s in
+  //    17 Nov   fight 17s to 122s, first roar at 35s   ->  18s in
+  //
+  // 21.5s is the mean. Note the spread: two fights of the SAME LENGTH against
+  // the SAME monster roared 7 seconds apart, so the roar is not a reliable
+  // clock and this entry carries about +/-15% of itself.
+  valorRoarSeconds: 21.5,
+  //
+  // THIS WAS 37.5s AND THAT WAS AN ARITHMETIC ERROR, not a measurement one.
+  // The player's "45 seconds makes it 75% uptime" was solved against the
+  // engine's DEFAULT 150s hunt instead of against the 104s fight the 45s was
+  // read from. The same sentence contains both numbers; only one fight length
+  // was ever consistent with it. The effect was to charge Valor for 16 seconds
+  // of every hunt that it never actually loses.
+  //
+  // THE FLOOR IS A SEPARATE CLAIM, and the correction has nearly retired it.
+  // At 21.5s the formula only drops under 0.60 on hunts shorter than 54s,
+  // where a solo monster under less pressure plausibly roars sooner still.
+  // At 37.5s it was overriding the formula on everything under 94s - that is,
+  // on most ordinary hunts - which is far more than a floor should ever do.
+  // Still the one part of this with nothing behind it.
   valorMinUptime: 0.60,
 
   // Set by the user rather than measured â€” none of these can be read off
