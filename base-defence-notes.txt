@@ -143,3 +143,65 @@ the boundaries, plus one fight recorded with NO ramping skills at all so the
 amplification can be separated from the skill stack. The second is the one
 that matters - as it stands, skill ramp and amplification are confounded and
 the x3.47 cannot be attributed.
+
+
+THE KINSECT, AND WHY THE PREVIOUS SECTION'S CONCLUSION WAS WRONG
+================================================================
+Player: on an Insect Glaive, once the bar below the Special button is fully
+charged the KINSECT starts attacking alongside you, and it adds a great deal
+of damage. Which glaive you carry decides the shape of it - some kinsects
+attack far more often, some hit much harder. In video 3 it was up from about
+50s to 1m50s, and Power Prolonger 2 is what stretched it to a full minute.
+
+That window straddles the phases, and the previous section did not know it
+existed. It attributed the 100% window's x3.47 to amplification compounding
+with a skill ramp. THAT WAS WRONG, and the data contains the experiment that
+shows it.
+
+THE KINSECT EXPIRES MID-WINDOW, at about 110s, while the amplification stays
+fixed at 100%. So the two can be separated with nothing else moving:
+
+   104-112s   +154,158   19,270/s    kinsect up for 6 of those 8 seconds
+   112-120s    +51,271    6,409/s    kinsect gone
+
+Solving the mixed span gives 23,557/s with the kinsect against 6,409/s
+without - A FACTOR OF 3.7, with amplification held constant. On this glaive
+the kinsect is contributing roughly three quarters of the damage while it is
+up, and none of it is modelled: the engine has no notion of a kinsect at all,
+only the display names decoded in kinsect-readings.txt.
+
+WHAT THAT DOES TO POWER PROLONGER, which the engine scores from a Dual Blades
+measurement and applies to all seven weapon types at the same weight:
+
+   POWER_PROLONGER = { 1: 0.030, 2: 0.068, 3: 0.120 }
+
+On Dual Blades it extends Demon Mode and 6.8% at Lv2 is measured and right.
+On an Insect Glaive it extends something worth 3.7x, which is a different
+skill wearing the same name - exactly the mistake already caught once for
+Dual Blades styles, where Power Prolonger is worth nothing on Feral because
+the thing it lengthens should not be entered.
+
+If the Dual Blades drain rule carries over (20% less drain per level), Lv2
+giving 60s implies a 36s base, and across this 104s fight:
+
+   without Power Prolonger   1.93x
+   with Power Prolonger 2    2.54x     the skill is worth +32%
+
+against the +6.8% the engine books. A FIVE-FOLD UNDERSTATEMENT if it holds.
+
+NOT CHANGED IN THE ENGINE, and deliberately. That +32% rests on three
+inferences stacked: a 3.7x from one pair of eight-second samples, the drain
+rule carried over from a different weapon, and a base uptime inferred rather
+than observed. Any one of them being out moves the answer a long way. What is
+solid is the direction and the rough size - the current 6.8% is wrong for
+this weapon and wrong low.
+
+WHAT WOULD SETTLE IT, in order of value:
+   - the kinsect multiplier, from a flat fight: damage rate with the kinsect
+     up against the same fight once it drops. An elder dragon hunt has no
+     shield phases, so it isolates this cleanly - video 2 may already hold it
+   - the base kinsect uptime with no Power Prolonger at all, which turns the
+     drain rule from an assumption into arithmetic
+   - whether the multiplier differs by kinsect type, which the player says it
+     does: "some will attack much more frequently, some will cause huge
+     damage on each attack"
