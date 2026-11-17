@@ -205,3 +205,52 @@ WHAT WOULD SETTLE IT, in order of value:
    - whether the multiplier differs by kinsect type, which the player says it
      does: "some will attack much more frequently, some will cause huge
      damage on each attack"
+
+
+VALORWING, AND WHY THE KINSECT AND THE AIR ARE THE SAME FINDING
+===============================================================
+The kinsect on this Thanatos Glaive, from its own screen:
+
+   Kinsect type: Flight       "Kinsects perform follow-up thrust attacks in
+                              tandem with your AERIAL attacks after charging up"
+   Performance type: Power    "Stamina decreased, making it more difficult to
+                              enter a charged state, but attack power is high"
+   Attack type: Blunt
+   Kinsect bonus: Aerial      "Kinsects are boosted while in the air following
+                              a Vaulting Dance"
+
+THE KINSECT'S DAMAGE IS AERIAL-LINKED. Its follow-ups come in tandem with
+aerial attacks, and the bonus boosts it further while airborne. So the 3.7x
+measured in the previous section is not a flat addition sitting alongside the
+player's damage - it lands disproportionately on the aerial attacks, and it
+is only up for part of the fight.
+
+That ties two separate findings into one. Skyward Striker multiplies aerial
+damage; this kinsect ADDS aerial damage. They compound on the same attacks.
+
+AND IT MEANS aerialShare = 0.50 IS CONSERVATIVE, for a third reason on top of
+the two already recorded. The share was anchored on a 49% TIME share. Aerial
+hits were already denser than ground ones; dead air drags the time figure
+down and not the damage figure; and now, for the minute the kinsect is up,
+every aerial attack carries a follow-up that a ground attack does not. The
+aerial DAMAGE share on a Flight kinsect must sit well above the time share.
+
+The Power performance type also explains the timing. Harder to charge means
+the kinsect arrives late - 50s into video 3, 67s into video 2 - so on a
+short hunt it may never arrive at all, and Power Prolonger decides how much
+of the fight it survives into. On a 104s fight arriving at 50s, more than
+half the hunt has no kinsect whatsoever.
+
+WHERE THE CLEAN MEASUREMENT IS NOT. Video 2 was the hope: an elder dragon
+fight has no shield phases, so a flat environment. But it is a Kushala Daora
+with a two-segment monster health bar and NO per-player damage counter - that
+counter belongs to the base defence UI. In a group hunt the health bar falls
+to everyone's damage, so it cannot isolate one player.
+
+So the kinsect multiplier has to come from a base defence after all, where
+the counter exists, and the phases have to be worked around rather than
+avoided. The 3.7x already derived does exactly that - it brackets the
+kinsect's expiry inside ONE window, with amplification held constant - and
+that remains the best available route. What it needs is more of the same:
+the kinsect dropping inside a window, read at 1-second spacing instead of
+eight.
