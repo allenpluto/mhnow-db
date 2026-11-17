@@ -339,12 +339,12 @@ Master 3, Power Prolonger 2, Advanced Burst 2, Weakness Exploit 1, and the
 unpriced Partbreaker/Kushala Frostwind/Advanced Partbreaker):
 
       hunt    valor uptime     Skyward 2    Valor 2
-        75s       60%             4954       5029    valor +1.5%
-       105s       64%             4954       5066    valor +2.2%
-       150s       75%             4954       5160    valor +4.0%
-       225s       83%             4954       5233    valor +5.3%
+        75s       71%             4954       5128    valor +3.4%
+       105s       80%             4954       5200    valor +4.7%
+       150s       86%             4954       5253    valor +5.7%
+       225s       90%             4954       5295    valor +6.4%
 
-A TWO PERCENT DIFFERENCE. Now the measurements:
+A FIVE PERCENT DIFFERENCE. Now the measurements:
 
    whole fight, idle seconds removed     VALOR 6967/s     SKYWARD 5667/s
    final damage                          VALOR 578,228    SKYWARD 402,364
@@ -377,15 +377,24 @@ number of hunts recorded this way will separate them. Keep Valor 2 on the
 engine's answer, and treat that answer as resting on the model rather than on
 anything observed.
 
-THE ONE THING THAT WOULD DECIDE IT is not another hunt. Skyward Striker 2 is
-worth more than Valor 2 at an aerial DAMAGE share of 0.63 or above; the engine
-carries 0.50, set from a measured aerial TIME share. The kinsect is what could
-push it over, because Valorwing is a Flight kinsect with an Aerial Bonus - its
-follow-ups come with aerial attacks - and it now accounts for about 45% of the
+WHAT WOULD DECIDE IT is not another hunt. Skyward Striker 2 overtakes Valor 2
+at an aerial DAMAGE share of 0.77; the engine carries 0.50, set from a
+measured aerial TIME share. The kinsect is the only thing that could push it
+that far, because Valorwing is a Flight kinsect with an Aerial Bonus - its
+follow-ups come with aerial attacks - and it accounts for about 45% of the
 damage while up. If Skyward Striker multiplies the kinsect's hits as well as
-the player's, the aerial damage share on a kinsect-heavy fight lands near 0.68
-and Skyward wins. If it does not, Valor wins.
+the player's, the aerial damage share on a kinsect-heavy fight lands near
+0.68. STILL SHORT OF 0.77.
 
-That is one dummy test, not a hunt: charge the kinsect, run a fixed aerial
-combo, read Total Damage; remove Skyward Striker, repeat. Two numbers, no
-variance, and it decides the swap for every Insect Glaive build in the engine.
+So on the figures as they stand Valor wins even on the assumption most
+favourable to Skyward, and the swap is not close enough to be worth a test on
+its own. Note how much of that rests on the roar timing: at the old and wrong
+37.5s the tie point was 0.63, the favourable assumption cleared it, and the
+test below was decisive. Correcting one constant turned a coin-flip into a
+settled answer, which is a fair warning about how much weight these margins
+can carry.
+
+The test is still worth running for the aerial share itself, which feeds every
+Insect Glaive build rather than this one swap: charge the kinsect, run a fixed
+aerial combo on a dummy, read Total Damage; remove Skyward Striker, repeat.
+Two numbers and no variance.
