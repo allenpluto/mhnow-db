@@ -1,0 +1,139 @@
+The engine has no weapon-class damage model, and it costs more than
+every skill ever measured in this project
+=========================================================================
+Five Riftcharged Zinogre base defences recorded back to back on the evening
+of 2026-11-17, within twenty minutes of each other, same player, same monster,
+same fight type. Three builds, fully documented from per-piece screenshots.
+
+HOW THE SCORE SCREEN WORKS, settled first because everything below rests on it
+-----------------------------------------------------------------------------
+At the end of a base defence the result panel shows a number that COUNTS UP.
+It starts at the player's raw damage and animates to the final score:
+
+   final score = raw damage x 1.6      the event's +60% featured weapon boost
+
+Confirmed exactly, twice:
+   221,096 -> 353,754     217,076 -> 347,322     513,992 -> 822,387
+
+and cross-checked against the in-fight counter on a third: the panel's base
+figure was 287,426 and the counter read 286,249 two seconds before the fight
+ended. So the base figure IS the counter, and the counter is what the score
+is computed from.
+
+THIS REPLACES READING THE COUNTER FRAME BY FRAME. A fight's raw damage is one
+number on one frame of the result panel - the first frame, before the count-up
+reaches the boosted figure. The per-second read is still needed for anything
+about WHEN damage lands; it is no longer needed for how much.
+
+THE FIVE FIGHTS
+---------------
+   v   weapon                    class         build     damage    s     /s
+   1   Axe of Demons 5           Switch Axe    Burst    287,426    99   2903
+   2   Axe of Demons 5           Switch Axe    Burst    221,096   104   2126
+   3   Axe of Demons 5           Switch Axe    Valor    217,076   105   2067
+   4   Griffon Blazooka 5        Heavy Bowgun  own      301,916   109   2770
+   5   Thanatos Force            Charge Blade  Burst    513,992   107   4804
+
+Videos 1, 2 and 5 share the SAME FIVE ARMOUR PIECES. Only the weapon changed.
+
+THE FINDING
+-----------
+Axe of Demons and Thanatos Force are the same weapon on paper. Both are
+grade 10, both 2658 attack at level 5, both -30% affinity, both no element,
+both carry Partbreaker 1 and Advanced Partbreaker 1 and nothing else. The
+engine scores them IDENTICALLY, 4822 and 4822, because it has no notion of
+what a Switch Axe does differently from a Charge Blade:
+
+   engine   Charge Blade vs Switch Axe, same armour, matched stats:   0.0%
+   measured Charge Blade vs the BEST Switch Axe run:                 +65%
+            Charge Blade vs the MEAN of the two Switch Axe runs:    +102%
+
+A 65% floor on the gap, against a model that says there is no gap at all.
+
+AND IT IS FAR OUTSIDE THE NOISE, which is the part that matters. Run-to-run
+spread on one build is about +/-30% and is documented in base-defence-notes;
+the two Switch Axe runs here differ by 37% from each other, which is that
+spread again. 65% clears the top of it, and 102% clears it twice.
+
+WHAT THIS DOES TO EVERYTHING ELSE IN THE PROJECT. Every skill question settled
+or left open here moves the score by a few percent - Valor against Skyward
+Striker by 2 to 5, guard reload by nothing, the whole Burst-versus-Valor
+argument below by 7.6. The weapon CLASS is worth more than all of them put
+together, and the engine cannot see it. A player asking this suggester which
+armour to wear is being answered carefully inside a choice that was already
+made badly.
+
+NOT MODELLED, and it would be wrong to model it from this. What exists is one
+pair of weapons and three fights. A class multiplier fitted to that would be
+a guess wearing a measurement's clothes, and the gap is big enough that a
+wrong multiplier would do real damage to the ranking.
+
+WHAT WOULD MAKE IT MODELLABLE, in order:
+   - the style customisation of Thanatos Force. Axe of Demons was at 10/20
+     with 2 of 4 stat slots filled; Thanatos Force was never screenshotted.
+     If it is at 20/20 with three attack slots that is +300 attack, worth
+     maybe 10% - it does not explain 65%, but it has to come off the top
+     before anything is fitted
+   - the same armour on a third and fourth class. Two points cannot tell a
+     class multiplier from a weapon-specific one
+   - whether the gap holds at other attack values, which decides whether this
+     is a multiplier on damage or a different attack rate
+
+A NOTE ON THE BURST / VALOR A/B, which was the reason these were recorded
+------------------------------------------------------------------------
+Videos 1 and 2 against video 3 are the same Switch Axe with two complete
+builds: Burst 5 / Combo Master 3 / Advanced Burst 2 / Power Prolonger 3
+against Valor 4 / Raw Power 3 / Critical Ferocity 2 / Sneak Attack 1.
+
+   engine, 104s multiplayer:  VALOR 5188   BURST 4822     valor +7.6%
+   measured:                  VALOR 2067/s against BURST 2903 and 2126/s
+
+The Valor run lands a whisker below the worse of the two Burst runs and 29%
+below the better one. That is not a refutation - it is inside the same
++/-30% that defeated the last A/B - but it is the second complete build
+comparison in a row where the engine's preferred build lost on the day.
+
+Not acted on. Two paired fights cannot overturn a 7.6% model prediction, and
+the unpriced skills on both sides (Artful Dodger, Partbreaker and Advanced
+Partbreaker on the Burst side; Blast Attack, Chameleos Venomist, Headstrong
+and the same two Partbreakers on the Valor side) are a real hole in the
+comparison. What it does establish is that the weapon class above swamps the
+question either way.
+
+
+THE ARMOUR DATA CHECKS OUT, ELEVEN FOR ELEVEN
+=============================================
+The three builds were documented piece by piece rather than from the Status
+summary, which gives something the project has never had: an independent read
+of the armour database against the game itself. Every piece, at the grade the
+screenshots show, against data.json at grade 10:
+
+   Viper Kadachi Mail        Combo Master 2                            match
+   Viper Kadachi Helm        Advanced Burst 1, Artful Dodger 1,
+                             Combo Master 1                            match
+   Viper Kadachi Coil        Advanced Burst 1, Burst 2                 match
+   Almudron Greaves          Quick Work 2, Lock On 1                   match
+   Rathian Vambraces         Lock On 1, Burst 2                        match
+   Bazelgeuse Greaves        Valor 2, Blast Attack 1                   match
+   Glavenus Coil             Quick Work 2, Sneak Attack 1              match
+   Glavenus Mail             Lock On 1, Raw Power 2                    match
+   Mizuha Sleeves            Chameleos Venomist 1, Valor 2             match
+   Golm Helm                 Critical Ferocity 2                       match
+   Lunagaron Greaves         Ballistics 2, Burst 1                     match
+
+Eleven pieces across seven families, no discrepancies.
+
+AND IT RETIRES A RECORDED DATA GAP. It was noted earlier in this project that
+"Viper Kadachi gradeSkills rows are empty at every grade, so Combo Master can
+never be recommended". That is no longer true - all five Viper Kadachi pieces
+carry their skills, and the three in these builds match the screenshots to the
+level. Whatever the gap was, it is closed, and anything that was reasoned
+around it should be revisited.
+
+THE DRIFTSMELT SLOTS are the part the engine still does not take from the
+data: each piece carries a slotted skill AND a stat bonus, and across these
+fifteen pieces the stat bonuses ran attack +2 to +6, affinity +1%, defence +1
+to +4. The Burst build's three Power Prolonger 1 slots stack to Power
+Prolonger 3, which no armour piece grants on its own - so driftsmelt is not a
+rounding detail on these builds, it is where a third of the skill levels come
+from. Scoring a set without it understates it.
