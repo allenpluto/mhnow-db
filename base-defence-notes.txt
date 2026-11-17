@@ -254,3 +254,138 @@ kinsect's expiry inside ONE window, with amplification held constant - and
 that remains the best available route. What it needs is more of the same:
 the kinsect dropping inside a window, read at 1-second spacing instead of
 eight.
+
+
+THE 1-SECOND READ. BOTH EARLIER NUMBERS WERE WRONG
+==================================================
+The previous two sections asked for the same thing twice: the counter read at
+1-second spacing instead of eight, with the kinsect dropping inside a window.
+Both recordings now have it, and both of the headline figures derived from the
+8-second samples do not survive it.
+
+   16 Nov   Thanatos Glaive, VALOR 2            fight 20-124s   kinsect 50-110s
+   17 Nov   Thanatos Glaive, SKYWARD STRIKER 2  fight 17-122s   kinsect 49-77s
+
+Same weapon, same monster, same base defence, same build apart from that one
+skill. 105 and 104 seconds of counter, every second, read off the screen.
+
+IDLE SECONDS ARE EXCLUDED from every rate below. The counter not moving for a
+second means no damage landed, and the 17 Nov fight has three long stretches
+of it - 10s mid-window, 8s knocked out at 78s, 10s frozen at 105s, 34s dead
+out of 105. Averaging those in measures the player's luck, not the build.
+
+THE SHIELDED REDUCTION: ABOUT 0.6, NOT 1/6.4
+--------------------------------------------
+Each pair is a shielded stretch against the window next to it, with the stated
+amplification divided out and the kinsect in the same state across the pair:
+
+   17 Nov   shielded 1 / window +25%     1151 / 1868   0.62   no kinsect
+   17 Nov   shielded 3 / window +100%    2340 / 3334   0.70   no kinsect
+   16 Nov   shielded 1 / window +25%      963 / 2906   0.33   no kinsect
+   16 Nov   shielded 2 / window +50%     5257 / 6797   0.77   kinsect up
+   16 Nov   shielded 3 / window +100%    4496 / 8344   0.54   kinsect up
+   17 Nov   shielded 2 / window +50%     4425 / 9607   0.46   kinsect up
+
+Mean 0.57, range 0.33 to 0.77. THE SHIELD COSTS ABOUT 40% OF YOUR DAMAGE.
+
+The earlier section put it at a FACTOR OF 6.4 and drew the conclusion that a
+base defence "is overwhelmingly decided inside the three windows". That was
+one two-second interval at the very start of a fight - cold skills, closing
+the distance, the first hit not yet landed - and it was not a reading of the
+shield at all. The shielded stretches are worth roughly two thirds of a
+window, so they carry real damage and the fight is NOT decided in the windows
+alone. The outlier in the table, 0.33, is that same opening stretch on the
+other recording, which is consistent: the first seconds of a fight are slow
+for reasons that have nothing to do with the shield.
+
+THE KINSECT: ABOUT 1.8x, NOT 3.7x
+---------------------------------
+The 16 Nov fight contains the clean experiment. The kinsect expires at 110s,
+INSIDE the +100% window, so amplification, phase and skill stack are all held
+constant across the boundary and only the kinsect changes:
+
+   102-110s   +133,504   16,688/s   kinsect up
+   110-124s   +109,268    9,106/s   kinsect gone
+
+   1.83x, from 22 seconds of 1-second samples either side of one event.
+
+The earlier 3.7x came from the same two minutes of footage sampled every eight
+seconds, which straddled the boundary and attributed part of the kinsect's own
+decay to the span after it. At 1-second spacing the boundary is where the
+player said it was and the figure halves.
+
+The 17 Nov fight agrees loosely and cannot do better: its kinsect was cut off
+early by a knockout at 77s, and the no-kinsect comparison has to reach across
+that knockout and a freeze. It gives 2.9x. Take 1.8x as the measurement and
+2.9x as the ceiling.
+
+SO THE KINSECT ROUGHLY DOUBLES THE DAMAGE RATE while it is up, contributing
+about 45% of the damage in that window rather than three quarters. Everything
+the previous section said about Power Prolonger still points the same way, at
+half the size: on a 104s fight, Lv2 is worth about +15% against the +6.8% the
+engine books, not +32%. STILL NOT CHANGED IN THE ENGINE, and for the same
+reason - the drain rule is carried over from Dual Blades and the base uptime
+is inferred, so two of the three inputs remain assumptions.
+
+
+VALOR 2 AGAINST SKYWARD STRIKER 2: WHY PLAYING CANNOT ANSWER IT
+===============================================================
+The two recordings above were made to settle exactly this, one skill swapped
+and nothing else. They do not settle it, and the reason is worth recording
+because it applies to every future A/B of this kind.
+
+WHAT THE ENGINE SAYS, on the real build (Burst 5, Artful Dodger 3, Combo
+Master 3, Power Prolonger 2, Advanced Burst 2, Weakness Exploit 1, and the
+unpriced Partbreaker/Kushala Frostwind/Advanced Partbreaker):
+
+      hunt    valor uptime     Skyward 2    Valor 2
+        75s       60%             4954       5029    valor +1.5%
+       105s       64%             4954       5066    valor +2.2%
+       150s       75%             4954       5160    valor +4.0%
+       225s       83%             4954       5233    valor +5.3%
+
+A TWO PERCENT DIFFERENCE. Now the measurements:
+
+   whole fight, idle seconds removed     VALOR 6967/s     SKYWARD 5667/s
+   final damage                          VALOR 578,228    SKYWARD 402,364
+
+which looks like a 23% win for Valor until the fights are cut into pieces:
+
+   base rate, early, no kinsect          VALOR 1935/s     SKYWARD 1509/s
+   base rate, kinsect up                 VALOR 6027/s     SKYWARD 7016/s
+   base rate, late, no kinsect           VALOR 4553/s     SKYWARD 2837/s
+
+THE FIRST ROW IS THE WHOLE ARGUMENT. The monster's roar did not come until 45s
+in the Valor fight, so for that entire early stretch VALOR WAS NOT ACTIVE -
+the two builds were identical - and the Valor run is still 22% ahead. That gap
+is the player, the monster's behaviour and the dice. It is ten times the size
+of the effect being looked for, and it appears in the one window where the
+effect cannot exist.
+
+THE SECOND CONFOUND IS THE KINSECT, which is worth 1.83x and was up for 58% of
+the Valor fight and 27% of the Skyward one, because a knockout at 77s ended it
+early. That alone moves the whole-fight rate by more than either skill could.
+
+AND THE PLAYER'S OWN THIRD RUN SETTLES THE POINT. On the SAME Skyward set,
+unrecorded, they scored 1.2m, which at the event's x1.6 featured-weapon boost
+is about 750,000 damage - against 402,364 on the recorded Skyward fight and
+578,228 on the Valor one. TWO RUNS OF THE SAME BUILD BRACKET THE OTHER BUILD,
+and the spread within one build is about 30% either way.
+
+So: run-to-run variance is roughly +/-30%, the skills differ by 2%, and no
+number of hunts recorded this way will separate them. Keep Valor 2 on the
+engine's answer, and treat that answer as resting on the model rather than on
+anything observed.
+
+THE ONE THING THAT WOULD DECIDE IT is not another hunt. Skyward Striker 2 is
+worth more than Valor 2 at an aerial DAMAGE share of 0.63 or above; the engine
+carries 0.50, set from a measured aerial TIME share. The kinsect is what could
+push it over, because Valorwing is a Flight kinsect with an Aerial Bonus - its
+follow-ups come with aerial attacks - and it now accounts for about 45% of the
+damage while up. If Skyward Striker multiplies the kinsect's hits as well as
+the player's, the aerial damage share on a kinsect-heavy fight lands near 0.68
+and Skyward wins. If it does not, Valor wins.
+
+That is one dummy test, not a hunt: charge the kinsect, run a fixed aerial
+combo, read Total Damage; remove Skyward Striker, repeat. Two numbers, no
+variance, and it decides the swap for every Insect Glaive build in the engine.
