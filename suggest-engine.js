@@ -58,14 +58,27 @@ const ASSUME = {
   //
   //    uptime = (huntSeconds - valorRoarSeconds) / huntSeconds
   //
-  // TWO FIGHTS ARE NOW TIMED, both Riftcharged Zinogre base defences:
+  // FOUR FIGHTS ARE TIMED, all Riftcharged Zinogre base defences. Three were
+  // read off the recordings without being hunted for by hand: VALOR ANNOUNCES
+  // ITSELF with a skill banner at the top left the moment it procs, so the
+  // roar is machine-readable in any fight where Valor was equipped. Fight
+  // start is the first frame the damage counter exists.
   //
-  //    16 Nov   fight 20s to 124s, first roar at 45s   ->  25s in
-  //    17 Nov   fight 17s to 122s, first roar at 35s   ->  18s in
+  //    recording          start    Valor banner    delay
+  //    16 Nov 18-07-09      13s        33.5s       20.5s
+  //    16 Nov 18-24-21      19s        45.5s       26.5s    player-timed too
+  //    16 Nov 21-03-48      16s        36.5s       20.5s
+  //    17 Nov 12-09-26      17s        35.0s       18.0s    player-timed
   //
-  // 21.5s is the mean. Note the spread: two fights of the SAME LENGTH against
-  // the SAME monster roared 7 seconds apart, so the roar is not a reliable
-  // clock and this entry carries about +/-15% of itself.
+  // Mean 21.4s, spread 18 to 26.5. 21.5 was set from the first two of these
+  // and the other two did not move it, which is the best thing that can be
+  // said for a constant this cheap to measure.
+  //
+  // THE SPREAD IS THE REAL CONTENT. Four fights of near-identical length
+  // against the same monster roared across an 8.5-second range, so the roar
+  // is not a clock. At 105s that range is worth about 1% of the score, which
+  // is why more samples of the SAME fight type are not worth collecting: the
+  // mean is already steadier than the thing it averages.
   valorRoarSeconds: 21.5,
   //
   // THIS WAS 37.5s AND THAT WAS AN ARITHMETIC ERROR, not a measurement one.
@@ -80,7 +93,12 @@ const ASSUME = {
   // where a solo monster under less pressure plausibly roars sooner still.
   // At 37.5s it was overriding the formula on everything under 94s - that is,
   // on most ordinary hunts - which is far more than a floor should ever do.
-  // Still the one part of this with nothing behind it.
+  //
+  // STILL THE ONE PART OF THIS WITH NOTHING BEHIND IT, and note what the four
+  // timings above have in common: every one is a GROUP base defence. The floor
+  // is a claim about SOLO SHORT HUNTS specifically, and not one of the samples
+  // is one. That is the recording worth making - a single solo hunt's roar
+  // time would either retire this constant or turn it into a measurement.
   valorMinUptime: 0.60,
 
   // Set by the user rather than measured â€” none of these can be read off
