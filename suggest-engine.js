@@ -58,7 +58,7 @@ const ASSUME = {
   //
   //    uptime = (huntSeconds - valorRoarSeconds) / huntSeconds
   //
-  // FOUR FIGHTS ARE TIMED, all Riftcharged Zinogre base defences. Three were
+  // SIX FIGHTS ARE TIMED, all Riftcharged Zinogre base defences. Five were
   // read off the recordings without being hunted for by hand: VALOR ANNOUNCES
   // ITSELF with a skill banner at the top left the moment it procs, so the
   // roar is machine-readable in any fight where Valor was equipped. Fight
@@ -69,17 +69,27 @@ const ASSUME = {
   //    16 Nov 18-24-21      19s        45.5s       26.5s    player-timed too
   //    16 Nov 21-03-48      16s        36.5s       20.5s
   //    17 Nov 12-09-26      17s        35.0s       18.0s    player-timed
+  //    17 Nov 21-10-49      24s        65.0s       41.0s    <- outlier
+  //    17 Nov 21-14-09      62s        84.5s       22.5s
   //
-  // Mean 21.4s, spread 18 to 26.5. 21.5 was set from the first two of these
-  // and the other two did not move it, which is the best thing that can be
-  // said for a constant this cheap to measure.
+  //    mean 24.8s   median 21.5s   sd 8.4s   standard error 3.4s
   //
-  // THE SPREAD IS THE REAL CONTENT. Four fights of near-identical length
-  // against the same monster roared across an 8.5-second range, so the roar
-  // is not a clock. At 105s that range is worth about 1% of the score, which
-  // is why more samples of the SAME fight type are not worth collecting: the
-  // mean is already steadier than the thing it averages.
-  valorRoarSeconds: 21.5,
+  // THE MEAN IS THE RIGHT STATISTIC, not the median: uptime is LINEAR in the
+  // delay above the floor, so the expected uptime uses the expected delay.
+  // That is the only reason this moved off 21.5 - the median did not budge.
+  valorRoarSeconds: 24.8,
+  //
+  // THE 41-SECOND FIGHT IS UNEXPLAINED and it is the single most interesting
+  // number here. Checked rather than assumed: the banner strip from 44s to
+  // 65s holds nothing but two "down!!" messages, and the detector found no
+  // skill banner at all between 25.5s and 56.5s, so Valor really did sit idle
+  // for 41 seconds of that fight. One sample at nearly double the others
+  // moved the mean 3.4s and more than doubled the spread.
+  //
+  // So this constant is now +/-3.4s at one standard error, and whether that
+  // outlier belongs to the same distribution cannot be tested at n=6. If a
+  // seventh fight lands near 40s there are two regimes here rather than one
+  // noisy constant, and the fixed-delay model itself needs rethinking.
   //
   // THIS WAS 37.5s AND THAT WAS AN ARITHMETIC ERROR, not a measurement one.
   // The player's "45 seconds makes it 75% uptime" was solved against the
