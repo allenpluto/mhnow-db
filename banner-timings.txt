@@ -1,0 +1,124 @@
+Reading skill procs off the banner, and what it did to Burst
+============================================================
+Every skill that procs puts a banner at the top left of the screen for about
+two seconds: the skill's name and its hexagonal icon on a dark pill. The pill
+grows to fit the name, so the icon sits further right for a longer skill.
+
+THAT MAKES IT MACHINE-READABLE. The text and icon render identically every
+time, so a template of the bright pixels - thresholded, then compared by
+intersection-over-union against every frame at 2fps - finds a named skill's
+procs across a whole recording in about a second of compute, whatever the
+scenery behind it. The previous approach was to find a frame where the banner
+happened to be legible against sky, which is why the constants below rested
+on two readings instead of six.
+
+VALIDATION BEFORE USE, both directions:
+   the Combo Master template, run on the one build with NO Combo Master in it
+      (17Nov 21-10-49, the Valor set), returns NOTHING
+   the Combo Master template, run on a fight with a known proc, returns that
+      proc at a match of 0.95 and nothing else - so it is rejecting Valor,
+      Burst, Shared Sword, Divine Protection and the rest, not just finding
+      any banner
+
+
+COMBO MASTER FIRES ONCE PER FIGHT. NEVER TWICE.
+===============================================
+The question was whether it repeats like Burst or fires once like Valor.
+Across nine recordings carrying the skill, every single one shows EXACTLY ONE
+Combo Master banner - while Burst banners five to seven times in those same
+fights as its chain breaks and re-arms.
+
+So the name was a false friend. The source calls it POWER_BURST and the
+engine priced it at Burst's uptime on that basis; it is not a Burst.
+
+   recording        lv   fight start   Combo Master   into the fight
+   17Nov 21-02-13    3        5s           17.0s           12.0s
+   17Nov 21-04-56    3       30s           46.0s           16.0s
+   17Nov 21-18-48    3       14s           33.5s           19.5s
+   17Nov 12-09-26    3       17s           40.5s           23.5s
+   16Nov 18-07-09    ?       13s           28.5s           15.5s
+   17Nov 21-14-09    2       62s          NEVER               -
+
+Twelve to twenty-four seconds in, once, and then nothing for the rest of the
+fight. Taken with the absence of any second banner, the reading is that it
+arms once and holds - the same shape as Valor.
+
+THAT IS AN INFERENCE, AND IT IS THE WEAK POINT HERE. The banner says when the
+skill armed; it does not say the buff is still up at the end. What rules out
+the alternative - that it expired and simply never re-armed - is that the
+condition would have to become unmeetable for ninety seconds of continuous
+fighting, and Burst's banner shows the player was landing chains throughout.
+
+AND ONE FIGHT IT NEVER FIRED AT ALL. 17Nov 21-14-09 is 109 seconds of Heavy
+Bowgun with Combo Master 2 equipped and not one banner, confirmed at a
+loosened threshold so it is absence rather than a detection failure.
+"Performing an action multiple times" is evidently a melee combo that a gun
+may never perform. One sample cannot justify making the skill weapon
+specific, so the misfire is carried in the average as risk instead: 0.666
+with it, 0.832 without, and the lower is taken.
+
+
+BURST: THE 0.50 WAS LOW BY TWO THIRDS
+=====================================
+Burst's uptime is set by its first activation - the chain analysis already in
+the engine shows it barely ever breaks once started, with ceilings of 87% to
+100%. The constant rested on two Charge Blade runs and took the lower.
+
+Six fights, read by template, fight boundaries from the damage counter:
+
+   recording        lv    fight       first Burst   uptime
+   17Nov 12-09-26    5   17-122s         28.0s       0.895
+   17Nov 21-02-13    5    5-104s         27.5s       0.781
+   17Nov 21-04-56    5   30-134s         38.5s       0.918
+   17Nov 21-18-48    5   14-121s         24.0s       0.907
+   17Nov 21-14-09    2   62-171s         71.0s       0.917
+   17Nov 21-10-49    1   24-129s         82.0s       0.448
+
+   mean 0.811, and five of six sit between 0.78 and 0.92
+
+All six are under the 87-100% ceilings the chain analysis puts on them, which
+is the consistency check worth having: two independent methods on different
+recordings, and the first-activation numbers do not contradict the lull
+numbers.
+
+THE 0.448 STAYS IN. That is the Switch Axe run where the player reports
+missing repeatedly, and the damage counter agrees - 2067/s against 2903/s on
+the same weapon two fights earlier. Burst took 58 seconds to arm because the
+hits were not landing. A real outcome of a real hunt, not an error, and it
+drags the mean from 0.87 to 0.81. The spread is the skill: Burst pays you for
+connecting, so a build around it is worth less to a player having a bad day.
+
+   burstUptime        0.50 -> 0.81
+   comboMasterUptime  new, 0.67   (was sharing burstUptime)
+
+Burst 5 goes from +15% to +24%, Combo Master 3 from +17.5% to +23.5%.
+
+
+THE PART THAT WASN'T CIRCULAR
+=============================
+These uptimes came from banner timings. They have nothing to do with the
+damage totals on the result screen. So what happened next is a check rather
+than a fit:
+
+   Switch Axe, Burst build against Valor build, same weapon, 104s
+      before   VALOR 5188   BURST 4822     engine preferred VALOR by 7.6%
+      after    BURST 5638   VALOR 5267     engine prefers BURST by 6.6%
+
+   measured on the day   BURST 2903 and 2126/s   VALOR 2067/s
+
+The engine's preference flipped to the side that actually won, on constants
+derived from a completely separate signal. That is not proof - the measured
+gap is inside the +/-30% run-to-run spread, so the fights never settled it -
+but a model that disagreed with the only two build comparisons on record now
+agrees with both.
+
+UNCHANGED BY ALL OF THIS: Valor 2 still beats Skyward Striker 2 on the
+Thanatos Glaive, by 4.2% at 105s rather than the earlier 4.7%.
+
+WHAT THIS METHOD COULD DO NEXT, now that it exists:
+   - Latent Power, Rising Tide and anything else with a ramp - the banner
+     gives the start, which is the whole constant for a hold-to-end skill
+   - whether Combo Master's misfire is a Heavy Bowgun property or a one-off,
+     which needs one more bowgun fight with the skill equipped
+   - Burst's first activation on a fast weapon against a slow one, which is
+     the extrapolation the old comment flagged and this still has not tested

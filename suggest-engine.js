@@ -138,18 +138,70 @@ const ASSUME = {
    * Even a real solo hunt holds an unbroken chain for its whole length. Only
    * the three-player hunt broke it, and only for an eighth of the time.
    *
-   * Uptime is therefore set by the first activation. Two Charge Blade runs
-   * where the banner is legible — it needs sky behind it, not ground — put
-   * that at 41.7s into one run and 12.5s into another, giving 51% and about
-   * 78% of their length. The lower of the two is taken here, because slow
-   * activation is the risk and a fast weapon has never been read: the glaive
-   * recordings all have dark ground behind the banner and no test has yet
-   * separated it from scenery.
+   * Uptime is therefore set by the first activation. That used to rest on two
+   * Charge Blade runs where the banner happened to be legible against sky, and
+   * the lower of the two was taken because reading the banner was hard.
    *
-   * Still an extrapolation from one weapon to all of them, like Power
-   * Prolonger. 50% measured somewhere beats 35% measured nowhere.
+   * IT IS NO LONGER HARD. The banner is matched by template now - the text and
+   * its icon render identically every time - so the first activation is read
+   * off every recording that has the skill, whatever the scenery:
+   *
+   *    recording        lv   fight    first Burst   uptime
+   *    17Nov 12-09-26    5   17-122s     28.0s       0.895
+   *    17Nov 21-02-13    5    5-104s     27.5s       0.781
+   *    17Nov 21-04-56    5   30-134s     38.5s       0.918
+   *    17Nov 21-18-48    5   14-121s     24.0s       0.907
+   *    17Nov 21-14-09    2   62-171s     71.0s       0.917
+   *    17Nov 21-10-49    1   24-129s     82.0s       0.448
+   *
+   *    mean 0.811 over all six
+   *
+   * THE OLD 0.50 WAS LOW BY TWO THIRDS, and for the same reason the Valor
+   * delay was: a first-activation time taken against the wrong denominator and
+   * then rounded down "to be safe". Five of six fights sit between 0.78 and
+   * 0.92, comfortably under the 87-100% ceilings the chain analysis above puts
+   * on them, which is the consistency check that matters.
+   *
+   * THE SIXTH IS WORTH KEEPING IN. 0.448 is the Switch Axe run where the
+   * player reports repeatedly missing, and the damage counter agrees - it is
+   * the slowest of the five fights recorded that evening. Burst took 58
+   * seconds to arm because the hits were not landing. That is a real outcome
+   * of a real hunt, not an error, so it stays in the mean and drags it from
+   * 0.87 to 0.81. The spread IS the skill: Burst rewards connecting.
    */
-  burstUptime: 0.50,
+  burstUptime: 0.81,
+
+  /* Combo Master, measured separately because IT IS NOT A BURST.
+   *
+   * It was priced at burstUptime on the reasoning that the source calls it
+   * POWER_BURST and the text has the same shape. The banner says otherwise.
+   * Across nine recordings carrying the skill, Combo Master banners EXACTLY
+   * ONCE per fight, never twice - while Burst banners five to seven times in
+   * the same fights as its chain breaks and re-arms. One trigger, like Valor,
+   * not a condition you keep re-entering.
+   *
+   * The detector was checked against a build with no Combo Master at all
+   * (17Nov 21-10-49, the Valor set) and found nothing, so the single hit is
+   * not the matcher giving up after the first.
+   *
+   *    recording        lv   fight    Combo Master   uptime
+   *    17Nov 21-02-13    3    5-104s      17.0s       0.888
+   *    17Nov 21-04-56    3   30-134s      46.0s       0.846
+   *    17Nov 21-18-48    3   14-121s      33.5s       0.818
+   *    17Nov 12-09-26    3   17-122s      40.5s       0.776
+   *    17Nov 21-14-09    2   62-171s      NEVER       0.000
+   *
+   * THE MISFIRE IS THE INTERESTING ONE and it is kept in the mean. Combo
+   * Master simply never triggered across a 109-second Heavy Bowgun fight -
+   * confirmed at a loosened threshold, so it is absence not detection failure.
+   * "After performing an action multiple times" is evidently a melee combo
+   * that a bowgun may never perform. One sample cannot make that weapon
+   * specific, so it is carried as risk in the average instead.
+   *
+   * 0.666 with the misfire, 0.832 without. The lower is taken, which leaves
+   * Combo Master BELOW Burst's uptime rather than above it.
+   */
+  comboMasterUptime: 0.67,
 
   /* Share of a glaive's DAMAGE dealt in the air, which is all that Skyward
    * Striker pays on. It must be a damage share and not a time share, because
@@ -1320,9 +1372,11 @@ const ADV_BURST = { 1: 0.05, 2: 0.10 };
  * family as Burst (BURST) and Advanced Burst (BURST_SECRET), and the text has
  * the same shape - a condition you ramp into and then hold.
  *
- * So it takes the same uptime as Burst, which is the honest choice and also a
- * lucky one: burstUptime was measured off GLAIVE recordings, and the glaive is
- * where this skill keeps turning up.
+ * THE NAME WAS A FALSE FRIEND. It was given burstUptime on that reasoning and
+ * it is not a Burst: the banner fires ONCE per fight and never again, while
+ * Burst fires five to seven times in the same fights. It has its own measured
+ * uptime now - see ASSUME.comboMasterUptime, which also carries the fight
+ * where it never triggered at all.
  *
  * IT IS A BIG SKILL AND IT WAS SCORED AS ZERO. Lv3 at 35% beats Burst at its
  * own Lv5 of 30%, and reaches it in three levels rather than five.
@@ -1905,7 +1959,7 @@ function score(totals, w) {
   // stat slots are split, so they are worked out once and applied after.
   let mult = 1;
   mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
-  mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.burstUptime;
+  mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.comboMasterUptime;
   mult *= 1 + (SKYWARD[lv('Skyward Striker')] || 0) * aerialShare(w);
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
@@ -2137,7 +2191,7 @@ function makeScorer(w, damageOnly) {
     // Everything that does not depend on how the stat slots are split.
     let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
-    dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.burstUptime;
+    dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.comboMasterUptime;
     if (airShare) dmg *= 1 + (SKYWARD[g(v, iSky)] || 0) * airShare;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
