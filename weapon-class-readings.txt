@@ -306,3 +306,55 @@ WHAT THE LIVE FIGHTS ARE STILL GOOD FOR: anything about WHEN rather than
 HOW MUCH. Skill banner timings, gauge uptimes and roar times all come
 off these recordings cleanly, because they do not depend on how hard the
 rest of the group was hitting.
+
+
+THREE NAMED MECHANISMS FOR THAT 61%, FROM THE PLAYER
+----------------------------------------------------
+The note above left the variance as "plausibly other players". That was
+vaguer than it needed to be. Three concrete causes, and all three are
+things the engine cannot see:
+
+1. A TEAMMATE WITH A HUNTING HORN BUFFS THE WHOLE PARTY'S ATTACK. Base
+   defence is four-player, so a stranger's weapon choice is a multiplier
+   on the player's own damage. The two Hammer fights 61% apart had
+   COMPLETELY DIFFERENT TEAMMATES - simshadows / willisk2155 / XiaoTwita
+   against Han / Klord / Willisk - so this is live, not hypothetical.
+   It cannot be read off these recordings: the horn's buff icons are not
+   visible in the HUD crop and teammate weapons are never shown.
+
+2. CRITICAL FEROCITY, which is in the later two Hammer sets and not the
+   first, makes damage less stable by construction. A crit skill widens
+   the distribution of every hit, which is exactly what a 61% pair of
+   runs looks like. Note the weapon is at -30% affinity, so what this
+   skill does there is worth understanding before trusting any run on
+   that set.
+
+3. WATER STRIKE IS A VARIANCE ENGINE IN ITS OWN RIGHT. The Hammer's
+   style spins up to about 22 times, damage rising with the spin count,
+   and a tap mid-spin cancels into a heavy blow whose multiplier depends
+   on how many spins were banked. So Hammer output is a function of
+   UNINTERRUPTED TIME, not of time. A fight where the monster keeps
+   breaking the spin pays a fraction of a fight where it does not, on
+   identical gear and identical open time.
+
+   THIS IS THE FIRST MECHANIC HERE THAT PUNISHES INTERRUPTION NON-
+   LINEARLY, and it predicts that the Hammer should have a wider spread
+   than the Charge Blade, which banks its state in a 32-to-80 second
+   buff rather than in a 22-hit combo. The Hammer's three runs span
+   61.5% and the Charge Blade's two span 8.9%. Two samples against
+   three, so it is a consistency note and not evidence.
+
+AND IT IS NOT A LATE SURGE. At the same elapsed time - 53.5 seconds into
+each fight - the 538k run read 203,796 and the 333k run read 112,990.
+They were already 80% apart. Whatever separates them was acting from the
+start, which fits a party buff or a per-hit distribution and fits a
+single lucky stretch much less well.
+
+ON OPEN TIME. The player rates it among the most important factors and
+that is surely right in general - the difference between +25% and +100%
+is 1.6x on every second. What the measurement shows is that it did not
+VARY here: 91% to 96% across all nine fights, with the 538k run open
+less than the 333k run. So it is a strong lever that happened to be held
+nearly constant, which makes it a poor explanation for this particular
+pair and leaves the multiplier split - which is still unmeasured - as
+the part of it that could still matter.
