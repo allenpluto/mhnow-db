@@ -456,6 +456,19 @@ const ASSUME = {
  */
 const POWER_PROLONGER = { 1: 0.030, 2: 0.068, 3: 0.120 };
 
+/* Quick Work, MEASURED ON THE CHARGE BLADE AND APPLIED ONLY THERE. The
+ * reasoning is under 'Quick Work' in UTILITY below; the arithmetic is in
+ * charge-blade-readings.txt. Lv3 cuts the transform's dead time from 2.22s
+ * to 1.13s, worth +2.6% through the cycle, and the levels follow the same
+ * fixed-fraction-per-level shape Power Prolonger has.
+ *
+ * DO NOT WIDEN THIS TO THE OTHER TWO TYPES. The skill pays per transform and
+ * the Charge Blade transforms least of the three - twice a hunt against the
+ * Switch Axe's six to eight. Spreading a Charge Blade figure to a Switch Axe
+ * would understate it by roughly the ratio of those counts.
+ */
+const QUICK_WORK_CHARGE_BLADE = { 1: 0.011, 2: 0.020, 3: 0.026 };
+
 const UTILITY = {
   // Measured on Dual Blades and applied to all seven types — see the note
   // above POWER_PROLONGER.
@@ -496,10 +509,6 @@ const UTILITY = {
    * gets the less it is worth: Power Prolonger 3 means one transform a hunt
    * instead of two or three, which cuts Quick Work's own value in half.
    *
-   * CHANGED, 0.05/0.10/0.15 -> 0.011/0.020/0.026, on the same per-level
-   * shape Power Prolonger turned out to have (a fixed ~20% off the remaining
-   * time each level, which reproduces the measured 49% at Lv3).
-   *
    * THE OLD NUMBER WAS NOT JUST HIGH, IT WAS INVERTING THE RANKING. On the
    * documented Charge Blade build at 105s, adding Quick Work 3 scored +13.4%
    * - ahead of Critical Ferocity 2 at +10.5%, Lock On 1 at +8.9% and Raw
@@ -507,19 +516,21 @@ const UTILITY = {
    * accelerator over every damage skill on offer. The player reached the
    * opposite conclusion from play, and the measurement agrees with them.
    *
-   * THESE ARE STILL THE USER'S OWN EXCHANGE RATES, REVISED BY THE USER. The
-   * 0.05/0.10/0.15 was their estimate before anything had been timed; the
-   * revision is theirs too, on seeing what the transform actually costs.
+   * SO THE MEASURED FIGURE IS APPLIED TO THE CHARGE BLADE ONLY, in
+   * QUICK_WORK_CHARGE_BLADE below, and this flat guess stands for the other
+   * two. That is the same rule Evading Reload follows: a measurement is
+   * applied where it was measured.
    *
-   * IT REMAINS A FLOOR, so if it is ever wrong it is wrong downward. The
-   * test covers ONE action on ONE of the three weapons the skill applies to.
-   * Long Sword and Switch Axe govern mechanics nobody has timed, and the
-   * skill may also speed sheathing, items or dodges. WHAT WOULD SETTLE IT:
-   * time a sheathe and a dodge with and without it. If those move, this
-   * number should come back up; if they do not, the transform is the whole
-   * skill and these figures are it.
+   * THIS ONE WOULD BE ACTIVELY WRONG IF SPREAD. Quick Work pays per
+   * transform, and the two weapons transform at completely different rates -
+   * read off the gauge in three live base defences, the Charge Blade entered
+   * its boost TWICE in 105s and the Switch Axe entered sword mode SIX to
+   * EIGHT times. On a weapon that transforms three or four times as often
+   * the skill is worth three or four times as much, so 0.026 is as wrong for
+   * a Switch Axe as 0.15 was for a Charge Blade. Long Sword has no transform
+   * at all and lives entirely on the "sheathing" half of the skill text.
    */
-  'Quick Work': { 1: 0.011, 2: 0.020, 3: 0.026 },
+  'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
 
   // Rude Awakener multiplies the FIRST attack on a sleeping monster by 1.3,
@@ -1147,6 +1158,13 @@ function utilityTable(name, w) {
   // and on one of them lengthens something you should not be using.
   if (name === 'Power Prolonger' && w.style && w.style.blades) {
     return w.style.blades.pp;
+  }
+  // Quick Work was timed on the Charge Blade and ONLY applies there, for the
+  // same reason Evading Reload's measurement is pinned to stepping shot: the
+  // thing it shortens happens a wildly different number of times per fight on
+  // the other weapons it covers. See QUICK_WORK_CHARGE_BLADE.
+  if (name === 'Quick Work' && w.category === 'Charge Blade') {
+    return QUICK_WORK_CHARGE_BLADE;
   }
   return UTILITY[name];
 }

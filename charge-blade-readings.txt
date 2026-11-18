@@ -241,25 +241,66 @@ Nothing here was fitted to the live fight; the cycle model was built
 entirely on the dummy and the live fight landed inside it.
 
 SWITCH AXE, SAME MORNING, SAME ARMOUR. The Switch Axe's gauge is drawn
-as the weapon itself rather than icons and phials - RED OUTLINE WITH A
-GOLD BAR IS AXE MODE, grey outline with a blue bar is sword - so the
-same detector reads it:
+as the weapon itself rather than icons and phials, and IT RUNS THE
+OPPOSITE WAY ROUND FROM THE CHARGE BLADE:
 
-   12-10-30   8 axe windows   17.4 2.1 6.7 8.3 5.2 3.6 19.0 5.0 s
-              67.3s of 103.5s   =  65% uptime, EIGHT transforms
-   12-13-20   6 axe windows in-fight
-              63.7s of 102.5s   =  62% uptime, SIX transforms
+   grey outline, BLUE bar     axe stage - the default. Attacks CHARGE
+                              the bar. Long reach, high per-hit, slow.
+   red outline, ORANGE bar    sword stage. Attacks SPEND the bar. Short
+                              reach, high frequency, low per-hit, and a
+                              charged finisher that explodes and drops
+                              you back to axe.
 
-   Charge Blade, same armour:  80% uptime, TWO transforms
+   (Corrected: these were labelled the wrong way round on first write.
+   The Charge Blade starts in sword and transforms to axe; the Switch
+   Axe starts in axe and transforms to sword.)
 
-THIS IS THE PLAYER'S OWN THESIS, MEASURED. "Axe mode is trading extra
-swap to axe time for high frequency attack" - the Charge Blade holds
-axe mode in two long blocks and the Switch Axe chops it into six or
+BOTH WEAPONS ARE THE SAME CYCLE WITH THE NAMES SWAPPED. A slow state
+that builds a resource, and a fast state that spends it:
+
+   Charge Blade    sword charges the phial  ->  AXE BOOST spends it
+   Switch Axe      axe charges the bar      ->  SWORD MODE spends it
+
+So the detector was reading each weapon's SPEND state all along, which
+is the state worth comparing:
+
+   12-10-30   8 sword windows   17.4 2.1 6.7 8.3 5.2 3.6 19.0 5.0 s
+              67.3s of 103.5s   =  65% uptime, EIGHT entries
+   12-13-20   6 sword windows in-fight
+              63.7s of 102.5s   =  62% uptime, SIX entries
+
+   Charge Blade, same armour:   80% uptime, TWO entries
+
+THIS IS THE PLAYER'S OWN THESIS, MEASURED. The Charge Blade holds its
+spend state in two long blocks; the Switch Axe chops it into six or
 eight short ones, paying a transform each time and spending a third of
-the fight out of axe mode rather than a fifth.
+the fight outside it rather than a fifth. The worse of the two Switch
+Axe runs has a 26-second stretch - 61s to 88s - with no sword mode at
+all, which is the "damage stops growing for a lot of periods" the
+player described, visible as a hole in the gauge.
 
-WHAT IT STILL DOES NOT ESTABLISH. The Switch Axe's axe mode has never
-been put on a dummy, so "fewer axe-mode seconds" only matters if its
-axe mode is worth what the Charge Blade's is. Fragmentation is now
-measured on both weapons; the damage rate is measured on one. That is
-the remaining half of the 96% gap and it is three dummy runs away.
+TWO CONSEQUENCES THAT ARE NOT ABOUT THE 96% GAP
+-----------------------------------------------
+QUICK WORK IS A DIFFERENT SKILL ON EACH WEAPON. It pays per transform,
+and these counts are 2 against 6-8. A Charge Blade figure spread to a
+Switch Axe would understate it three or four times over - so the
+measured 0.011/0.020/0.026 is pinned to the Charge Blade in
+utilityTable() and the old flat guess stands elsewhere, the same rule
+Evading Reload follows. The engine now says +2.3% on Thanatos Force and
++13.4% on Axe of Demons for the same skill, which is the shape the
+evidence actually has.
+
+POWER PROLONGER MAY FIT THE SWITCH AXE BETTER THAN THE CHARGE BLADE.
+The Charge Blade's Axe Boost is a timed window; the Switch Axe's sword
+stage is a DRAINING BAR, which is precisely the mechanic Power
+Prolonger was measured on with Dual Blades' Demon Mode. The 20%-per-
+level drain reduction found there has a real chance of transferring
+literally rather than by analogy. Untested, and now obviously worth
+testing.
+
+WHAT IT STILL DOES NOT ESTABLISH. The Switch Axe's sword stage has
+never been put on a dummy, so "fewer spend-state seconds" only matters
+if its spend state is worth what the Charge Blade's is. Fragmentation is
+now measured on both weapons; the damage rate inside the windows is
+measured on one. That is the remaining half of the 96% gap and it is
+three dummy runs away.
