@@ -460,8 +460,19 @@ const UTILITY = {
   // Measured on Dual Blades and applied to all seven types — see the note
   // above POWER_PROLONGER.
   'Power Prolonger': POWER_PROLONGER,
-  /* QUICK WORK PLAINLY WORKS, AND IS STILL PROBABLY OVERPRICED HERE. The
-   * two Charge Blade dummy runs above, timed on the sword-to-axe transform:
+  /* QUICK WORK PLAINLY WORKS, AND WAS BADLY OVERPRICED HERE. Three Charge
+   * Blade dummy runs, timed by the player from the button press to the first
+   * axe damage number:
+   *
+   *     Normal style, no skills      1.87s
+   *     Axe Boost,    no skills      3.90s
+   *     Axe Boost,    Quick Work 3   2.05s
+   *
+   * TWO FINDINGS IN THREE NUMBERS. Axe Boost's transform costs TWICE what
+   * Normal style's does - 2s of extra dead time is part of what the style is
+   * bought with - and Quick Work 3 refunds almost exactly that surcharge.
+   * The figures below are therefore the skill's BEST case: on Normal style
+   * there is half as much transform to shorten.
    *
    *                      button press -> first axe damage    dead time
    *     no skills                  3.90s                       2.22s
@@ -485,22 +496,30 @@ const UTILITY = {
    * gets the less it is worth: Power Prolonger 3 means one transform a hunt
    * instead of two or three, which cuts Quick Work's own value in half.
    *
-   * NOT CHANGED, AND THIS IS A JUDGEMENT CALL WORTH STATING. The measurement
-   * is sound now - it was the player who caught the earlier reading, which
-   * had the transform at 1.7s because a semi-transparent damage panel let
-   * scenery register as a damage tick. What it does not cover is the rest of
-   * the skill. Quick Work also applies to Long Sword and Switch Axe, where
-   * it governs mechanics nobody here has timed, and it may speed sheathing,
-   * items or dodges on all three. A transform-only reading is therefore a
-   * FLOOR, and replacing a cross-weapon constant with one action on one
-   * weapon is the same mistake as fitting a weapon-class multiplier to two
-   * weapons.
+   * CHANGED, 0.05/0.10/0.15 -> 0.011/0.020/0.026, on the same per-level
+   * shape Power Prolonger turned out to have (a fixed ~20% off the remaining
+   * time each level, which reproduces the measured 49% at Lv3).
    *
-   * WHAT WOULD SETTLE IT: time a sheathe and a dodge with and without the
-   * skill. If those are unaffected the transform is the whole skill, the
-   * floor is the value, and this should drop to about 0.01/0.02/0.026.
+   * THE OLD NUMBER WAS NOT JUST HIGH, IT WAS INVERTING THE RANKING. On the
+   * documented Charge Blade build at 105s, adding Quick Work 3 scored +13.4%
+   * - ahead of Critical Ferocity 2 at +10.5%, Lock On 1 at +8.9% and Raw
+   * Power 3 at +6.8%. The engine was telling a player to take a transform
+   * accelerator over every damage skill on offer. The player reached the
+   * opposite conclusion from play, and the measurement agrees with them.
+   *
+   * THESE ARE STILL THE USER'S OWN EXCHANGE RATES, REVISED BY THE USER. The
+   * 0.05/0.10/0.15 was their estimate before anything had been timed; the
+   * revision is theirs too, on seeing what the transform actually costs.
+   *
+   * IT REMAINS A FLOOR, so if it is ever wrong it is wrong downward. The
+   * test covers ONE action on ONE of the three weapons the skill applies to.
+   * Long Sword and Switch Axe govern mechanics nobody has timed, and the
+   * skill may also speed sheathing, items or dodges. WHAT WOULD SETTLE IT:
+   * time a sheathe and a dodge with and without it. If those move, this
+   * number should come back up; if they do not, the transform is the whole
+   * skill and these figures are it.
    */
-  'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
+  'Quick Work': { 1: 0.011, 2: 0.020, 3: 0.026 },
   'Lock On': { 1: 0.10 },
 
   // Rude Awakener multiplies the FIRST attack on a sleeping monster by 1.3,

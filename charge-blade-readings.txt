@@ -144,22 +144,45 @@ instead of two or three, so the thing Quick Work speeds up stops
 happening. A skill that halves an action can still be worth very little
 if the action is 5% of the fight.
 
-NOT CHANGED, AND THAT IS A JUDGEMENT CALL. The measurement is sound now.
-What it does not cover is the rest of the skill: Quick Work also applies
-to Long Sword and Switch Axe, where it governs mechanics nobody has
-timed, and it may speed sheathing, items or dodges on all three. A
-transform-only reading is a FLOOR, and swapping a cross-weapon constant
-for one action on one weapon is the same error as fitting a weapon-class
-multiplier to two weapons.
+AND NORMAL STYLE TRANSFORMS IN HALF THE TIME, which is the third number
+and changes the reading of the other two:
 
-WHAT WOULD SETTLE IT: time a sheathe and a dodge with and without the
-skill. If those are unaffected, the transform is the whole skill, the
-floor is the value, and 0.05/0.10/0.15 should drop to about
-0.01/0.02/0.026.
+   Normal style, no skills      1.87s
+   Axe Boost,    no skills      3.90s
+   Axe Boost,    Quick Work 3   2.05s
 
-THE PLAYER EXPECTED NORMAL STYLE TO TRANSFORM MUCH FASTER, and this test
-cannot say - the normal-style run was not timed from the button press,
-only from the last sword hit. That comparison needs a re-run.
+AXE BOOST'S TRANSFORM COSTS TWICE WHAT NORMAL'S DOES. Two seconds of
+extra dead time is part of what the style is bought with, alongside the
+customisation node. And Quick Work 3 refunds almost exactly that
+surcharge - it brings Axe Boost's transform back to Normal's baseline.
+
+That makes +2.6% the skill's BEST case, not its typical one: on Normal
+style there is half as much transform to shorten.
+
+CHANGED, 0.05/0.10/0.15 -> 0.011/0.020/0.026, on the same per-level
+shape Power Prolonger turned out to have - a fixed ~20% off the
+remaining time each level, which reproduces the measured 49% at Lv3.
+
+THE OLD NUMBER WAS NOT MERELY HIGH, IT WAS INVERTING THE RANKING. On the
+documented Charge Blade build at 105s, one level of each:
+
+                          before    after
+   Quick Work 3           +13.4%    +2.3%
+   Critical Ferocity 2    +10.5%   +10.5%
+   Lock On 1               +8.9%    +8.9%
+   Raw Power 3             +6.8%    +6.8%
+
+The engine was recommending a transform accelerator over every damage
+skill on offer. The player reached the opposite conclusion from play -
+"consider last base defence i only transformed 3 times, use a damage
+boost skill is probably much better" - and the measurement agrees with
+them. These are the user's own exchange rates and this is the user's own
+revision of them.
+
+IT REMAINS A FLOOR, so if it is wrong it is wrong downward. One action,
+on one of the three weapons the skill applies to. WHAT WOULD SETTLE IT:
+time a sheathe and a dodge with and without it. If those move, the
+number comes back up; if they do not, the transform is the whole skill.
 
 
 THE NUMBER THAT CHANGES HOW MUCH EVERYTHING ELSE IS WORTH
@@ -191,3 +214,52 @@ WHAT THIS STILL CANNOT SEE
      does; none of it describes what the Switch Axe fails to do, and the
      96% gap between them is still unattributed. The same three runs on
      Axe of Demons are the other half and would take twenty minutes.
+
+
+=====================================================================
+THE DUMMY NUMBERS SURVIVE CONTACT WITH A REAL FIGHT
+=====================================================================
+The red-icon detector was pointed at the three live base defences from
+the same morning. This is the test that matters for every dummy figure
+above: a dummy never roars, never knocks you down and never moves.
+
+CHARGE BLADE, 12-16-11, fight 9s -> 113.5s:
+
+   Axe Boost  22.7s -> 76.4s   (53.7s)
+              82.1s -> 111.8s  (29.7s)
+
+   83.4s boosted out of 104.5s   =  79.8% uptime, two transforms
+
+   dummy cycle model predicted    76% (no Power Prolonger)
+                                  88% (Power Prolonger 3)
+
+LIVE UPTIME LANDS BETWEEN THE TWO DUMMY BOUNDS, and the 53.7s first
+window is what Power Prolonger 2 should give if each level multiplies
+the window by about 1.36 - which is what the build has, since the leg
+swap to Bazelgeuse Greaves traded a Power Prolonger slot for Valor 2.
+Nothing here was fitted to the live fight; the cycle model was built
+entirely on the dummy and the live fight landed inside it.
+
+SWITCH AXE, SAME MORNING, SAME ARMOUR. The Switch Axe's gauge is drawn
+as the weapon itself rather than icons and phials - RED OUTLINE WITH A
+GOLD BAR IS AXE MODE, grey outline with a blue bar is sword - so the
+same detector reads it:
+
+   12-10-30   8 axe windows   17.4 2.1 6.7 8.3 5.2 3.6 19.0 5.0 s
+              67.3s of 103.5s   =  65% uptime, EIGHT transforms
+   12-13-20   6 axe windows in-fight
+              63.7s of 102.5s   =  62% uptime, SIX transforms
+
+   Charge Blade, same armour:  80% uptime, TWO transforms
+
+THIS IS THE PLAYER'S OWN THESIS, MEASURED. "Axe mode is trading extra
+swap to axe time for high frequency attack" - the Charge Blade holds
+axe mode in two long blocks and the Switch Axe chops it into six or
+eight short ones, paying a transform each time and spending a third of
+the fight out of axe mode rather than a fifth.
+
+WHAT IT STILL DOES NOT ESTABLISH. The Switch Axe's axe mode has never
+been put on a dummy, so "fewer axe-mode seconds" only matters if its
+axe mode is worth what the Charge Blade's is. Fragmentation is now
+measured on both weapons; the damage rate is measured on one. That is
+the remaining half of the 96% gap and it is three dummy runs away.
