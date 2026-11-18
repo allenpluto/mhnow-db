@@ -82,55 +82,84 @@ bar this skill was measured on - a discrete buff rather than a drain -
 and nothing like the fixed 20%-per-level drain reduction found there.
 
 But the skill is priced in damage, and the cycle arithmetic lands almost
-on top of the old number. A cycle is phial charge (6.5s sword) plus
-transform (1.7s dead) plus the window:
+exactly on the number already in the engine. A cycle is the productive
+sword stretch (7486 damage over 8.2s, 913/s) plus the transform's dead
+time (2.2s) plus the window at 3244/s:
 
-   no skills   6.5 + 1.7 + 32.1 = 40.3s    2766 dmg/s
-   Lv3         6.5 + 1.7 + 80.2 = 88.4s    3024 dmg/s     +9.3%
+   no skills   8.2 + 2.2 + 32.1 = 42.5s    2625 dmg/s
+   Lv3         8.2 + 2.2 + 80.2 = 90.6s    2953 dmg/s    +12.5%
 
    carried in the engine, extrapolated from Dual Blades:  +12.0%
 
-DOUBLING THE WINDOW BUYS 9% BECAUSE THE WINDOW WAS ALREADY 80% OF THE
+DOUBLING THE WINDOW BUYS 12% BECAUSE THE WINDOW WAS ALREADY 76% OF THE
 CYCLE. This is the same trap Demon Mode sprang: the bar lasted 2.6x
 longer at Lv3 and the damage moved 12%. Duration multipliers look
 enormous and pay out small whenever the thing being extended already
 dominates its cycle.
 
-NOT CHANGED IN THE ENGINE. 9.3% against 12.0% is two dummies on two
-weapons whose mechanics have nothing in common, and the cycle model
-assumes the phial recharges from empty every time, which is NOT verified
-- the phial bar was still part-full during the boost. The finding is
-that an extrapolation nobody had ever tested survived its first contact
-with a second weapon type.
+NOT CHANGED IN THE ENGINE, and now for a good reason rather than a
+cautious one - 12.5% measured against 12.0% carried is the closest this
+project has come to confirming anything. The cycle model still assumes
+the phial recharges from empty every time, which is NOT verified - the
+phial bar was part-full during the boost - so the agreement is closer
+than the evidence strictly supports. But an extrapolation nobody had
+ever tested survived its first contact with a second weapon type, on a
+mechanic that shares nothing with the one it was measured on.
 
 
-QUICK WORK 3: THE WEAKEST NUMBER IN THE ENGINE, AND NOW IT SHOWS
-----------------------------------------------------------------
-Quick Work is supposed to speed up the transform. Timed from the last
-sword hit to the first axe hit:
+QUICK WORK 3: IT PLAINLY WORKS, AND IS STILL PROBABLY OVERPRICED
+-----------------------------------------------------------------
+FIRST, A CORRECTION THAT WAS THE PLAYER'S CATCH, NOT MINE. This section
+originally reported the transform at 1.7s against 1.5s and concluded the
+skill did almost nothing. That was an artefact. The Total Damage pill is
+SEMI-TRANSPARENT, and the first tick detector watched the whole pill, so
+scenery drifting behind it registered as a damage tick and chopped the
+front off the gap. Rewritten to watch only the gold digits, and checked
+against the player's own frame-by-frame read, the numbers are:
 
-   normal style, no skills     1.7s
-   axe boost, no skills        1.7s
-   axe boost, Quick Work 3     1.5s
+                        button press -> first axe damage    dead time
+      no skills                   3.90s                       2.22s
+      Quick Work 3                2.05s                       1.13s
+                                 -47.4%                      -39.1%
 
-0.2s off one transform. At about 2.6 transforms in a 105s hunt that is
-half a second of extra attacking: +0.5%, against the +15% the engine
-carries for Lv3. Thirty times out.
+Quick Work 3 cuts the transform roughly in half. That is a large, real,
+repeatable effect and the earlier -12% reading was simply wrong.
 
-NOT CHANGED, BECAUSE THE MEASUREMENT IS WORSE THAN THE DISCREPANCY. One
-run each, and the gap is timed from the last sword hit to the first axe
-hit - so the player's own reaction to the phial turning red is inside
-both numbers, easily +/-0.3s, which is larger than the whole effect. The
-honest position is that 0.05/0.10/0.15 is an unevidenced estimate and
-the one attempt to check it came back far lower.
+TWO CLOCKS, BECAUSE THEY ANSWER DIFFERENT QUESTIONS. The transform is
+input-buffered: the swing already in progress lands after the button is
+pressed, so sword damage keeps arriving for about a second into the
+animation. Button-to-damage is what the player feels. Dead time - last
+damage of any kind to first axe damage - is the only part a damage model
+can actually spend.
 
-It may also speed up actions this test never used - sheathing, items,
-dodges - in which case a transform-only reading is a floor and not a
-refutation. Worth establishing before anyone touches the number.
+THE SMALLER CLOCK IS THE ONE THE ENGINE EATS:
 
-THE PLAYER EXPECTED NORMAL STYLE TO TRANSFORM MUCH FASTER. It measured
-the same 1.7s. With one sample each and reaction time included, that is
-a failure to confirm rather than a contradiction.
+   no skills       cycle 8.2 + 2.22 + 32.1 = 42.5s    2625 dmg/s
+   Quick Work 3    cycle 8.2 + 1.13 + 32.1 = 41.4s    2694 dmg/s   +2.6%
+   on top of Power Prolonger 3                                     +1.2%
+
++2.6% against the +15% the engine carries. AND THE BETTER THE BUILD GETS
+THE LESS IT IS WORTH: Power Prolonger 3 means one transform a hunt
+instead of two or three, so the thing Quick Work speeds up stops
+happening. A skill that halves an action can still be worth very little
+if the action is 5% of the fight.
+
+NOT CHANGED, AND THAT IS A JUDGEMENT CALL. The measurement is sound now.
+What it does not cover is the rest of the skill: Quick Work also applies
+to Long Sword and Switch Axe, where it governs mechanics nobody has
+timed, and it may speed sheathing, items or dodges on all three. A
+transform-only reading is a FLOOR, and swapping a cross-weapon constant
+for one action on one weapon is the same error as fitting a weapon-class
+multiplier to two weapons.
+
+WHAT WOULD SETTLE IT: time a sheathe and a dodge with and without the
+skill. If those are unaffected, the transform is the whole skill, the
+floor is the value, and 0.05/0.10/0.15 should drop to about
+0.01/0.02/0.026.
+
+THE PLAYER EXPECTED NORMAL STYLE TO TRANSFORM MUCH FASTER, and this test
+cannot say - the normal-style run was not timed from the button press,
+only from the last sword hit. That comparison needs a re-run.
 
 
 THE NUMBER THAT CHANGES HOW MUCH EVERYTHING ELSE IS WORTH

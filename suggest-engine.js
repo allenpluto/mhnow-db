@@ -433,21 +433,26 @@ const ASSUME = {
  * A COMPLETELY DIFFERENT MECHANIC FROM DEMON MODE - a discrete buff window
  * rather than a draining bar - and nothing like a fixed 20%-per-level drain
  * reduction. But the skill is priced in damage, not seconds, and the cycle
- * arithmetic lands in the same place. Measured on the same dummy: sword mode
- * 1152 dmg/s, Axe Boost 3240 dmg/s, phial charge 6.5s, transform 1.7s.
+ * arithmetic lands almost exactly on the number already here. Measured on
+ * the same dummy: sword mode 7486 damage over 8.2s (913/s), Axe Boost
+ * 3244/s, and 2.2s of dead time across the transform.
  *
- *   no skills   cycle 6.5 + 1.7 + 32.1 = 40.3s   2766 dmg/s
- *   Lv3         cycle 6.5 + 1.7 + 80.1 = 88.3s   3024 dmg/s      +9.3%
+ *   no skills   cycle 8.2 + 2.2 + 32.1 = 42.5s   2625 dmg/s
+ *   Lv3         cycle 8.2 + 2.2 + 80.2 = 90.6s   2953 dmg/s     +12.5%
  *
- * +9.3% against the 12.0% carried here. Doubling the window buys so little
- * because the window was ALREADY 80% of the cycle - the same reason Demon
- * Mode's Lv3 bought 12% rather than the 2.6x its bar suggested.
+ * +12.5% against the 12.0% carried here, which is as close as this project
+ * has come to confirming anything. Doubling the window buys only 12% because
+ * the window was ALREADY 76% of the cycle - the same reason Demon Mode's Lv3
+ * bought 12% rather than the 2.6x its bar suggested.
  *
- * NOT CHANGED. 9.3% and 12.0% are one dummy apiece on two weapons whose
- * mechanics have nothing in common, and the cycle model assumes the phial
- * recharges from empty every time, which is not verified. The point is that
- * the extrapolation was finally checked against something and did not fall
- * apart; a per-type split would be fitting noise.
+ * NOT CHANGED, and now for a good reason rather than a cautious one: 12.5%
+ * measured against 12.0% carried. The cycle model still assumes the phial
+ * recharges from empty every time, which is not verified - the phial bar was
+ * part-full during the boost - so the agreement is closer than the evidence
+ * strictly supports. But an extrapolation nobody had ever tested survived
+ * its first contact with a second weapon type, on a mechanic that shares
+ * nothing with the one it was measured on. A per-type split would be fitting
+ * noise.
  */
 const POWER_PROLONGER = { 1: 0.030, 2: 0.068, 3: 0.120 };
 
@@ -455,24 +460,45 @@ const UTILITY = {
   // Measured on Dual Blades and applied to all seven types — see the note
   // above POWER_PROLONGER.
   'Power Prolonger': POWER_PROLONGER,
-  /* QUICK WORK IS THE WEAKEST NUMBER LEFT IN THIS FILE, and the first
-   * attempt to measure it says so loudly. On the two Charge Blade dummy
-   * runs above, the sword-to-axe transform - the action the skill is
-   * supposed to speed up - took 1.7s with no skills and 1.5s with Quick
-   * Work 3. That is 0.2s off one transform. At roughly 2.6 transforms in a
-   * 105s hunt it buys half a second of extra attacking: +0.5%, against the
-   * 15% claimed here. Thirty times out.
+  /* QUICK WORK PLAINLY WORKS, AND IS STILL PROBABLY OVERPRICED HERE. The
+   * two Charge Blade dummy runs above, timed on the sword-to-axe transform:
    *
-   * NOT CHANGED, because the measurement is worse than the discrepancy.
-   * One run each, and the gap is timed from the last sword hit to the first
-   * axe hit, so the player's own reaction to the phial turning red is inside
-   * both numbers - easily +/-0.3s, which is larger than the effect. A second
-   * pair of runs would settle it, and until then 0.05/0.10/0.15 stays as the
-   * user's estimate rather than being replaced by a worse one.
+   *                      button press -> first axe damage    dead time
+   *     no skills                  3.90s                       2.22s
+   *     Quick Work 3               2.05s                       1.13s
+   *                               -47.4%                      -39.1%
    *
-   * It may also be that the skill speeds up actions this test never used -
-   * sheathing, items, dodges - in which case a transform-only reading is a
-   * floor and not a refutation. Worth knowing before touching the number.
+   * TWO CLOCKS, BECAUSE THEY ANSWER DIFFERENT QUESTIONS. The transform is
+   * input-buffered: the swing already in progress lands after the button is
+   * pressed, so damage keeps flowing for about a second into the animation.
+   * Button-to-damage is what the player feels. Dead time - last damage of
+   * any kind to first axe damage - is the only part a DPS model can spend.
+   *
+   * FEEDING THE SMALLER ONE THROUGH THE CYCLE, against the Power Prolonger
+   * figures above (8.2s sword at 913/s, 32.1s boost at 3244/s):
+   *
+   *     no skills       cycle 42.5s   2625 dmg/s
+   *     Quick Work 3    cycle 41.4s   2694 dmg/s          +2.6%
+   *     on top of Power Prolonger 3                       +1.2%
+   *
+   * +2.6% against the 15% claimed here, and the better the rest of the build
+   * gets the less it is worth: Power Prolonger 3 means one transform a hunt
+   * instead of two or three, which cuts Quick Work's own value in half.
+   *
+   * NOT CHANGED, AND THIS IS A JUDGEMENT CALL WORTH STATING. The measurement
+   * is sound now - it was the player who caught the earlier reading, which
+   * had the transform at 1.7s because a semi-transparent damage panel let
+   * scenery register as a damage tick. What it does not cover is the rest of
+   * the skill. Quick Work also applies to Long Sword and Switch Axe, where
+   * it governs mechanics nobody here has timed, and it may speed sheathing,
+   * items or dodges on all three. A transform-only reading is therefore a
+   * FLOOR, and replacing a cross-weapon constant with one action on one
+   * weapon is the same mistake as fitting a weapon-class multiplier to two
+   * weapons.
+   *
+   * WHAT WOULD SETTLE IT: time a sheathe and a dodge with and without the
+   * skill. If those are unaffected the transform is the whole skill, the
+   * floor is the value, and this should drop to about 0.01/0.02/0.026.
    */
   'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
