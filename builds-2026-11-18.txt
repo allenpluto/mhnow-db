@@ -1,0 +1,169 @@
+Four weapon classes, documented piece by piece, 2026-11-18 evening
+==================================================================
+Twenty-five screenshots covering four complete sets, plus one swapped
+piece. Read off the screenshots, not the Status summary, so this is
+another independent check of the armour database as well as a record of
+what was worn.
+
+WHICH VIDEO IS WHICH, worked out from the HUD rather than asked
+---------------------------------------------------------------
+   video       len    weapon                class          set
+   18-01-21   128s    Sinister Shadow Bolt 5  Light Bowgun   A
+   18-06-18   128s    Chaos Shatterer 6       Hammer         B
+   18-24-58     6s    Chaos Shatterer 6       Hammer         B'  ESCAPED
+   18-25-25   129s    Chaos Shatterer 6       Hammer         B'
+   18-28-56   147s    Chaos Shatterer 6       Hammer         B'
+   21-03-35   137s    Skullwhistle 8          Hunting Horn   C
+   21-25-57   138s    Thanatos Mauls 6        Dual Blades    D
+
+   THE EVIDENCE, since none of this was stated:
+     18-01-21 carries a "Reset Aim" button - ranged
+     18-06-18, 18-25-25 and 18-28-56 all show the hammer glyph on the
+       special button, at three different charge levels
+     18-06-18 has NO Lock On button; 18-25-25 and 18-28-56 DO, which
+       matches the Somnacanth U Braces swap (Lock On 1) screenshotted at
+       18:17:59 - between those recordings
+     21-03-35 shows three melody notes and a staff - Hunting Horn
+     21-25-57 shows the crossed-blades glyph and a second gold bar under
+       health - Dual Blades' demon gauge
+     18-24-58 is six seconds and ends on "Escape from this hunt? -> Yes".
+       Not a data point.
+
+THE WEAPONS
+-----------
+   Sinister Shadow Bolt 5   Light Bowgun   2512 (+261)    0%   none
+                            style: Stepping Shot
+   Chaos Shatterer 6        Hammer         2760 (+102)  -30%   none
+                            style: Water Strike
+   Skullwhistle 8           Hunting Horn   2312 (+400)    0%   Paralysis
+                            style: Fleeting Melody        457 (+40)
+   Thanatos Mauls 6         Dual Blades    2760 (+102)  -30%   none
+                            style: Spiral Slash
+
+THREE CLASSES NOW SHARE ONE STATLINE. Chaos Shatterer, Thanatos Mauls
+and the already-recorded Thanatos Force are all 2760 attack with the
+same +102 customisation bonus, -30% affinity and no element. Whatever
+separates a Hammer from a Dual Blades from a Charge Blade, it is not the
+numbers on the weapon page.
+
+THE SETS
+--------
+SET A - Light Bowgun
+   Viper Kadachi Helm 4   G8 2/5  142  Advanced Burst 1, Artful Dodger 1,
+                                       Combo Master 1   | DS Artful Dodger 1
+   Viper Kadachi Mail 4   G8 2/5  142  Combo Master 2   | DS Burst 1, Def +1
+   Somnacanth Vambraces 5 G8 2/5  142  Evading Reload 2 | DS Defense Boost 1,
+                                                             Def +4
+   Nargacuga Faulds 4     G8 1/5  139  Evading Reload 2, Peak Performance 1
+                                                        | DS Artful Dodger 1,
+                                                             Def +3
+   Bazelgeuse Greaves 4   G8 2/5  142  Valor 2, Blast Attack 1
+                                                        | DS Peak Performance 1,
+                                                             Aff +1%
+   TOTALS  Evading Reload 4, Combo Master 3, Artful Dodger 3,
+           Peak Performance 2, Valor 2, Advanced Burst 1, Burst 1,
+           Blast Attack 1, Defense Boost 1
+
+SET B - Hammer
+   Viper Kadachi Helm 4, Viper Kadachi Mail 4   as above
+   Lunagaron Vambraces 3  G6 5/5  113  Blunt Force 2    | DS Slugger 1, Aff +1%
+   Somnacanth U Coil 4    G8 1/5  139  Advanced Ice Attack 1, Charge Stock 2
+                                                        | DS NOT SET
+   Bazelgeuse Greaves 4                as above
+   TOTALS  Combo Master 3, Artful Dodger 2, Charge Stock 2, Blunt Force 2,
+           Valor 2, Advanced Burst 1, Burst 1, Slugger 1,
+           Advanced Ice Attack 1, Blast Attack 1, Peak Performance 1
+
+SET B' - Hammer, vambraces swapped between 18-06-18 and 18-25-25
+   Lunagaron Vambraces 3  ->  Somnacanth U Braces 4
+                          G8 2/5  142  Lock On 1, Critical Ferocity 1,
+                                       Raw Power 1      | DS Artful Dodger 1
+   net: loses Blunt Force 2 and Slugger 1
+        gains Lock On 1, Critical Ferocity 1, Raw Power 1, Artful Dodger +1
+
+SET C - Hunting Horn
+   Viper Kadachi Helm 4, Viper Kadachi Mail 4   as above
+   Rathian Vambraces 5    G8 4/5  149  Lock On 1, Burst 2
+                                                        | DS Power Prolonger 1,
+                                                             Atk +6
+   Viper Kadachi Coil 4   G8 2/5  142  Advanced Burst 1, Burst 2
+                                                        | DS Power Prolonger 1,
+                                                             Atk +4
+   Bazelgeuse Greaves 4                as above
+   TOTALS  Burst 5, Combo Master 3, Advanced Burst 2, Artful Dodger 2,
+           Power Prolonger 2, Valor 2, Lock On 1, Blast Attack 1,
+           Peak Performance 1
+
+SET D - Dual Blades, legs swapped from Set C
+   Bazelgeuse Greaves 4   ->  Kushala Crus 3
+                          G8 5/5  153  Kushala Frostwind 1, Skyward Striker 2,
+                                       Artful Dodger 1  | DS Earplugs 1
+   TOTALS  Burst 5, Combo Master 3, Artful Dodger 3, Advanced Burst 2,
+           Power Prolonger 2, Skyward Striker 2, Lock On 1,
+           Kushala Frostwind 1, Earplugs 1
+
+SET C IS THE SAME ARMOUR AS THE CHARGE BLADE FIGHT
+--------------------------------------------------
+Set C is piece for piece the set worn in 12-16-11 (Thanatos Force,
+471,759) and 12-10-30 / 12-13-20 (Axe of Demons, 302,796 and 227,211):
+Viper Kadachi helm, mail and coil, Rathian vambraces, Bazelgeuse
+greaves. Power Prolonger 2 from the two driftsmelt slots, which also
+confirms the level inferred from that fight's 53.7s Axe Boost window.
+
+So the Hunting Horn run is directly comparable to those three, and the
+Dual Blades run differs by one piece. That is the closest this project
+has come to a controlled multi-class comparison.
+
+BUT THESE ARE NOT MATCHED-ARMOUR COMPARISONS ACROSS THE BOARD, and it
+would be wrong to treat them as one set of five. Sets A and B are
+tailored to their weapons - Evading Reload 4 for the bowgun, Blunt Force
+and Slugger for the hammer - so they answer "what does this player
+achieve with each class" rather than "what is the class worth with
+armour held constant". Both are worth knowing. They are different
+questions and the second one is the one the engine gets wrong.
+
+STILL MISSING
+-------------
+   - the driftsmelt STAT bonus on three pieces. The skill is readable on
+     all of them (Viper Kadachi Helm: Artful Dodger 1, Somnacanth U
+     Braces: Artful Dodger 1, Kushala Crus: Earplugs 1) but the number
+     underneath is covered - by the phone's navigation bar on two, and
+     by the game's own floating Equip button on the helm. These run +1
+     to +6 attack, +1% affinity or +1 to +4 defence elsewhere in this
+     set, so the exposure is small but not zero
+   - the Switch Axe dummy weapon in 17-26-37, 17-28-35 and 17-30-26. No
+     screenshot. Reported as 0 affinity, deliberately, so the damage is
+     stable - which also makes it a DIFFERENT weapon from Axe of Demons
+     (-30%), so its dummy figures cannot be compared to the Axe of
+     Demons live fights without knowing its attack
+
+THE DATABASE CHECKS OUT AGAIN, ELEVEN FOR ELEVEN
+------------------------------------------------
+Every piece above, at the grade the screenshots show, against data.json:
+
+   Viper Kadachi Helm    G8  Advanced Burst 1, Artful Dodger 1,
+                             Combo Master 1                        match
+   Viper Kadachi Mail    G8  Combo Master 2                        match
+   Viper Kadachi Coil    G8  Advanced Burst 1, Burst 2             match
+   Somnacanth Vambraces  G8  Evading Reload 2                      match
+   Somnacanth U Coil     G8  Advanced Ice Attack 1, Charge Stock 2 match
+   Somnacanth U Braces   G8  Critical Ferocity 1, Lock On 1,
+                             Raw Power 1                           match
+   Nargacuga Faulds      G8  Evading Reload 2, Peak Performance 1  match
+   Bazelgeuse Greaves    G8  Blast Attack 1, Valor 2               match
+   Lunagaron Vambraces   G6  Blunt Force 2                         match
+   Rathian Vambraces     G8  Burst 2, Lock On 1                    match
+   Kushala Crus          G8  Artful Dodger 1, Skyward Striker 2,
+                             Kushala Frostwind 1                   match
+
+SIX OF THESE ARE NEW - Somnacanth Vambraces, Somnacanth U Coil,
+Somnacanth U Braces, Nargacuga Faulds, Lunagaron Vambraces and Kushala
+Crus had never been checked. With the eleven validated on 17 November
+that is seventeen distinct pieces across eleven families, no
+discrepancies, and one of them read at Grade 6 rather than Grade 8 so
+the grade progression is checked too.
+
+EVERY PIECE HAS EXACTLY ONE DRIFTSMELT SLOT at these grades, which the
+engine still does not take from the data. On Set C that is two Power
+Prolonger 1 slots stacking to Power Prolonger 2, plus Attack +6 and
+Attack +4 - a skill level and 10 attack the engine scores as zero.
