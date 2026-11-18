@@ -175,33 +175,49 @@ const ASSUME = {
    *
    * It was priced at burstUptime on the reasoning that the source calls it
    * POWER_BURST and the text has the same shape. The banner says otherwise.
-   * Across nine recordings carrying the skill, Combo Master banners EXACTLY
-   * ONCE per fight, never twice - while Burst banners five to seven times in
-   * the same fights as its chain breaks and re-arms. One trigger, like Valor,
-   * not a condition you keep re-entering.
+   * Across thirteen recordings carrying the skill, Combo Master banners
+   * EXACTLY ONCE per fight, never twice - while Burst banners four to nine
+   * times in the same fights as its chain breaks and re-arms. One trigger,
+   * like Valor, not a condition you keep re-entering.
    *
    * The detector was checked against a build with no Combo Master at all
    * (17Nov 21-10-49, the Valor set) and found nothing, so the single hit is
    * not the matcher giving up after the first.
    *
-   *    recording        lv   fight    Combo Master   uptime
-   *    17Nov 21-02-13    3    5-104s      17.0s       0.888
-   *    17Nov 21-04-56    3   30-134s      46.0s       0.846
-   *    17Nov 21-18-48    3   14-121s      33.5s       0.818
-   *    17Nov 12-09-26    3   17-122s      40.5s       0.776
-   *    17Nov 21-14-09    2   62-171s      NEVER       0.000
+   *    recording        lv   fight     Combo Master   uptime
+   *    17Nov 21-02-13    3    5-104s       17.0s       0.879
+   *    17Nov 21-04-56    3   30-134s       46.0s       0.846
+   *    17Nov 21-18-48    3   14-121s       33.5s       0.818
+   *    17Nov 12-09-26    3   17-122s       40.5s       0.776
+   *    16Nov 18-07-09    ?   13-151s       28.5s       0.888
+   *    18Nov 12-10-30    3    9-112s       27.5s       0.821
+   *    18Nov 12-13-20    3   11-113s       20.5s       0.907
+   *    18Nov 12-16-11    3    9-113s       28.0s       0.818
+   *    18Nov 12-04-07    3   94-196s      132.0s       0.627   bowgun, tapped
+   *    17Nov 21-14-09    2   62-171s       NEVER       - excluded, see below
    *
-   * THE MISFIRE IS THE INTERESTING ONE and it is kept in the mean. Combo
-   * Master simply never triggered across a 109-second Heavy Bowgun fight -
-   * confirmed at a loosened threshold, so it is absence not detection failure.
-   * "After performing an action multiple times" is evidently a melee combo
-   * that a bowgun may never perform. One sample cannot make that weapon
-   * specific, so it is carried as risk in the average instead.
+   *    mean of the nine that fired: 0.820
    *
-   * 0.666 with the misfire, 0.832 without. The lower is taken, which leaves
-   * Combo Master BELOW Burst's uptime rather than above it.
+   * THE MISFIRE IS NO LONGER A MYSTERY, AND NO LONGER A RISK. It was read as
+   * "a bowgun may never perform a melee combo" and carried in the mean as
+   * risk, which dragged the constant down to 0.666. That was wrong on both
+   * counts. 18Nov 12-04-07 is the SAME WEAPON CLASS with the skill equipped,
+   * fired MANUALLY one tap at a time, and Combo Master triggered - roughly
+   * twenty shots in, 38 seconds into the fight. 17Nov 21-14-09 was played
+   * with crouching shot, which is tap-and-hold: one sustained action, so the
+   * counter never advances however long you hold it.
+   *
+   * So the condition is an ACTION COUNT, not a weapon and not a melee combo,
+   * and a build that never taps simply never gets the skill. That is a
+   * playstyle precondition to state, not a probability to average over, so
+   * the zero is excluded rather than carried. 0.67 -> 0.82.
+   *
+   * THE PRICE OF TAPPING IS VISIBLE IN THE SAME ROW. 0.627 is the worst
+   * uptime of the nine by a wide margin, because twenty taps take far longer
+   * than a melee chain does: 38 seconds in against 10 to 24 for the melee
+   * fights. Combo Master is worth materially less on a gun even when it works.
    */
-  comboMasterUptime: 0.67,
+  comboMasterUptime: 0.82,
 
   /* Share of a glaive's DAMAGE dealt in the air, which is all that Skyward
    * Striker pays on. It must be a damage share and not a time share, because
@@ -403,6 +419,35 @@ const ASSUME = {
  * the better of the two options on offer: a number measured on one weapon
  * beats the 5/10/15% that was measured on none. If another type is ever
  * timed, it belongs here as its own entry.
+ *
+ * ---- THE EXTRAPOLATION WAS TESTED ON A SECOND TYPE, AND IT HELD ----
+ * 2026-11-18, Charge Blade (Thanatos Force 6, Axe Boost style), two dummy
+ * runs. Axe Boost shows as the weapon icons beside the phial bar glowing
+ * red, so its window is read off the icons rather than inferred from when
+ * the player stopped - which matters, because both runs kept attacking past
+ * the moment the glow died, so both are expiries and not stopping points:
+ *
+ *   no skills        boost window 32.1s
+ *   Power Prolonger 3             80.1s      x2.50
+ *
+ * A COMPLETELY DIFFERENT MECHANIC FROM DEMON MODE - a discrete buff window
+ * rather than a draining bar - and nothing like a fixed 20%-per-level drain
+ * reduction. But the skill is priced in damage, not seconds, and the cycle
+ * arithmetic lands in the same place. Measured on the same dummy: sword mode
+ * 1152 dmg/s, Axe Boost 3240 dmg/s, phial charge 6.5s, transform 1.7s.
+ *
+ *   no skills   cycle 6.5 + 1.7 + 32.1 = 40.3s   2766 dmg/s
+ *   Lv3         cycle 6.5 + 1.7 + 80.1 = 88.3s   3024 dmg/s      +9.3%
+ *
+ * +9.3% against the 12.0% carried here. Doubling the window buys so little
+ * because the window was ALREADY 80% of the cycle - the same reason Demon
+ * Mode's Lv3 bought 12% rather than the 2.6x its bar suggested.
+ *
+ * NOT CHANGED. 9.3% and 12.0% are one dummy apiece on two weapons whose
+ * mechanics have nothing in common, and the cycle model assumes the phial
+ * recharges from empty every time, which is not verified. The point is that
+ * the extrapolation was finally checked against something and did not fall
+ * apart; a per-type split would be fitting noise.
  */
 const POWER_PROLONGER = { 1: 0.030, 2: 0.068, 3: 0.120 };
 
@@ -410,6 +455,25 @@ const UTILITY = {
   // Measured on Dual Blades and applied to all seven types — see the note
   // above POWER_PROLONGER.
   'Power Prolonger': POWER_PROLONGER,
+  /* QUICK WORK IS THE WEAKEST NUMBER LEFT IN THIS FILE, and the first
+   * attempt to measure it says so loudly. On the two Charge Blade dummy
+   * runs above, the sword-to-axe transform - the action the skill is
+   * supposed to speed up - took 1.7s with no skills and 1.5s with Quick
+   * Work 3. That is 0.2s off one transform. At roughly 2.6 transforms in a
+   * 105s hunt it buys half a second of extra attacking: +0.5%, against the
+   * 15% claimed here. Thirty times out.
+   *
+   * NOT CHANGED, because the measurement is worse than the discrepancy.
+   * One run each, and the gap is timed from the last sword hit to the first
+   * axe hit, so the player's own reaction to the phial turning red is inside
+   * both numbers - easily +/-0.3s, which is larger than the effect. A second
+   * pair of runs would settle it, and until then 0.05/0.10/0.15 stays as the
+   * user's estimate rather than being replaced by a worse one.
+   *
+   * It may also be that the skill speeds up actions this test never used -
+   * sheathing, items, dodges - in which case a transform-only reading is a
+   * floor and not a refutation. Worth knowing before touching the number.
+   */
   'Quick Work': { 1: 0.05, 2: 0.10, 3: 0.15 },
   'Lock On': { 1: 0.10 },
 

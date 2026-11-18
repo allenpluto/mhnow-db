@@ -122,3 +122,62 @@ WHAT THIS METHOD COULD DO NEXT, now that it exists:
      which needs one more bowgun fight with the skill equipped
    - Burst's first activation on a fast weapon against a slow one, which is
      the extrapolation the old comment flagged and this still has not tested
+
+
+=====================================================================
+UPDATE 2026-11-18: THE MISFIRE SOLVED, AND IT WAS NOT THE WEAPON
+=====================================================================
+The open question was whether Combo Master's one total failure - 17Nov
+21-14-09, 109 seconds of Heavy Bowgun with the skill equipped and not a
+single banner - was a Heavy Bowgun property or a one-off. It was
+neither.
+
+18Nov 12-04-07 is the SAME WEAPON CLASS with the skill equipped, played
+by tapping each shot manually instead of holding. Combo Master fired -
+once, 38 seconds in, after roughly twenty taps.
+
+   CROUCHING SHOT IS TAP-AND-HOLD. One sustained action, however long
+   you hold it, so the counter never advances. Manual tapping advances
+   it one shot at a time and needs about twenty.
+
+So the trigger is an ACTION COUNT, not a melee combo and not a weapon
+class. The skill is not unavailable to bowguns; it is unavailable to a
+playstyle, and a player who crouches gets nothing from it at any level.
+
+THAT CHANGES HOW THE ZERO SHOULD BE TREATED. It was being carried in the
+mean as risk, which dragged the constant from 0.832 down to 0.666. A
+known precondition is not a probability to average over - it is a
+condition to state. The zero is excluded and the constant goes to the
+mean of the nine fights that fired.
+
+   comboMasterUptime   0.67 -> 0.82
+   Combo Master 3      +23.5% -> +28.7%
+
+THE PRICE OF TAPPING IS VISIBLE IN THE SAME ROW. At 0.627 the bowgun
+fight has the worst uptime of the nine by a wide margin, because twenty
+taps take far longer than a melee chain: 38 seconds in, against 10 to 24
+for the melee fights. Combo Master is worth materially less on a gun
+even when it works.
+
+ONCE PER FIGHT NOW HOLDS AT THIRTEEN RECORDINGS. The four new fights
+each show exactly one Combo Master banner and nothing after it, while
+Burst banners four to nine times in the same fights.
+
+   recording        fight       Combo Master   into fight   uptime
+   18Nov 12-10-30    9-112s        27.5s         18.5s       0.821
+   18Nov 12-13-20   11-113s        20.5s          9.5s       0.907
+   18Nov 12-16-11    9-113s        28.0s         19.0s       0.818
+   18Nov 12-04-07   94-196s       132.0s         38.0s       0.627
+
+WHAT THIS METHOD DID NEXT. The same template idea was pointed at a UI
+element that is not a banner at all - the weapon icons beside the phial
+bar, which glow red while Axe Boost is up - and read the buff window
+directly off them. That is what separated "the buff expired" from "the
+player stopped attacking", which no damage counter can do. See
+charge-blade-readings.txt.
+
+   STILL OPEN, and now narrower:
+   - Burst's first activation on a fast weapon against a slow one, which
+     the old comment flagged and this still has not tested
+   - whether Combo Master's ~20-action threshold is the same on melee,
+     which would turn the uptime from an average into a formula

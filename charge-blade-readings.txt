@@ -1,0 +1,164 @@
+The Charge Blade on a dummy: what Axe Boost actually does, and what
+Power Prolonger and Quick Work are really worth on it
+=====================================================================
+Three training-dummy runs, 2026-11-18, Thanatos Force 6 (2760 attack,
+-30% affinity, no element). The first controlled test in this project:
+same weapon, same player, same dummy, one variable changed per run.
+
+   15-26-33   Normal style    no skills
+   15-17-57   Axe Boost       no skills
+   15-20-53   Axe Boost       Quick Work 3 + Power Prolonger 3
+
+AXE BOOST IS A SELECTED STYLE, NOT A STAT. The weapon page shows it as
+node 5 of the style customisation tree, sitting between Attack Power +17
+and Attack Power +8 - so it is bought with a node that would otherwise
+be raw attack, and the Normal-style run is the same weapon with that
+node spent elsewhere.
+
+
+HOW IT WAS READ
+---------------
+The dummy's panel gives Total Damage and a HIT count, and it resets to
+zero after a few seconds without damage. That reset is the phase
+separator: the sword stretch ends at a reset, and the axe stretch counts
+up from zero, so the two never have to be separated by arithmetic.
+
+THE BOOST WINDOW IS READ OFF THE ICONS, NOT THE COUNTER. The two weapon
+icons beside the phial bar glow red while Axe Boost is up. That matters
+more than it sounds: a damage counter cannot tell "the buff expired"
+from "the player stopped swinging", and those are the two readings that
+decide what Power Prolonger is worth.
+
+   NEAR THE END THE GLOW FLASHES between red and black, which could have
+   been mistaken for the window closing. It was not: the detector bridges
+   gaps up to 0.5s and the flashes are 1 to 3 frames, while both windows
+   end with three or more SOLID seconds of dark. In both runs the player
+   was still landing hits after the glow died, so both are expiries.
+
+   The flash is a warning, and a fixed-length one: it begins 10.7s before
+   the end in the short window and 9.8s before the end in the long one.
+
+
+SWORD MODE IS THE SAME IN ALL THREE RUNS
+----------------------------------------
+   15-26-33  normal       7214 over 10 hits in 6.5s   1110/s
+   15-17-57  axe boost    7486 over 10 hits in 6.5s   1152/s
+   15-20-53  axe boost    8051 over 11 hits in 7.5s   1073/s
+
+About 1110/s, 1.5 hits/s, 730 per hit, whatever the style and whatever
+the skills. That is the control: style and skills do nothing until the
+transform, exactly as they should, which is the best evidence that the
+method is measuring the weapon and not the recording.
+
+
+AXE MODE IS WHERE EVERYTHING HAPPENS
+------------------------------------
+   style       dmg/s    hits/s   per hit
+   Normal       2246      1.56      1437
+   Axe Boost    3244      5.08       671
+
+   AXE BOOST  +44% damage per second, 3.3x the hit rate, 0.47x per hit
+
+The player's own description - "normal axe makes slow but relatively
+high damage attack moves" - is exactly right, and this puts numbers on
+it. Axe Boost is not a damage multiplier. It is an ATTACK RATE
+multiplier that costs you almost half of each hit, and the rate wins.
+
+THAT DISTINCTION IS WORTH MORE THAN THE 44%. A rate multiplier compounds
+with everything priced per hit and does nothing for anything priced per
+second; a damage multiplier does the opposite. Nothing in the engine
+knows which of the two it is holding, for any weapon.
+
+Against sword mode in the same run: Axe Boost 2.81x, Normal 2.02x.
+
+
+POWER PROLONGER 3: THE WINDOW DOUBLES, THE DAMAGE DOES NOT
+----------------------------------------------------------
+   no skills              boost window 32.1s
+   Power Prolonger 3                   80.2s      x2.50
+
+A x2.50 window on a completely different mechanic from the Dual Blades
+bar this skill was measured on - a discrete buff rather than a drain -
+and nothing like the fixed 20%-per-level drain reduction found there.
+
+But the skill is priced in damage, and the cycle arithmetic lands almost
+on top of the old number. A cycle is phial charge (6.5s sword) plus
+transform (1.7s dead) plus the window:
+
+   no skills   6.5 + 1.7 + 32.1 = 40.3s    2766 dmg/s
+   Lv3         6.5 + 1.7 + 80.2 = 88.4s    3024 dmg/s     +9.3%
+
+   carried in the engine, extrapolated from Dual Blades:  +12.0%
+
+DOUBLING THE WINDOW BUYS 9% BECAUSE THE WINDOW WAS ALREADY 80% OF THE
+CYCLE. This is the same trap Demon Mode sprang: the bar lasted 2.6x
+longer at Lv3 and the damage moved 12%. Duration multipliers look
+enormous and pay out small whenever the thing being extended already
+dominates its cycle.
+
+NOT CHANGED IN THE ENGINE. 9.3% against 12.0% is two dummies on two
+weapons whose mechanics have nothing in common, and the cycle model
+assumes the phial recharges from empty every time, which is NOT verified
+- the phial bar was still part-full during the boost. The finding is
+that an extrapolation nobody had ever tested survived its first contact
+with a second weapon type.
+
+
+QUICK WORK 3: THE WEAKEST NUMBER IN THE ENGINE, AND NOW IT SHOWS
+----------------------------------------------------------------
+Quick Work is supposed to speed up the transform. Timed from the last
+sword hit to the first axe hit:
+
+   normal style, no skills     1.7s
+   axe boost, no skills        1.7s
+   axe boost, Quick Work 3     1.5s
+
+0.2s off one transform. At about 2.6 transforms in a 105s hunt that is
+half a second of extra attacking: +0.5%, against the +15% the engine
+carries for Lv3. Thirty times out.
+
+NOT CHANGED, BECAUSE THE MEASUREMENT IS WORSE THAN THE DISCREPANCY. One
+run each, and the gap is timed from the last sword hit to the first axe
+hit - so the player's own reaction to the phial turning red is inside
+both numbers, easily +/-0.3s, which is larger than the whole effect. The
+honest position is that 0.05/0.10/0.15 is an unevidenced estimate and
+the one attempt to check it came back far lower.
+
+It may also speed up actions this test never used - sheathing, items,
+dodges - in which case a transform-only reading is a floor and not a
+refutation. Worth establishing before anyone touches the number.
+
+THE PLAYER EXPECTED NORMAL STYLE TO TRANSFORM MUCH FASTER. It measured
+the same 1.7s. With one sample each and reaction time included, that is
+a failure to confirm rather than a contradiction.
+
+
+THE NUMBER THAT CHANGES HOW MUCH EVERYTHING ELSE IS WORTH
+---------------------------------------------------------
+The two Axe Boost runs are different builds, recorded separately. Twenty
+seconds into the axe phase they read:
+
+   15-17-57   71,579
+   15-20-53   70,579      1.4% apart
+
+A DUMMY RUN IS WORTH ABOUT TWENTY LIVE HUNTS AS EVIDENCE. Live base
+defences on one build run +/-33% - two Switch Axe runs minutes apart on
+the same set came in at 302,796 and 227,211 the same morning. That
+spread has now defeated three build comparisons in this project. The
+dummy's is 1.4%.
+
+Everything that failed to settle on live recordings should be re-asked
+on a dummy before anyone records another hunt for it.
+
+
+WHAT THIS STILL CANNOT SEE
+--------------------------
+   - a dummy never moves, never roars and never knocks you down, so the
+     phial-charge half of the cycle is a best case and the boost half
+     never gets interrupted
+   - whether the phial recharges from empty after a boost expires, which
+     the whole cycle model rests on
+   - the Switch Axe. Everything above describes what the Charge Blade
+     does; none of it describes what the Switch Axe fails to do, and the
+     96% gap between them is still unattributed. The same three runs on
+     Axe of Demons are the other half and would take twenty minutes.

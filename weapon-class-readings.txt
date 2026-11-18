@@ -137,3 +137,85 @@ to +4. The Burst build's three Power Prolonger 1 slots stack to Power
 Prolonger 3, which no armour piece grants on its own - so driftsmelt is not a
 rounding detail on these builds, it is where a third of the skill levels come
 from. Scoring a set without it understates it.
+
+
+=====================================================================
+UPDATE 2026-11-18: THREE MORE FIGHTS, AND THE GAP NO LONGER OVERLAPS
+=====================================================================
+Three more Riftcharged Zinogre base defences, same morning, same player.
+The build is the five-piece set above with the leg slot swapped to
+Bazelgeuse Greaves 4 (Valor 2, Blast Attack 1, driftsmelt Peak
+Performance 1 / Affinity +1%). Videos 2 and 3 are the Switch Axe on that
+set; video 4 is the Charge Blade on the SAME set. Only the weapon moved.
+
+   v   weapon                 class          damage     s      /s
+   2   Axe of Demons 5        Switch Axe    302,796   ~104    2912
+   3   Axe of Demons 5        Switch Axe    227,211    105    2164
+   4   Thanatos Force 6       Charge Blade  471,759   ~105    4493
+
+THE GAME REPORTS FIGHT LENGTH AND NOBODY HAD NOTICED. The post-fight
+Hunt Report carries "Completion Time" - 01:45 on video 3 - along with
+"Dimensional Barrier Weakened Count: 3 times". Fight duration no longer
+has to be inferred from when the damage counter appears and vanishes.
+Against that clock the counter-window method reads about 2.5s short,
+which is the calibration for the fights whose recordings cut off before
+the report.
+
+ALL SEVEN FIGHTS NOW ON RECORD
+------------------------------
+   Switch Axe     287,426   221,096   217,076   302,796   227,211
+                  mean 251,121     best 302,796
+   Charge Blade   513,992   471,759
+                  mean 492,876    worst 471,759
+
+   THE WORST CHARGE BLADE RUN BEATS THE BEST SWITCH AXE RUN BY 55.8%.
+
+No overlap at all across seven fights. The earlier note put a 65% floor
+on the gap from one pair of weapons and three fights, and worried that
+one more Switch Axe run could close it. Two more Switch Axe runs have
+now happened and the distributions still do not touch.
+
+   engine, Charge Blade vs Switch Axe, same armour:          0.0%
+   measured, mean against mean:                               +96%
+   measured, worst Charge Blade against best Switch Axe:    +55.8%
+
+The engine scores Axe of Demons and Thanatos Force at exactly 4762.0 and
+4012.7 for the two documented builds - identical, to the decimal, on
+both weapons.
+
+AND THE NOISE FIGURE IS RE-CONFIRMED BY THE WORST PAIR IN THE SET.
+Videos 2 and 3 are the same weapon on the same build minutes apart:
+302,796 and 227,211, which is 33% apart. That is the run-to-run spread
+again, and it is why the 55.8% separation matters more than the 96%.
+
+WHAT IS NOW KNOWN ABOUT WHY, AND WHAT IS NOT
+--------------------------------------------
+The dummy work the same afternoon (charge-blade-readings.txt) explains
+the Charge Blade side: Axe Boost is an attack-RATE multiplier, 3.3x the
+hit rate at 0.47x per hit, sustaining 3244 dmg/s against sword mode's
+1152 - and it holds that state for 32s at a time, 80s with Power
+Prolonger 3.
+
+THAT IS HALF AN EXPLANATION AND IT SHOULD NOT BE MISTAKEN FOR THE WHOLE
+ONE. It describes what the Charge Blade does. It says nothing about what
+the Switch Axe fails to do, because the Switch Axe has never been put on
+a dummy. Until it is, the 96% has a mechanism on one side only.
+
+Thanatos Force is also 2760 attack against Axe of Demons' 2658 - +3.8%,
+which was the stat-slot question the earlier note raised. It is now
+answered and it does not matter: 3.8% against 96%.
+
+STILL NOT MODELLED. A class multiplier fitted to two weapons would be a
+guess wearing a measurement's clothes, and now that Axe Boost turns out
+to be a STYLE choice rather than a property of the class, fitting one
+would be wrong in a second way - the same Charge Blade on Normal style
+loses 44% of its axe-mode output and the engine would have no way to
+tell the two apart.
+
+WHAT WOULD CLOSE IT, in order:
+   - Axe of Demons on a dummy, same three runs. Twenty minutes, and the
+     dummy's 1.4% noise means three runs settle what twenty hunts could
+     not
+   - a third and fourth class on the same armour
+   - whether the gap holds at other attack values, which decides whether
+     this is a multiplier on damage or a different attack rate
