@@ -219,3 +219,90 @@ WHAT WOULD CLOSE IT, in order:
    - a third and fourth class on the same armour
    - whether the gap holds at other attack values, which decides whether
      this is a multiplier on damage or a different attack rate
+
+
+=====================================================================
+UPDATE 2026-11-19: SIX MORE FIGHTS, AND THE 55.8% CLAIM DOES NOT HOLD
+=====================================================================
+Four more weapon classes, recorded the evening of 18 November. Builds
+are documented piece by piece in builds-2026-11-18.txt; the video-to-set
+mapping was read off the HUD. Every fight ran 104 to 105 seconds.
+
+   class          weapon                 atk    damage    dmg/s
+   Hammer         Chaos Shatterer 6     2760   538,115     5125
+   Light Bowgun   Sinister Shadow Bolt 5 2512  527,060     5020
+   Charge Blade   Thanatos Force        2760   513,992     4895
+   Charge Blade   Thanatos Force 6      2760   471,759     4493
+   Hammer         Chaos Shatterer 6     2760   372,901     3551
+   Hammer         Chaos Shatterer 6     2760   333,215     3174
+   Hunting Horn   Skullwhistle 8        2312   324,548     3091
+   Dual Blades    Thanatos Mauls 6      2760   320,784     3055
+   Heavy Bowgun   Griffon Blazooka 5    2658   301,916     2770
+   Switch Axe     Axe of Demons 5       2658   302,796     2884
+   Switch Axe     Axe of Demons 5       2658   287,426     2903
+   Switch Axe     Axe of Demons 5       2658   227,211     2164
+   Switch Axe     Axe of Demons 5       2658   221,096     2105
+   Switch Axe     Axe of Demons 5       2658   217,076     2067
+
+THE HAMMER ALONE SPANS 333,215 TO 538,115
+-----------------------------------------
+Three fights, same player, same weapon, inside about twenty-five
+minutes. TWO OF THEM - 333,215 and 538,115 - ARE THE SAME ARMOUR SET,
+recorded three minutes apart. That is +61.5%.
+
+The weapon-class claim written here yesterday was that the worst Charge
+Blade run beat the best Switch Axe run by 55.8%, across seven fights
+with no overlap, and that this "clears the top" of the run-to-run
+spread. IT DOES NOT. The spread is now demonstrably larger than the gap
+it was supposed to clear: one weapon, one build, two fights, 61.5%.
+
+So the honest position is:
+   - the DIRECTION still looks real. Five Switch Axe runs all land at or
+     below 303k; two Charge Blade runs both land at or above 472k. If
+     the true spread were 61% in both, some Switch Axe run should have
+     climbed into Charge Blade territory and none did
+   - the MAGNITUDE is not established and two Charge Blade samples
+     cannot establish it. 55.8% was measured against a noise floor that
+     was itself mis-measured
+   - anything that reasoned from the 55.8% should be re-read with that
+     in mind
+
+WHAT IT IS NOT, which took some work to rule out
+------------------------------------------------
+Base defence is not a flat fight - the monster is shielded part of the
+time and open the rest, at +25%, +50% or +100%. The obvious suspect was
+that the big runs simply got more open time. THEY DID NOT:
+
+   open time, all nine fights measured frame by frame:  91% to 96%
+
+That is as flat as anything in this project. 18-28-56 (538,115) was open
+93% of the fight and 18-25-25 (333,215) was open 95%. The 61% gap is not
+bought with seconds of vulnerability.
+
+The next suspect is the MULTIPLIER - 100% against 25% is a 1.6x swing on
+the same open second - and that is a GROUP property in a multiplayer
+base defence, not a build property. Two attempts to read it failed: the
+text-width classifier smears because the counter's own digits grow, and
+a shielded-to-open transition counter returns 6 for the one fight whose
+Hunt Report says 3. NEITHER IS PUBLISHED. The hypothesis is live and
+unmeasured.
+
+THE REAL CONCLUSION IS ABOUT METHOD
+-----------------------------------
+A base defence has now defeated four build comparisons and one class
+comparison. The instrument is too noisy for the question, and the noise
+is plausibly other players.
+
+   base defence, same build, best vs worst pair:   +61.5%
+   dummy, same weapon, two separate runs:           +1.4%
+
+Forty times better. Everything that failed to settle on recorded hunts
+should be re-asked on the dummy, and the dummy is where the Charge
+Blade's mechanics actually got measured. No further live fights should
+be recorded to answer a damage question until the dummy has been
+exhausted.
+
+WHAT THE LIVE FIGHTS ARE STILL GOOD FOR: anything about WHEN rather than
+HOW MUCH. Skill banner timings, gauge uptimes and roar times all come
+off these recordings cleanly, because they do not depend on how hard the
+rest of the group was hitting.
