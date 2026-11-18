@@ -240,6 +240,41 @@ swap to Bazelgeuse Greaves traded a Power Prolonger slot for Valor 2.
 Nothing here was fitted to the live fight; the cycle model was built
 entirely on the dummy and the live fight landed inside it.
 
+*** THE SWITCH AXE UPTIME FIGURES BELOW ARE WITHDRAWN. 2026-11-19. ***
+The detector that produced "62-65% in six to eight windows" was reading
+the gauge BAR, and the Switch Axe's sword-slash effect is pink and is
+drawn straight over it. Pink passes any "is this red" test, so attack
+effects were being counted as sword stage. Frames prove it: at 13s and
+30s of the 17-30-26 dummy run the bar is plainly BLUE and the detector
+called both red.
+
+Rebuilt to read the small weapon icon to the right of the bar, with a
+majority filter, and validated against six hand-checked frames, the
+live figures collapse to 7.7% uptime in one fight and 31.4% in the
+other - nowhere near 62-65%, and not even consistent with each other.
+
+THE ICON IS NOT CLEAN EITHER. Hand-checking turned up at least four
+distinct gauge appearances (blue bar / purple bar with a magenta icon /
+orange bar with an orange glow / small orange bar with a white icon),
+and the magenta icon does not line up with the orange bar. Nothing here
+is trustworthy enough to publish a Switch Axe uptime, so none is
+published. A designed dummy test - one attack type at a time - is what
+this needs, and that is what has been asked for.
+
+THE CHARGE BLADE FIGURES ARE NOT AFFECTED. That detector reads the two
+weapon icons beside the phial bar, not a bar under the effect layer,
+and it was checked against frames at 12s, 30s and 51s on the dummy and
+40s, 79s and 95s on the live fight. ONE CAVEAT FOUND WHILE CHECKING: at
+79s the HUD IS ABSENT ENTIRELY - no gauge, no phials - which the
+detector scores as "not boosted". That frame sits in the gap between
+the two live windows and the health bar is low, so a knockdown is the
+likely cause, and a knockdown would end the boost anyway. But "window
+ended" and "HUD hidden" are the same observation to this method, and in
+a fight with more knockdowns they would not be.
+
+Everything from here to the end of the section is the ORIGINAL TEXT,
+kept so the error is visible rather than quietly rewritten.
+
 SWITCH AXE, SAME MORNING, SAME ARMOUR. The Switch Axe's gauge is drawn
 as the weapon itself rather than icons and phials, and IT RUNS THE
 OPPOSITE WAY ROUND FROM THE CHARGE BLADE:
