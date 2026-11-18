@@ -291,12 +291,24 @@ Evading Reload follows. The engine now says +2.3% on Thanatos Force and
 evidence actually has.
 
 POWER PROLONGER MAY FIT THE SWITCH AXE BETTER THAN THE CHARGE BLADE.
-The Charge Blade's Axe Boost is a timed window; the Switch Axe's sword
-stage is a DRAINING BAR, which is precisely the mechanic Power
-Prolonger was measured on with Dual Blades' Demon Mode. The 20%-per-
-level drain reduction found there has a real chance of transferring
-literally rather than by analogy. Untested, and now obviously worth
-testing.
+The Switch Axe's sword stage is a DRAINING BAR, which is precisely the
+mechanic Power Prolonger was measured on with Dual Blades' Demon Mode.
+The 20%-per-level drain reduction found there has a real chance of
+transferring literally rather than by analogy. Untested, and now
+obviously worth testing.
+
+AND A CLAIM ABOVE NEEDS WITHDRAWING. Axe Boost was called "a discrete
+buff window rather than a draining bar" on the strength of its 32.1s
+and 80.2s running like clocks. THEY CANNOT ACTUALLY BE TOLD APART HERE:
+the two runs attacked at 5.08 and 5.03 hits a second, so a timer and a
+per-hit drain predict the same two numbers. The phial bar was also
+visibly part-spent during the boost, which leans the other way.
+
+That matters for anyone using the Power Prolonger figure: if Axe Boost
+drains per hit rather than per second, then ATTACK-SPEED SKILLS SHORTEN
+IT, and the cycle model above - which treats the window as fixed - will
+overstate builds that stack them. A dummy run at a deliberately slower
+attack rate would separate the two in one recording.
 
 WHAT IT STILL DOES NOT ESTABLISH. The Switch Axe's sword stage has
 never been put on a dummy, so "fewer spend-state seconds" only matters

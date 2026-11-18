@@ -430,9 +430,15 @@ const ASSUME = {
  *   no skills        boost window 32.1s
  *   Power Prolonger 3             80.1s      x2.50
  *
- * A COMPLETELY DIFFERENT MECHANIC FROM DEMON MODE - a discrete buff window
- * rather than a draining bar - and nothing like a fixed 20%-per-level drain
- * reduction. But the skill is priced in damage, not seconds, and the cycle
+ * IT LOOKS LIKE A TIMED WINDOW RATHER THAN DEMON MODE'S DRAINING BAR, BUT
+ * THIS CANNOT TELL THEM APART. The two runs attacked at 5.08 and 5.03 hits a
+ * second, so a timer and a per-hit drain predict the same two durations, and
+ * the phial bar was visibly part-spent during the boost. IF IT DRAINS PER
+ * HIT, ATTACK-SPEED SKILLS SHORTEN IT and the cycle below overstates builds
+ * that stack them. One dummy run at a deliberately slower swing rate would
+ * separate the two.
+ *
+ * Either way the skill is priced in damage, not seconds, and the cycle
  * arithmetic lands almost exactly on the number already here. Measured on
  * the same dummy: sword mode 7486 damage over 8.2s (913/s), Axe Boost
  * 3244/s, and 2.2s of dead time across the transform.
