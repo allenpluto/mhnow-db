@@ -625,3 +625,66 @@ dividing the multiplier out treats all open seconds as equal, and for a
 late-peaking weapon they are not.
 
    one recorded glaive base defence settles both the 20% and the ramp
+
+
+=====================================================================
+THREE DUAL BLADES FIGHTS ON IDENTICAL GEAR, AND A COUNTER-EXAMPLE
+=====================================================================
+Set D unchanged - Thanatos Mauls 6, Kushala Crus legs, Burst 5 / Combo
+Master 3 / Advanced Burst 2 / Skyward Striker 2 / Power Prolonger 2 -
+played three times across two evenings.
+
+   fight               damage    raw/s   open%   BASE   per-stage base
+   21-25-57 (18 Nov)   320,784    3055    74%    2294   2227 2929 1818
+   18-03-02 (19 Nov)   325,819    3103    71%    2687   3659 2561 1674
+   18-08-34 (19 Nov)   420,743    4046    68%    3291   2627 3498 3832
+
+   raw damage spread   31.2%
+   BASE dps spread     43.4%
+
+NORMALISING MADE THE SPREAD WORSE, WHICH CONTRADICTS WHAT WAS WRITTEN
+HERE YESTERDAY. The Hammer pair narrowed from 61.5% to 42% once open
+time and the multipliers were divided out, and that was reported as the
+instrument overstating. These three go the other way: 31.2% raw becomes
+43.4% normalised.
+
+The reason is visible in the table. THE BEST FIGHT HAD THE LEAST OPEN
+TIME - 68% against 74% for the worst - so it was doing more damage with
+fewer seconds to do it in, and dividing by open seconds widens its lead
+instead of narrowing it.
+
+SO THE CORRECT STATEMENT IS NARROWER THAN THE ONE MADE YESTERDAY. Base
+dps does not reduce the spread; it removes a confound. Whether the
+number moves up or down depends on which way the confound happened to
+be pointing, and with the feedback loop in play it can point either
+way. The Hammer case was not a demonstration that normalising shrinks
+noise. It was one draw.
+
+WHAT IT DOES CONFIRM IS THE NOISE FLOOR, on a third weapon. Three runs,
+one player, one set, nothing changed between them, and the fairest
+measure available spreads 43%. Every same-build repeat now on record:
+
+   Hammer                   61.5% raw   42% base
+   Dual Blades (3 runs)     31.2% raw   43% base
+   Switch Axe               33.3% raw
+   Skullwhistle             31.3% raw
+   Charge Blade              9.0% raw
+
+DUAL BLADES SIT MID-TABLE. Base mean 2757, range 2294 to 3291:
+
+   Charge Blade      3785
+   Hammer best       3743
+   LBG solo slicing  3384
+   LBG cluster       3267
+   Hunting Horn      2919
+   Dual Blades       2757   (mean of three)
+   Hammer            2638
+   Hammer            2630
+   Switch Axe best   2437
+
+AND THEY DO NOT RAMP. Per-stage base runs 2227/2929/1818, then
+3659/2561/1674, then 2627/3498/3832 - no consistent direction across
+the three. That puts Dual Blades with the Switch Axe and the Hunting
+Horn rather than with the Hammer and the bowguns, which climb steeply.
+With three fights disagreeing about the shape, the honest reading is
+that this weapon's stage-to-stage variation is noise rather than ramp.
