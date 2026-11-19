@@ -68,11 +68,13 @@ Take the transform off each and they are identical:
 
 The whole difference is the transform: 1.08s on S3 against 1.90s on S5.
 
-S3 ACTIVATES SWORD MODE WITH A TAP AND S5 WITH A HOLD, so the obvious
-reading is that the hold-activation costs about 0.8s more. One sample
-each, and the player's reaction is inside both, so it is a lead rather
-than a finding - but it is the same size of effect Quick Work 3 was
-worth on the Charge Blade, and it would be free.
+*** THE FOLLOWING LEAD IS DEAD. See the transform section below. ***
+S3 activates sword mode with a TAP and S5 with a HOLD, so the obvious
+reading was that hold-activation costs about 0.8s more. Video 2 then
+timed a TAP activation at 1.80s and a HOLD at 1.89s - the same. The
+1.08s on S3 is simply an under-read, and the player has since explained
+why: the transform's END HAS NO CLEAR ON-SCREEN SIGNAL, so where it
+falls is a judgement that varies between attempts.
 
 The explosion itself is real: the last second of S5 lands 4 hits for
 4489, about 1122 each against 649 for a normal sword hit. It just does
@@ -222,3 +224,66 @@ one specific style rather than a whole axis.
 
 Two styles measured, one on each weapon, so this is a direction and not
 a conclusion. The Switch Axe's third style is recorded and untimed.
+
+
+=====================================================================
+THE TRANSFORM, AND WHY THE SWORD STAGE IS A CONSTANT
+=====================================================================
+Three transforms timed in video 2, plus the two from video 1:
+
+   v2  9.23 -> 11.18   1.95s   (early, outside the listed stages)
+   v2 28.14 -> 30.03   1.89s   HOLD activation, S2
+   v2 48.20 -> 50.00   1.80s   TAP  activation, S4
+   v1 53.18 -> 55.08   1.90s   HOLD activation, S5
+   v1 26.10 -> 27.18   1.08s   TAP  activation, S3   <- the outlier
+
+   the four consistent readings: mean 1.88s, spread 8%
+
+TAP AND HOLD ACTIVATION COST THE SAME, which retires the "hold costs
+0.8s more" lead from the video 1 section above. The player supplies the
+reason the readings scatter at all: THE TRANSFORM'S END HAS NO OBVIOUS
+ON-SCREEN SIGNAL. Where it finishes is a judgement, and 1.08s is that
+judgement going short once rather than a different move.
+
+   so: the Switch Axe transform costs about 1.9 SECONDS, +/- 0.1s,
+   and nothing the player does at the input changes it.
+
+THE SWORD STAGE IS THE SAME EVERYWHERE
+--------------------------------------
+Taking each transform off its own stage:
+
+   v1 S3  tap tap tap       no style    13.06s   17533   1342 dps
+   v1 S5  charged, full bar no style     7.16s    9503   1327 dps
+   v2 S4  tap tap tap       EBC         12.16s   16208   1333 dps
+   v2 S2  charged, ~75% bar EBC          7.23s    6994    967 dps
+
+THREE OF THE FOUR LAND WITHIN 1.1% OF EACH OTHER - 1342, 1327, 1333 -
+across two different styles AND two different sword moves. On a 14%
+noise floor that is not consistency, it is identity. Sword mode runs at
+about 1334 dps on this weapon and essentially nothing changes it.
+
+THE ONE THAT DOES NOT FIT IS THE ONE WITH LESS ENERGY. S2's charged
+attack ran on a bar the player had filled to about 75% and returned 967
+dps - 27% below the same move on a full bar, for a bar 25% less full.
+THE CHARGED ATTACK APPEARS TO SCALE WITH THE ENERGY IT SPENDS, roughly
+one for one. That is a real mechanic and it is the only thing measured
+here that moves the sword stage's damage rate at all.
+
+   (two samples, so the proportionality is a shape not a law - but the
+   alternative, that Element Burst Counter weakens the charged attack
+   by 27% while leaving tap-tap-tap untouched, is much less likely)
+
+WHAT IS NOW SETTLED ABOUT THE SWITCH AXE
+----------------------------------------
+   axe stage      ~886 dps, two moves, balanced to each other
+   transform      ~1.9s, unavoidable, same for tap and hold
+   sword stage    ~1334 dps, flat across styles and sword moves,
+                  scaling only with how full the bar was
+   full cycle     ~1082 dps, +22% over never transforming
+   style          Element Burst Counter: no measurable effect
+
+A weapon with far fewer moving parts than the Charge Blade, and with no
+state worth protecting: there is no 32-to-80 second buff to extend, no
+expiry to race, and the one skill the engine prices highly for it -
+Quick Work - accelerates a 1.9s action inside a cycle whose entire
+payoff is 22%.
