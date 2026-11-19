@@ -1,0 +1,156 @@
+The Switch Axe, move by move, and the first mechanical account of
+why the Charge Blade out-damages it
+=================================================================
+Dummy, 2026-11-18, recording 17-26-37. Lumu Smasher 5: Switch Axe, 1949
+attack, 0% affinity chosen deliberately so the damage is stable, no
+element, and NO STYLE SELECTED. Stage boundaries timed by the player to
+a hundredth of a second; damage and hit counts off the dummy panel,
+which resets between every stage so each total stands alone.
+
+HOW A MOVE IS TIMED, which turned out to matter more than expected
+------------------------------------------------------------------
+Each window runs from the first frame of the action to the frame the
+character returns to a standing position - NOT from first damage to last
+damage. The recovery frames do no damage but you cannot do anything else
+during them, so a dps figure that excludes them describes a rate nobody
+can sustain.
+
+THAT IS NOT JUST PRINCIPLE, IT MEASURES BETTER. The same move was
+recorded twice (S1 and S4). On full windows those two land 2.4% apart.
+On first-damage-to-last-damage windows they land 8.6% apart, because
+that convention depends on exactly where the final tick happened to fall
+inside a recovery. The stricter definition is also the more repeatable
+one, which is the sort of agreement worth noticing.
+
+   repeatability of this method: 2.4%
+
+THE FIVE STAGES
+---------------
+   stage  mode   move                   window    dmg  hits   dps  hits/s  /hit
+   S1     axe    tap-and-hold           11.89s  10623   13    893   1.09    817
+   S2     axe    tap tap tap             9.98s   8491    8    851   0.80   1061
+   S3     sword  tap tap tap            14.14s  17533   27   1240   1.91    649
+   S4     axe    tap-and-hold (repeat)   8.15s   7459    9    915   1.10    829
+   S5     sword  charged + explosion     9.06s   9503   12   1049   1.32    792
+
+   axe mean 886 dps. Axe attacks recharge the bar and are free forever;
+   sword attacks drain it. S1/S2 and S4/S5 are consecutive, so the axe
+   stages are also what pays for the sword stages.
+
+EVERY MOVE IN A STAGE IS BALANCED TO THE SAME DPS
+-------------------------------------------------
+   axe    tap-and-hold   1.09 hits/s x  817 = 893
+   axe    tap tap tap    0.80 hits/s x 1061 = 851        5% apart
+   sword  tap tap tap    2.07 hits/s x  649 = 1342
+   sword  charged hold   1.68 hits/s x  792 = 1327       1.1% apart
+
+(the sword figures with the transform taken off - see below)
+
+FOUR MOVES, TWO STAGES, AND INSIDE EACH STAGE THEY TIE. The faster move
+always hits for proportionally less. At 2.4% repeatability the 1.1% gap
+between the two sword moves is nothing at all and the 5% between the axe
+moves is barely something. This looks like deliberate balancing.
+
+WHICH MEANS THE CHOICE IS NOT ABOUT DAMAGE - EXCEPT THAT IT IS, ONCE
+SKILLS ARE ON. Burst, Combo Master and Advanced Burst all count actions.
+Two moves that tie on raw dps do not tie on a build that pays per hit,
+and on this weapon the spread is 1.09 against 0.80 hits a second in axe
+and 2.07 against 1.68 in sword. A hit-counting build should prefer the
+faster move in both stages, for free.
+
+THE CHARGED ATTACK IS NOT WORSE. ITS TRANSFORM IS SLOWER.
+---------------------------------------------------------
+On the stated windows S5 looks clearly worse than S3, 1049 against 1240.
+Take the transform off each and they are identical:
+
+   S3  transform ends 27.18, sword runs to 40.24   13.06s   1342 dps
+   S5  transform ends 55.08, sword runs to 62.24    7.16s   1327 dps
+
+The whole difference is the transform: 1.08s on S3 against 1.90s on S5.
+
+S3 ACTIVATES SWORD MODE WITH A TAP AND S5 WITH A HOLD, so the obvious
+reading is that the hold-activation costs about 0.8s more. One sample
+each, and the player's reaction is inside both, so it is a lead rather
+than a finding - but it is the same size of effect Quick Work 3 was
+worth on the Charge Blade, and it would be free.
+
+The explosion itself is real: the last second of S5 lands 4 hits for
+4489, about 1122 each against 649 for a normal sword hit. It just does
+not make the stage better than tapping, it makes it equal.
+
+WHAT TRANSFORMING IS ACTUALLY WORTH
+-----------------------------------
+   sword, transform excluded      1335 dps     +51% over axe
+   sword, transform included      1240 dps     +40% over axe
+
+A cycle is axe to refill the bar, the transform, then sword until it
+empties. S1 then S3 is exactly that cycle, start to finish:
+
+   never transform, stay in axe       886 dps
+   full axe -> sword -> axe cycle    1082 dps over 26.03s    +22%
+
+TRANSFORMING IS WORTH TWENTY-TWO PERCENT. The sword stage is half again
+as good but you only occupy half the cycle and you pay a transform to
+get in. That is the number any Switch Axe skill has to be judged
+against, and it reframes the player's own live fight where sword mode
+was barely used as a much smaller mistake than it looked.
+
+AGAINST THE CHARGE BLADE
+------------------------
+   Switch Axe    Lumu Smasher    1949 atk   cycle 1082 dps
+   Charge Blade  Thanatos Force  2760 atk   cycle 2625 dps
+
+   per 1000 attack    Switch Axe 555     Charge Blade 951     1.71x
+
+Both weapons run the same shape - a slow state that banks a resource, a
+fast state that spends it - and the spend states are not comparable:
+
+   Switch Axe    axe  886 -> sword 1335        spend state  +51%
+   Charge Blade  sword 913 -> Axe Boost 3244   spend state +255%
+
+THE CHARGE BLADE'S SPEND STATE IS FIVE TIMES THE UPGRADE. It also holds
+it far longer - 32 to 80 seconds in one block against a bar that empties
+in 13 - which is why its live uptime was 80% in two windows against a
+Switch Axe that transforms six or eight times a fight.
+
+AND THE SKILLS AMPLIFY IT, which is the part that compounds. Axe Boost
+lands 5.08 hits a second; the Switch Axe manages 0.80 to 2.07. On the
+Burst 5 / Combo Master 3 / Advanced Burst 2 build both weapons were
+wearing, that is a skill set which arms faster, breaks less and stays up
+longer on the Charge Blade for reasons that have nothing to do with the
+skills. The measured Burst uptimes already showed it: 0.448 on the
+Switch Axe run where hits were not landing, 0.78 to 0.92 everywhere else.
+
+   live base defences, Charge Blade against Switch Axe   ~1.9x
+   dummy, mechanics alone, attack-normalised             1.71x
+
+The dummy now accounts for most of a gap the engine still scores as
+ZERO, and the remainder points the right way for the skill argument
+above and for the group confounds in weapon-class-readings.
+
+THE CAVEAT THAT MATTERS MOST
+----------------------------
+LUMU SMASHER HAS NO STYLE SELECTED. Thanatos Force was running Axe
+Boost, and Axe Boost is worth +44% over the Charge Blade's own normal
+axe mode. So this is a STYLELESS weapon measured against a STYLED one,
+and it is not the clean class comparison it resembles. Strip Axe Boost
+out and the Charge Blade's advantage per 1000 attack falls a long way.
+
+Axe of Demons - the Switch Axe in every live fight in this project -
+does carry a style, and nobody has recorded which one.
+
+THE NEXT RECORDING THAT WOULD CHANGE ANYTHING is these same five stages
+on a STYLED Switch Axe. If a style lifts it the way Axe Boost lifts the
+Charge Blade, then most of the 1.71x is style rather than class, and the
+axis the engine is missing is styleVariants() rather than weapon
+category - which matters, because styleVariants() already exists and
+already branches for Dual Blades.
+
+ALSO OPEN
+---------
+   - whether the hold-activation transform really costs 0.8s more than
+     the tap-activation. Two runs of S3 and S5 would settle it
+   - the 22-spin Water Strike hammer mechanic, a third style that banks
+     damage in a combo rather than a buff or a bar
+   - whether any of this holds at other attack values. Everything here
+     is one weapon at 1949 attack against one at 2760
