@@ -358,3 +358,63 @@ less than the 333k run. So it is a strong lever that happened to be held
 nearly constant, which makes it a poor explanation for this particular
 pair and leaves the multiplier split - which is still unmeasured - as
 the part of it that could still matter.
+
+
+=====================================================================
+UPDATE 2026-11-19: A SOLO RUN KILLS THE BARRIER-BREAK HYPOTHESIS
+=====================================================================
+Two more fights. The second is the one that matters: the player could
+not find a teammate and ran the base defence SOLO, which removes the
+group confound completely rather than arguing about it.
+
+   fight                          start-end     dur   damage   dmg/s
+   Skullwhistle, Hunting Horn      24-127.5s  103.5s  426,091   4117
+   LBG slicing build, SOLO        106-212.5s  106.5s  438,173   4114
+
+OPEN TIME IS IDENTICAL SOLO. 92%, against 91-96% for every group fight
+measured. The hypothesis written here yesterday was that the damage
+multiplier - and behind it the barrier-break rate - is "a GROUP property
+in a multiplayer base defence, not a build property", and that this was
+the live candidate for the 61% Hammer spread.
+
+A SOLO PLAYER BREAKS THE BARRIER JUST AS OFTEN. Whatever drives the
+spread, it is not that three other hunters open the monster up for you.
+That is a clean negative result and it was free - one recording the
+player made for a different reason.
+
+   open time now measured on eleven fights, solo and group: 92% to 96%
+
+The Hunting Horn's party attack buff survives this, because it works on
+damage per hit rather than on how long the monster is open. So does
+Water Strike's spin-count mechanic and so does Critical Ferocity. What
+does not survive is the idea that the group decides how much of the
+fight you get to spend hitting.
+
+AND THE SAME BUILD DRIFTED 31% OVERNIGHT
+----------------------------------------
+The Skullwhistle fight is yesterday's Set C, unchanged. Yesterday it
+returned 324,548. Today it returned 426,091.
+
+Every same-build repeat now on record:
+
+   Hammer, Set B'                333,215  vs  538,115    +61.5%
+   Switch Axe, Burst build       221,096  vs  287,426    +30.0%
+   Switch Axe, Valor legs        227,211  vs  302,796    +33.3%
+   Skullwhistle, Set C           324,548  vs  426,091    +31.3%
+   Charge Blade                  471,759  vs  513,992     +9.0%
+
+FOUR WEAPONS, FOUR BUILDS, AND THE TYPICAL SAME-BUILD SPREAD IS ABOUT
+30% WITH ONE PAIR AT 61%. Against that, no two-fight comparison in this
+project ever meant anything, and the 55.8% that was retracted yesterday
+was never going to survive.
+
+A NOTE ON THE SOLO RUN'S OUTPUT, which is the mild surprise: 4114 dmg/s
+solo is within 0.1% of the Hunting Horn's group run on the same day and
+sits above six of the nine group fights recorded. Different weapon and
+different build, so this is not a controlled comparison - but it is one
+more reason to doubt that having three other hunters present is worth
+much to a player's own damage number.
+
+   (the solo weapon was never screenshotted. The loadout screen in the
+   recording shows attack 1545, element 1508, defence 732 and Evading
+   Reload 5, which is enough to identify it later but not to score it)
