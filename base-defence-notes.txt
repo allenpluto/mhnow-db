@@ -588,3 +588,40 @@ WHAT THIS MEASURE STILL DOES NOT REMOVE
 
 It is a better instrument than raw damage per second, not a good one.
 The dummy remains the only thing in this project measuring at 1-3%.
+
+
+CLUSTER AGAINST SLICING, AND WHERE THE INSECT GLAIVE SITS
+---------------------------------------------------------
+The two Light Bowgun fights turn out to be different ammo: every earlier
+LBG run was CLUSTER, and the solo run is SLICING.
+
+   cluster LBG, group, 81% open     base 3267
+   slicing LBG, solo,  62% open     base 3384      +3.6%
+
+ESSENTIALLY TIED, with slicing marginally ahead - and ahead from the
+harder side, since it was the solo run with the least open time of any
+fight on record. On raw damage cluster looked far better (527,060
+against 438,173, +20%) and all of that was open time.
+
+One fight each, so this is not a verdict. But the direction is the
+opposite of the raw numbers, which is the sort of reversal this
+normalisation keeps producing.
+
+THE INSECT GLAIVE, revised downward by the player from the 40% that raw
+damage implied to about 20%, or roughly 4500 base dps. That would put it
+19% above the Charge Blade and make it the strongest weapon measured.
+
+AND THE PLAYER'S REASON FOR IT INTERACTS WITH THE RAMP ABOVE. The glaive
+is a slow warm-up weapon - short hunts can end before it reaches its
+kinsect-up state - but a base defence is exactly where that is paid
+back, because the 2.0x window comes LAST. A weapon that peaks late gets
+its best seconds multiplied most.
+
+That is a testable prediction, not just an explanation: a glaive should
+show a STEEPER stage-1-to-stage-3 base dps ramp than anything in the
+table, which currently tops out at the Light Bowgun's 2062 -> 4216. It
+is also a reason the base-dps normalisation is not the whole answer -
+dividing the multiplier out treats all open seconds as equal, and for a
+late-peaking weapon they are not.
+
+   one recorded glaive base defence settles both the 20% and the ramp
