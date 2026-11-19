@@ -287,3 +287,83 @@ state worth protecting: there is no 32-to-80 second buff to extend, no
 expiry to race, and the one skill the engine prices highly for it -
 Quick Work - accelerates a 1.9s action inside a cycle whose entire
 payoff is 22%.
+
+
+=====================================================================
+VIDEO 3: SOARING WYVERN BLADE, AND THE VERDICT ON SWITCH AXE STYLES
+=====================================================================
+Recording 17-30-26, same weapon and dummy, style Soaring Wyvern Blade.
+The player's prediction beforehand: "my feeling is this style's dps is
+even worse, tell me if i am wrong." Right in direction, overstated in
+size.
+
+   stage                                window    dmg  hits   dps  /hit
+   S1 axe, tap-and-hold, 3 swings
+      then a special slash that arms
+      the axe shape behind the bar      14.79s  14540   20    983   727
+   .. transform                          1.16s      -    -      -     -
+   S2 sword, altered charge attack       3.84s   2682    4    698   671
+   S3 sword, altered charge then the
+      POWERFUL attack (which ends
+      sword mode by itself)              6.20s   9149    4   1476  2287
+
+INSIDE S3 ARE THE TWO BIGGEST HITS IN THE WHOLE SWITCH AXE DATASET:
+5,361 and 2,622, against 649 for an ordinary sword hit. 8.3x and 4.0x.
+The style's whole design is visible there - three swings in axe arm an
+attack that lands eight times harder later.
+
+THE THREE STYLES, ON ONE BASIS
+------------------------------
+Axe to fill the bar, transform, sword until it empties:
+
+   no style                1082 dps over 26.03s
+   Element Burst Counter   1047 dps over 21.66s      -3.2%
+   Soaring Wyvern Blade    1015 dps over 25.99s      -6.2%
+
+   full spread across all three:  6.6%
+
+AND THE NOISE FLOOR IS 2.4% ON LONG WINDOWS AND 14% ON SHORT ONES. S2
+here is 3.84 seconds. So -6.2% is real at best and unresolvable at
+worst, and the honest statement is that SWITCH AXE STYLES DO NOT MATTER
+- three of them land inside seven percent of each other, and the
+styleless weapon is nominally the best of the three.
+
+WHAT EACH STYLE ACTUALLY TRADES
+-------------------------------
+   style   axe dps   bar fills in   sword
+   none      886       ~11.9s       1342 sustained
+   EBC       839        ~7.7s       1333 sustained   (fastest fill)
+   SWB       983       ~14.8s       698 then 1476    (best axe, best
+                                                      single stage,
+                                                      slowest fill)
+
+Soaring Wyvern Blade has the BEST axe stage of the three and the best
+single sword stage measured on this weapon - 1476, above the styleless
+weapon's 1342 - and still finishes last, because the bar takes three
+seconds longer to fill and the powerful attack ends sword mode as soon
+as it lands.
+
+A POSSIBLE OPTIMISATION, AND A QUESTION. S2 contributes 2,682 damage in
+3.84 seconds at 698 dps, which is the worst stage in the dataset. Drop
+it and go straight to the S3 sequence:
+
+   14.79 axe + 1.16 transform + 6.20 powerful = 22.15s, 23,689 damage
+   = 1,069 dps, which is level with the styleless weapon
+
+Whether that is legal depends on whether the powerful attack needs a
+charge attack ahead of it - S3 is described as "altered charge attack
+FOLLOW with the powerful attack", so the one inside S3 may be the
+prerequisite and S2 genuinely wasted. Worth one run to find out, and it
+is the only route by which a Switch Axe style has looked like it might
+matter.
+
+WHY THIS MATTERS BEYOND THE SWITCH AXE
+--------------------------------------
+Three styles on one weapon, all within 6.6%. One style on the Charge
+Blade - Axe Boost - is worth +44% over that weapon's own normal mode.
+
+So the caveat hanging over the 1.71x Charge Blade advantage, that it
+compared a STYLELESS Switch Axe against a STYLED Charge Blade, is now
+answered as far as this weapon can answer it: NO SWITCH AXE STYLE WOULD
+HAVE CLOSED THAT GAP. The best of the three is the one already measured.
+Axe Boost is an outlier among styles, not an example of them.
