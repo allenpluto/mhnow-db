@@ -504,3 +504,87 @@ shrinking.
 
 And the Hammer still spans 4674 to 6702 on one weapon, so none of this
 rescues the live fight as a measuring instrument.
+
+
+=====================================================================
+PER-STAGE BASE DPS: DIVIDING OUT THE MULTIPLIER, AT THE PLAYER'S
+SUGGESTION, AND IT CHANGES THE ANSWERS
+=====================================================================
+The player's objection to every dps figure in this project: the three
+open stages run at DIFFERENT multipliers, so dividing total damage by
+total time averages over a thing that varies. The right measure is per
+stage: damage / open seconds / multiplier.
+
+MULTIPLIERS CONFIRMED FROM THE PANEL, not assumed: stage 1 is "Damage
+increased by 25%", stage 2 by 50%, stage 3 by 100%. The shield badge
+also recolours - blue, orange, magenta - so the stage is readable even
+when the text is not.
+
+EIGHT FIGHTS, BASE DPS PER OPEN STAGE
+-------------------------------------
+                       open1  open2  open3    BASE    raw/s   open%
+   Charge Blade 472k    3113   3962   4217    3785     4514    65%
+   Hammer 538k          1865   4616   4699    3743     5174    77%
+   LBG solo 438k        3229   3434   3470    3384     4114    62%
+   Light Bowgun 527k    2062   3497   4216    3267     4996    81%
+   Skullwhistle 426k    3173   2495   3118    2919     4117    77%
+   Hammer 373k          2169   1789   3726    2638     3551    66%
+   Hammer 333k          2459   2215   3221    2630     3173    68%
+   Switch Axe 227k      2101   1155   2096    1754     2217    69%
+
+   BASE = total base-equivalent damage / total open seconds
+
+WHAT IT CHANGES
+---------------
+   Hammer 538k vs 333k        raw 1.62x  ->  base 1.42x
+   LBG solo vs Skullwhistle   raw 1.03x  ->  base 1.16x
+   Charge Blade vs Switch Axe raw 2.08x  ->  base 2.16x
+
+THE HAMMER PAIR NARROWS BY A THIRD. Open time and the multiplier split
+accounted for about a third of that 61% spread; 42% of it is real
+performance. So the instrument was overstating, exactly as the feedback
+loop above predicts.
+
+THE TWO BEST-PLAYED RUNS SEPARATE. Raw damage put the Hunting Horn and
+the solo Light Bowgun within 3% of each other - 426,091 and 438,173 -
+and that looked like a coincidence worth remarking on. It was an
+artefact: the horn had 77% open time against the solo run's 62%. On base
+dps the solo run is 16% ahead. Open time was flattering the horn.
+
+THE CHARGE BLADE'S LEAD GROWS. It had the second-LEAST open time of the
+eight and still tops the table. Nothing about open time or multipliers
+explains its advantage; if anything they were hiding it.
+
+BASE DPS RISES THROUGH NEARLY EVERY FIGHT
+-----------------------------------------
+Six of the eight climb from stage 1 to stage 3, several steeply - the
+Light Bowgun from 2062 to 4216, the Hammer from 1865 to 4699.
+
+THAT IS NOT THE MULTIPLIER BEING WRONG. If the stated 1.25 / 1.5 / 2.0
+were understated, making base flat would need multipliers near 1.25 /
+2.5 / 4.1, which the panel plainly contradicts. The ramp is real, and
+the obvious causes are the ones already measured here: Burst arms around
+25 seconds in, Combo Master once at 10 to 24 seconds, and a player warms
+up to a fight.
+
+   THE FLATTEST FIGHT IS THE SOLO ONE: 3229, 3434, 3470, a 7% rise
+   against the Light Bowgun's 104%. A solo player's stage 1 is not
+   spent waiting for three strangers to find the monster.
+
+AND THE SWITCH AXE'S BAD RUN HAS A LOCATION. Its stage 2 collapses to
+1155 against 2101 and 2096 either side - a single stage, not a flat
+deficit. That is the fight the player described as full of missed
+attacks, and it is now visible as one 26-second stretch rather than as a
+worse weapon.
+
+WHAT THIS MEASURE STILL DOES NOT REMOVE
+---------------------------------------
+   - the skill ramp above, which differs by build and is inside every
+     stage-1 number
+   - damage dealt while shielded, which is excluded entirely here
+   - a Hunting Horn in the party, which multiplies damage per hit and is
+     invisible in the recording
+   - everything about how cleanly the fight was played
+
+It is a better instrument than raw damage per second, not a good one.
+The dummy remains the only thing in this project measuring at 1-3%.
