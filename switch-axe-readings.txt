@@ -367,3 +367,71 @@ compared a STYLELESS Switch Axe against a STYLED Charge Blade, is now
 answered as far as this weapon can answer it: NO SWITCH AXE STYLE WOULD
 HAVE CLOSED THAT GAP. The best of the three is the one already measured.
 Axe Boost is an outlier among styles, not an example of them.
+
+
+S2 IS S3 WITHOUT THE RELEASE - SO SKIP IT
+-----------------------------------------
+The player: S2 is the same altered charge attack as S3 but without
+releasing the power attack, and its only benefit is staying in sword
+mode so you do not have to transform again. Priced out:
+
+   repeat S2, never leave sword     cycle 29.01s   23,662 dmg    816 dps
+   S3 straight after the transform  cycle 22.15s   23,689 dmg   1069 dps
+
+   firing immediately is worth +31%
+
+STAYING IN SWORD IS A TRAP ON THIS STYLE. The transform costs 1.16s;
+repeating S2 to avoid it costs almost seven seconds of cycle for the
+same damage. The saved transform is not worth a quarter of what it
+costs.
+
+That lifts Soaring Wyvern Blade from 1015 to 1069 - LEVEL WITH THE
+STYLELESS WEAPON at 1082, not above it. Playing the style correctly
+removes its deficit and buys nothing beyond that, which leaves the
+verdict unchanged: no Switch Axe style matters.
+
+
+THE SWITCH AXE IS LAST, CHECKED ON ITS BEST RUN
+-----------------------------------------------
+The base-dps table contained the Switch Axe's WORST live fight, the one
+with the collapsed second stage. Measuring its best run instead -
+12-10-30, 302,796, the highest of five - is the fair test:
+
+   per-stage base dps   2460, 2280, 2593     BASE 2437   70% open
+
+   Charge Blade         3785    stages 3113 3962 4217
+   Hammer best          3743           1865 4616 4699
+   LBG solo slicing     3384           3229 3434 3470
+   LBG cluster          3267           2062 3497 4216
+   Hunting Horn         2919           3173 2495 3118
+   Hammer               2638           2169 1789 3726
+   Hammer               2630           2459 2215 3221
+   Switch Axe BEST      2437           2460 2280 2593
+   Switch Axe worst     1754           2101 1155 2096
+
+EVEN ITS BEST RUN IS LAST, 7% below the worst Hammer fight and 36%
+below the Charge Blade. The player's summary - "one of the worst weapons
+at this stage no matter which style" - is supported by every measurement
+taken: three dummy styles inside 6.6% of each other, and five live
+fights whose best is still bottom of the table.
+
+AND IT IS THE FLATTEST WEAPON IN THE TABLE. Stage 1 to stage 3:
+
+   Hammer best     1865 -> 4699    +152%
+   LBG cluster     2062 -> 4216    +104%
+   Hammer          2169 -> 3726     +72%
+   Charge Blade    3113 -> 4217     +35%
+   Switch Axe best 2460 -> 2593      +5%
+   Switch Axe worst 2101 -> 2096      0%
+
+Most weapons nearly double across a fight. The Switch Axe does not move.
+That is consistent with the hit-rate finding - it lands 0.80 to 2.07
+hits a second against Axe Boost's 5.08, and the shared build is Burst 5
+/ Combo Master 3 / Advanced Burst 2, all of which count actions. A
+weapon that cannot feed them never gets the ramp everyone else is
+getting.
+
+CONSISTENT, NOT PROVEN: the Hunting Horn is also flat (-2%) on the same
+build, and the solo Light Bowgun is flat (+7%) for a different reason
+already noted. So flatness has more than one cause and this is a
+hypothesis that fits rather than a mechanism demonstrated.
