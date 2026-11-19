@@ -398,3 +398,109 @@ The test is still worth running for the aerial share itself, which feeds every
 Insect Glaive build rather than this one swap: charge the kinsect, run a fixed
 aerial combo on a dummy, read Total Damage; remove Skyward Striker, repeat.
 Two numbers and no variance.
+
+
+=====================================================================
+2026-11-19: THE CYCLE IS FIXED, NOT THE OPEN WINDOW - AND TWO
+RETRACTIONS THAT FOLLOW FROM GETTING THAT RIGHT
+=====================================================================
+The player asked a direct question: across the three shield-then-open
+periods, is the PERIOD fixed or is the OPEN TIME fixed? Neither, as it
+turns out. The CYCLE is.
+
+HOW IT IS READ. The shield phase carries a countdown in a brown clock
+face at the top left of the screen, and it vanishes the moment the
+barrier breaks. That is a fixed-position UI element on its own disc, so
+its presence is a clean binary. Two earlier attempts failed on the
+damage panel instead: the first because the "Damage increased by X%"
+text band also contains the bright blue shield badge, the second
+because the open panel's own purple background is blue-dominant and so
+is the monster's lightning. Validated against hand-checked frames -
+shielded at 28s, open at 34s - which both earlier versions got wrong.
+
+EIGHT FIGHTS, TWENTY-FOUR PHASES
+--------------------------------
+   SHIELD   mean 10.6s   sd 3.1   CV 29%    range  5.3 - 15.0
+   OPEN     mean 24.4s   sd 2.6   CV 11%    range 20.0 - 28.8
+   CYCLE    mean 35.0s   sd 1.4   CV  4%    range 31.8 - 37.3
+
+   correlation between a shield phase and the open phase that
+   follows it:   r = -0.89
+
+THE PERIOD IS ABOUT 35 SECONDS AND THE SPLIT IS YOURS TO SET. Break the
+barrier faster and the extra seconds go into the open window, nearly one
+for one. The measurement's own resolution is about +/-1.4s per duration,
+which is already most of the cycle's 1.4s sd - so "the cycle is fixed"
+is as strong a statement as this data can make, and the open window's
+larger spread is real rather than noise.
+
+The player's account of the mechanic fits exactly: a 30s countdown runs,
+landing attacks crack the shield, enough cracks break it early, and the
+crack threshold rises each stage.
+
+RETRACTION 1: OPEN TIME IS NOT FLAT
+-----------------------------------
+It was reported here that open time ran 91-96% across every fight and
+was "the most stable quantity in this project and explains nothing".
+That came from the broken classifier. Measured properly:
+
+   Light Bowgun   527,060    80.6% open    shields 5.3 / 6.8 / 8.5
+   Hammer         538,115    77.2%         shields 6.0 / 8.3 / 9.5
+   Skullwhistle   426,091    76.6%         shields 6.8 / 7.5 / 10.0
+   Switch Axe     227,211    68.9%         shields 7.5 / 9.8 / 14.8
+   Hammer         333,215    67.9%         shields 5.8 / 14.5 / 13.5
+   Hammer         372,901    66.3%         shields 10.8 / 13.8 / 11.0
+   Charge Blade   471,759    65.1%         shields 11.3 / 12.8 / 12.5
+   LBG solo       438,173    61.8%         shields 14.5 / 11.3 / 15.0
+
+62% to 81%, a 1.3x spread, and it moves between fights. It does not
+explain nothing; it is one of the things that varies.
+
+RETRACTION 2: SOLO DOES NOT BREAK THE BARRIER JUST AS FAST
+----------------------------------------------------------
+Yesterday's note called the solo run "a clean negative result" showing
+that three other hunters do not decide how much of the fight you spend
+hitting. Wrong, from the same broken classifier. THE SOLO RUN HAS THE
+LONGEST SHIELD PHASES OF ANY FIGHT ON RECORD - 14.5, 11.3 and 15.0s,
+40.8s in total - and the least open time of any fight, 61.8%. Breaking
+the barrier alone is slower, exactly as one would expect.
+
+OPEN TIME IS A FEEDBACK AMPLIFIER, NOT AN INDEPENDENT VARIABLE
+---------------------------------------------------------------
+This is the part that matters for every comparison in this project.
+Damage breaks the shield; breaking the shield buys open time; open time
+is where damage is multiplied. So:
+
+   more damage -> faster break -> more open seconds -> more damage
+
+A build that is 20% better does not score 20% more. It breaks earlier,
+collects a longer window, and scores more than 20% more. THE LIVE FIGHT
+AMPLIFIES WHATEVER IT MEASURES, which makes it a worse instrument than
+its noise alone suggests and makes every ratio taken off it an
+overstatement of the underlying difference.
+
+It also means open time cannot be used as a control variable. It is
+downstream of the thing being measured.
+
+WHAT A BETTER NORMALISATION LOOKS LIKE
+--------------------------------------
+Damage per open SECOND, which at least divides out the window length:
+
+   Charge Blade   471,759 / 68.0s  =  6938
+   Hammer         538,115 / 80.3s  =  6702
+   LBG solo       438,173 / 65.8s  =  6660
+   Light Bowgun   527,060 / 85.0s  =  6201
+   Skullwhistle   426,091 / 79.3s  =  5373
+   Hammer         372,901 / 69.6s  =  5358
+   Hammer         333,215 / 71.3s  =  4674
+   Switch Axe     227,211 / 70.6s  =  3218
+
+Still crude - it ignores the damage dealt while shielded, which earlier
+work here put at about 57% of open-phase damage - but it reverses one
+conclusion. The CHARGE BLADE had the SECOND-LEAST open time of any
+fight and still tops this table. Its advantage over the Switch Axe
+widens from 1.9x on raw damage to 2.16x per open second, rather than
+shrinking.
+
+And the Hammer still spans 4674 to 6702 on one weapon, so none of this
+rescues the live fight as a measuring instrument.
