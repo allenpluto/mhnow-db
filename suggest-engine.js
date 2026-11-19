@@ -229,11 +229,41 @@ const ASSUME = {
    * never armed in 109 seconds. So on a gun this skill is slower when it
    * works and worth nothing at all to a playstyle that does not tap.
    *
-   *    ONE SAMPLE FOR THE GUN FIGURE. It is carried because 16.7s would be
-   *    flatly wrong there, not because 38s is well established.
+   * ---- AND THEN IT WAS MEASURED DIRECTLY. 2026-11-19 ----
+   * Five dummy runs, one weapon each, with the HIT counter and the banner on
+   * screen in the same frame. The threshold is TWENTY ACTIONS and it is not
+   * close:
+   *
+   *    weapon                      banner at   HIT count   actions
+   *    Dual Blades                   13.75s       20         20
+   *    Hunting Horn                  20.50s       20         20
+   *    Heavy Bowgun, crouching       24.25s       42        ~20
+   *    Bow, pierce                   30.50s       27        ~20
+   *    Light Bowgun                  33.00s        0        ~20
+   *
+   * THE HIT COUNT IS NOT THE TRIGGER; THE ACTION COUNT IS. Hunting Horn and
+   * Dual Blades land one hit per input and fire at exactly 20. The Heavy
+   * Bowgun was firing PIERCING ammo, whose hit counter steps +1 to +3 per
+   * shot - traced frame by frame, averaging 2.1 - so 42 hits is about 20
+   * shots. The Bow's pierce shot does the same thing more weakly, 27 hits
+   * for about 20 shots.
+   *
+   * THE LIGHT BOWGUN SETTLES IT. Its banner fired at ZERO hits and zero
+   * damage, with the dummy panel already reset, WHILE THE PLAYER WAS MID-
+   * SLIDE. So a dodge counts as an action, and the counter had survived five
+   * or more seconds with no attack at all.
+   *
+   * TWO CONSEQUENCES THE EARLIER READING HAD WRONG:
+   *   - it is NOT Burst-like. Burst wants an unbroken chain of hits; this
+   *     counts discrete actions, keeps counting across pauses, and accepts
+   *     movement. A weapon that suits Burst does not automatically suit this
+   *   - the 109-second bowgun fight where it never fired is explained
+   *     without making the skill weapon-specific: crouching shot held down
+   *     is ONE action, and a player rooted in place performs no dodges
+   *     either, so the counter never advances
    */
+  comboMasterActions: 20,
   comboMasterArmSeconds: 16.7,
-  comboMasterArmSecondsGun: 38.0,
 
   /* Share of a glaive's DAMAGE dealt in the air, which is all that Skyward
    * Striker pays on. It must be a damage share and not a time share, because
@@ -1935,10 +1965,21 @@ function procChance(ssaLevel, blastExploitLevel, powderOrVenomistLevel) {
  * A gun gets its own, far longer figure, because twenty taps take a great
  * deal longer than a melee chain. See ASSUME.comboMasterArmSeconds.
  */
+/* Seconds to reach twenty actions, measured one dummy run per weapon. These
+ * are THIS PLAYER'S action rates, so they carry that player's habits as well
+ * as the weapon's cadence - but twenty is the weapon-independent part and the
+ * division is honest. A category with no entry falls back to the live melee
+ * mean. */
+const COMBO_MASTER_ARM = {
+  'Dual Blades': 13.75,
+  'Hunting Horn': 20.5,
+  'Heavy Bowgun': 24.25,
+  'Bow': 30.5,
+  'Light Bowgun': 33.0,
+};
+
 function comboMasterUptime(w) {
-  const arm = (w && RANGED_GUNS.indexOf(w.category) >= 0)
-    ? ASSUME.comboMasterArmSecondsGun
-    : ASSUME.comboMasterArmSeconds;
+  const arm = (w && COMBO_MASTER_ARM[w.category]) || ASSUME.comboMasterArmSeconds;
   const u = (ASSUME.huntSeconds - arm) / ASSUME.huntSeconds;
   if (u < 0) return 0;
   return u > 1 ? 1 : u;
