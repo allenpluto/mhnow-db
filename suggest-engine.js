@@ -212,12 +212,28 @@ const ASSUME = {
    * playstyle precondition to state, not a probability to average over, so
    * the zero is excluded rather than carried. 0.67 -> 0.82.
    *
-   * THE PRICE OF TAPPING IS VISIBLE IN THE SAME ROW. 0.627 is the worst
-   * uptime of the nine by a wide margin, because twenty taps take far longer
-   * than a melee chain does: 38 seconds in against 10 to 24 for the melee
-   * fights. Combo Master is worth materially less on a gun even when it works.
+   * ARM TIME, NOT UPTIME, IS THE CONSTANT WORTH CARRYING. Combo Master arms
+   * once and holds, exactly like Valor, so what the banner actually measures
+   * is a DELAY - and a delay costs a short hunt far more than a long one. A
+   * flat 0.82 said the skill was worth the same at 75s and 225s, which it
+   * plainly is not. Priced the same way Valor is, off valorRoarSeconds.
+   *
+   * The eight melee fights, seconds from fight start to the banner:
+   *
+   *    9.5  12.0  15.5  16.0  18.5  19.0  19.5  23.5
+   *    mean 16.7s   sd 4.2s
+   *
+   * THE GUN IS ITS OWN NUMBER AND ITS OWN RISK. 38 seconds, from the one
+   * bowgun fight where it fired at all - roughly twenty manual taps. The
+   * other bowgun fight used crouching shot, which is one held action, and it
+   * never armed in 109 seconds. So on a gun this skill is slower when it
+   * works and worth nothing at all to a playstyle that does not tap.
+   *
+   *    ONE SAMPLE FOR THE GUN FIGURE. It is carried because 16.7s would be
+   *    flatly wrong there, not because 38s is well established.
    */
-  comboMasterUptime: 0.82,
+  comboMasterArmSeconds: 16.7,
+  comboMasterArmSecondsGun: 38.0,
 
   /* Share of a glaive's DAMAGE dealt in the air, which is all that Skyward
    * Striker pays on. It must be a damage share and not a time share, because
@@ -1508,7 +1524,7 @@ const ADV_BURST = { 1: 0.05, 2: 0.10 };
  * THE NAME WAS A FALSE FRIEND. It was given burstUptime on that reasoning and
  * it is not a Burst: the banner fires ONCE per fight and never again, while
  * Burst fires five to seven times in the same fights. It has its own measured
- * uptime now - see ASSUME.comboMasterUptime, which also carries the fight
+ * uptime now - see comboMasterUptime(), which also carries the fight
  * where it never triggered at all.
  *
  * IT IS A BIG SKILL AND IT WAS SCORED AS ZERO. Lv3 at 35% beats Burst at its
@@ -1913,6 +1929,21 @@ function procChance(ssaLevel, blastExploitLevel, powderOrVenomistLevel) {
  * ASSUME.valorRoarSeconds for the two readings that pin it, and
  * ASSUME.valorMinUptime for the floor on a short solo hunt.
  */
+/**
+ * Combo Master arms ONCE and holds, so the thing that matters is the delay
+ * before it arms - the same shape as Valor's roar, and priced the same way.
+ * A gun gets its own, far longer figure, because twenty taps take a great
+ * deal longer than a melee chain. See ASSUME.comboMasterArmSeconds.
+ */
+function comboMasterUptime(w) {
+  const arm = (w && RANGED_GUNS.indexOf(w.category) >= 0)
+    ? ASSUME.comboMasterArmSecondsGun
+    : ASSUME.comboMasterArmSeconds;
+  const u = (ASSUME.huntSeconds - arm) / ASSUME.huntSeconds;
+  if (u < 0) return 0;
+  return u > 1 ? 1 : u;
+}
+
 function valorUptime() {
   const u = (ASSUME.huntSeconds - ASSUME.valorRoarSeconds) / ASSUME.huntSeconds;
   if (u < ASSUME.valorMinUptime) return ASSUME.valorMinUptime;
@@ -2092,7 +2123,7 @@ function score(totals, w) {
   // stat slots are split, so they are worked out once and applied after.
   let mult = 1;
   mult *= 1 + (BURST[lv('Burst')] || 0) * ASSUME.burstUptime;
-  mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * ASSUME.comboMasterUptime;
+  mult *= 1 + (COMBO_MASTER[lv('Combo Master')] || 0) * comboMasterUptime(w);
   mult *= 1 + (SKYWARD[lv('Skyward Striker')] || 0) * aerialShare(w);
   if (lv('Burst') >= 5) mult *= 1 + (ADV_BURST[lv('Advanced Burst')] || 0) * ASSUME.burstUptime;
   mult *= 1 + (OFF_GUARD[lv('Offensive Guard')] || 0) * ASSUME.offensiveGuardUptime;
@@ -2224,6 +2255,7 @@ function makeScorer(w, damageOnly) {
   const iAE = I('Attack Efficacy'), iSky = I('Skyward Striker');
   const iShared = I('Shared Sword');
   const airShare = aerialShare(w);
+  const cmUp = comboMasterUptime(w);
   const iEA = elemental ? I(w.element + ' Attack') : -1;
   const iAEA = elemental ? I('Advanced ' + w.element + ' Attack') : -1;
   const iVital = elemental ? I('Vital ' + w.element) : -1;
@@ -2324,7 +2356,7 @@ function makeScorer(w, damageOnly) {
     // Everything that does not depend on how the stat slots are split.
     let dmg = 1;
     dmg *= 1 + (BURST[g(v, iBurst)] || 0) * ASSUME.burstUptime;
-    dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * ASSUME.comboMasterUptime;
+    dmg *= 1 + (COMBO_MASTER[g(v, iCombo)] || 0) * cmUp;
     if (airShare) dmg *= 1 + (SKYWARD[g(v, iSky)] || 0) * airShare;
     if (g(v, iBurst) >= 5) dmg *= 1 + (ADV_BURST[g(v, iAB2)] || 0) * ASSUME.burstUptime;
     dmg *= 1 + (OFF_GUARD[g(v, iOG)] || 0) * ASSUME.offensiveGuardUptime;
@@ -2406,6 +2438,7 @@ return { ASSUME: ASSUME, UTILITY: UTILITY, UTILITY_SCOPE: UTILITY_SCOPE,
   specialCount: specialCount,
   blastAverageStacks: blastAverageStacks, blastDetonations: blastDetonations,
   valorUptime: valorUptime,
+  comboMasterUptime: comboMasterUptime,
   styleRate: styleRate, shotSeconds: shotSeconds,
   reloadSeconds: reloadSeconds, magazineSize: magazineSize,
   statSlotChoices: statSlotChoices,
