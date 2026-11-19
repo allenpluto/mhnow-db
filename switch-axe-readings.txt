@@ -154,3 +154,71 @@ ALSO OPEN
      damage in a combo rather than a buff or a bar
    - whether any of this holds at other attack values. Everything here
      is one weapon at 1949 attack against one at 2760
+
+
+=====================================================================
+VIDEO 2: ELEMENT BURST COUNTER, WHICH CHANGES ALMOST NOTHING
+=====================================================================
+Same weapon, same dummy, recording 17-28-35, style Element Burst Counter
+selected. The player's own read beforehand was "i dont feel significant
+improve though", and that is what the numbers say.
+
+   stage                          window    dmg  hits   dps  hits/s  /hit
+   S1 axe  hold + slide up         5.80s   4538    4    782   0.69   1135
+   S2 sword charged hold           9.12s   6994    7    767   0.77    999
+   S3 axe  charge move (= S1)      5.07s   4538    4    895   0.79   1135
+   S4 sword tap tap tap to empty  13.96s  16208   21   1161   1.50    772
+
+THE 0% AFFINITY CHOICE PAID OFF HERE. S1 and S3 are the same move and
+dealt EXACTLY the same damage - 4538 over 4 hits, with the same
+685 / 1294 / 4538 progression. The move is deterministic, so every bit
+of the dps difference between them is timing, and that difference is
+14.4%.
+
+   repeatability, video 2 (5-second moves):   14.4%
+   repeatability, video 1 (8-12 second moves): 2.4%
+
+SHORT MOVES ARE MUCH HARDER TO TIME PROPORTIONALLY, which is worth
+knowing before anyone reads a 5% difference off a 5-second window.
+Nothing under about 15% in this video is real.
+
+AGAINST THE STYLELESS RUN
+-------------------------
+   axe moves       no style 893 / 851 / 915 (886)    EBC 782 / 895 (839)
+   sword tap tap   no style 1240                     EBC 1161
+   sword charged   no style 1049                     EBC  767
+
+WHAT THE STYLE ACTUALLY BUYS is charge rate, not damage. The hold-and-
+slide-up move filled about 75% of the bar in 5.80s, so a full bar costs
+roughly 7.7s against the styleless run's 11.9s - about 35% faster. Put
+that through the cycle:
+
+   cycle, no style                        1082 dps over 26.03s
+   cycle, Element Burst Counter (7.7s)    1046 dps over 21.69s
+                                             -3.3%
+
+MINUS THREE PERCENT, INSIDE A FOURTEEN PERCENT NOISE FLOOR. The style
+is a wash. It reaches the sword stage faster and does slightly less
+while it is there, and the two cancel.
+
+DO NOT READ THE CHARGED-ATTACK ROW AS A STYLE EFFECT. S2 ran on a bar
+the player had only charged to ~75%, where video 1's equivalent ran on
+a full one, and the charged attack plausibly scales with the energy it
+consumes. 767 against 1049 is a bar-level comparison wearing a style
+comparison's clothes. The tap-tap-tap rows (1161 against 1240) are the
+cleaner pair and they are 6% apart, which is nothing.
+
+WHY THIS MATTERS FOR THE CHARGE BLADE COMPARISON
+------------------------------------------------
+The big caveat on the 1.71x was that it set a STYLELESS Switch Axe
+against a STYLED Charge Blade, Axe Boost being worth +44% over that
+weapon's own normal axe mode.
+
+STYLES ARE EVIDENTLY NOT ALL WORTH +44%. The first Switch Axe style
+measured is worth nothing at all. So the caveat does not dissolve the
+1.71x - it means Axe Boost may be an unusually strong style rather than
+styles being a general equaliser, and the engine's blind spot could be
+one specific style rather than a whole axis.
+
+Two styles measured, one on each weapon, so this is a direction and not
+a conclusion. The Switch Axe's third style is recorded and untimed.
