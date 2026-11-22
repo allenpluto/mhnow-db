@@ -688,3 +688,83 @@ the three. That puts Dual Blades with the Switch Axe and the Hunting
 Horn rather than with the Hammer and the bowguns, which climb steeply.
 With three fights disagreeing about the shape, the honest reading is
 that this weapon's stage-to-stage variation is noise rather than ramp.
+
+
+=====================================================================
+2026-11-23: SIX HUNTING HORN FIGHTS BREAK THE RANKING, AND SHOW WHY
+=====================================================================
+Eight more recordings: one Hammer, five usable Hunting Horn fights
+across two evenings, and the first INSECT GLAIVE base defence.
+
+   fight                   damage   dur   raw/s  open%  BASE  per-stage
+   Hammer    20 Nov       332,419  106s   3143   61%   2780  2264 1855 4240
+   Horn HH1  20 Nov       246,012  107s   2299   69%   1909  2039 2456 1239
+   Horn HH3  20 Nov       319,244  106s   3005   71%   2224  1701 3763 1414
+   Horn HH6  21 Nov       386,100  105s   3686   68%   2942  2603 4077 2376
+   Horn HH4  21 Nov       410,746  106s   3875   67%   3021  2401 2318 4496
+   Horn HH5  21 Nov       515,229  106s   4872   70%   3503  2917 3079 4446
+   Insect Glaive 22 Nov   430,896  106s   4065   73%   2870  1536 3991 3032
+
+FIVE FIGHTS, ONE WEAPON, ONE PLAYER: 246,012 TO 515,229. That is 109%
+on raw damage and 84% on base dps - by a wide margin the largest spread
+in this project, and it is a single weapon.
+
+ONE WEAPON NOW SPANS ELEVEN OF THE SIXTEEN ROWS in the base-dps table.
+The Hunting Horn's own range, 1909 to 3503, reaches from below the
+Switch Axe's best run to above everything except the Charge Blade and
+the best Hammer. THE RANKING BUILT ON THESE FIGURES CANNOT BE
+SUPPORTED. Any weapon with one to three fights could sit almost
+anywhere inside that band.
+
+BUT THE SPREAD DECOMPOSES, AND THAT IS THE USEFUL PART
+-------------------------------------------------------
+   20 Nov    base 1909, 2224     mean 2067    within-day spread 17%
+   21 Nov    base 2942, 3021, 3503  mean 3155  within-day spread 19%
+   between the two days                        +53%
+
+Within-day spreads across every weapon now on record:
+
+   Hunting Horn  20 Nov    17%
+   Hunting Horn  21 Nov    19%
+   Dual Blades   19 Nov    22%
+   Switch Axe    18 Nov    39%
+   Hammer        18 Nov    42%
+
+SO A SESSION IS WORTH MUCH MORE THAN A DAY. Typical within-session
+spread is about 20%, with two cases near 40%. The monstrous totals come
+from comparing ACROSS days, where a +53% step can sit on top of it.
+
+That is actionable. Fights recorded in one sitting are a usable
+instrument at roughly +/-20%; fights compared across days are not an
+instrument at all. Every cross-day comparison in this file should be
+read with that in mind, and the weapon table mixes days freely.
+
+WHAT CHANGED BETWEEN 20 AND 21 NOVEMBER IS NOT KNOWN and is worth
+asking. A +53% step on the same weapon is too large for play alone and
+points at a build change, a weapon level, or an event modifier.
+
+THE INSECT GLAIVE, FINALLY RECORDED
+-----------------------------------
+Set D - the Combo Master set with Kushala Crus legs, which is also the
+three Dual Blades fights' set, so it is directly comparable.
+
+   damage 430,896 over 106s, base 2870 dps, 73% open
+
+   per-stage base:  1536  ->  3991  ->  3032
+
+ITS STAGE-1 FIGURE OF 1536 IS THE LOWEST OF ANY FIGHT EVER RECORDED
+HERE. The next lowest is the Hammer's 1865. That is the player's own
+prediction confirmed exactly: a slow warm-up weapon that can finish a
+short hunt without reaching its kinsect-up state, paid back later -
+stage 2 is 2.6x stage 1.
+
+ON THE RANKING, THOUGH, ONE FIGHT CANNOT SAY MUCH. Base 2870 puts it
+mid-table, 4% above the Dual Blades mean on identical armour and 24%
+below the Charge Blade. The player's estimate was about +20% over the
+field. This fight does not support that - but it was recorded on 22
+November with no same-day fight to calibrate against, and the day
+effect above is +53%. So it neither confirms nor refutes the estimate.
+
+It is also far below the player's own best glaive result, the
+unrecorded 1.2m score that implies 750,000 raw against this fight's
+430,896 - a 74% gap on one weapon, which is the same story again.
