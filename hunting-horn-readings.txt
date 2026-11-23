@@ -220,3 +220,70 @@ The player believes the counter bugged. The speed question - whether
 the +20% damage is joined by a +20% attack rate, which would make the
 buff 1.44x rather than 1.20x - is therefore still open, and it is the
 last unknown on this style.
+
+
+FLEETING MELODY, SETTLED: x1.20 DAMAGE, x1.12 SPEED, x1.35 DPS
+----------------------------------------------------------------
+A clean re-recording, 14-47-32, 73 seconds of nothing but the same
+tap-tap-tap combo repeated eight times straight through a Fleeting
+Melody window and out the other side. The combo turns out to be seven
+hits in a fixed sequence, which makes every comparison here a like-for-
+like one.
+
+THE WHOLE COMBO CONFIRMS x1.20, not just the five hits timed by hand:
+
+   no FM    FM     ratio
+     463    556    1.2009
+     609    730    1.1987
+     794    952    1.1990
+     238    286    1.2017
+    1058   1270    1.2004
+     397    476    1.1990
+
+SIX DIFFERENT MOVES, EVERY ONE AT 1.20. At 0% affinity the damage is
+deterministic, so this is the multiplier, not an estimate of it.
+
+IT ALSO IDENTIFIES THE STATE WITHOUT READING THE DOTS. The sequence
+463/609/794+238/1058/397/1587 is the unbuffed combo and 556/730/952+286
+/1270/476 is the buffed one, so the damage values alone say which state
+every hit was in. That is how combos 3 and 7 were confirmed to straddle
+the activation exactly as the player described - first hit unbuffed,
+everything after it buffed.
+
+AND THE SPEED HALF IS REAL BUT SMALLER
+--------------------------------------
+Span from first hit to last hit of each combo - six intervals, seven
+hits, measured at 20fps:
+
+   no FM            7.20, 8.10, 7.25, 7.50   mean 7.51s
+   FM               6.65, 6.60, 7.00, 6.50   mean 6.69s
+
+   speed   x1.12    (12% faster)
+
+   dps = 1.200 x 1.123 = x1.348
+
+SO FLEETING MELODY IS WORTH ABOUT +35% DPS, not the +44% that a x1.20
+speed bonus would have given. The player's theory - that the skill text
+promising both attack and speed meant 1.2 x 1.2 - was right in shape
+and high in size. The damage half is exactly 1.20; the speed half is
+about 1.12.
+
+   THE WEAKEST PART IS THE SPEED FIGURE. Four unbuffed combos against
+   four buffed, and one unbuffed combo (8.10s) sits well outside the
+   other three (7.20, 7.25, 7.50). Dropping it gives 10% rather than
+   13%. So the speed bonus is somewhere near 10-13% and the dps figure
+   near x1.33 to x1.36.
+
+WHAT THIS MEANS NEXT TO SHOCKWAVE
+---------------------------------
+   Fleeting Melody   x1.35 dps, ~16.4s per activation
+   Shockwave         +54% per hit, ~10s, after a 5.03s activator
+
+Fleeting Melody is the weaker effect per second but holds for longer
+and costs nothing to arm beyond notes the player is already playing.
+Shockwave hits harder while up but spends five seconds of its worst
+move getting there and lasts ten.
+
+AND FLEETING MELODY BUFFS THE TEAM, which a dummy scores at zero. On
+personal damage alone the two are closer than they look; with the team
+counted, nothing in these recordings argues for Shockwave.
