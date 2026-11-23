@@ -1,0 +1,75 @@
+Standardised dummy DPS, for comparing weapons and styles
+=========================================================
+A running table of dummy measurements normalised by weapon attack, so
+figures taken on different weapons can be set side by side. NOT used by
+the engine - this is a reference for judging future measurements.
+
+HOW TO ADD A ROW. Dummy, 0% AFFINITY so the damage is deterministic,
+attack continuously for about a minute, and take the span from the
+first damage to the last with the panel's idle reset excluded. State
+the weapon's attack, element and affinity. That method is one recording
+and needs no phase bookkeeping, and it is what the Hunting Horn rows
+below use.
+
+   dps/atk = dps / attack            the figure to compare
+   dps/ae  = dps / (attack+element)  the other bound, see the caveats
+
+
+=== MEASURED BY CONTINUOUS ATTACKING (directly comparable) ===
+
+ weapon             class          atk   ele  aff   style              dps  dps/atk  dps/ae
+ Datura Horn 3      Hunting Horn  1017   364   0%   Shockwave          778   0.765   0.564
+ Datura Horn 3      Hunting Horn  1017   364   0%   Fleeting Melody    726   0.714   0.526
+ Datura Horn 3      Hunting Horn  1017   364   0%   Normal             582   0.573   0.422
+
+   measured 2026-11-23, ~68-70s of continuous attacking each.
+   Both styles beat Normal by +34% and +25%; Shockwave leads Fleeting
+   Melody by 7.2%, which is above the 2.4% repeatability but is one run
+   each and reflects how attentively each armed state was maintained.
+
+
+=== MODELLED FROM PHASE CYCLES (NOT directly comparable to the above) ===
+
+ weapon             class          atk  ele   aff   style              dps  dps/atk
+ Thanatos Force 6   Charge Blade  2760    0  -30%   Axe Boost         2625   0.951
+ Lumu Smasher 5     Switch Axe    1949    0    0%   no style          1082   0.555
+ Lumu Smasher 5     Switch Axe    1949    0    0%   Soaring Wyvern*   1069   0.549
+ Lumu Smasher 5     Switch Axe    1949    0    0%   Element Burst C.  1046   0.537
+
+   * played correctly, firing the power attack straight after the
+     transform rather than repeating the weak charge. As played it was
+     1015 / 0.521.
+
+   THESE ARE ASSEMBLED, NOT MEASURED. Each is a cycle built from
+   separately timed phases - charge, transform, spend - rather than one
+   continuous run. They should be re-taken by the continuous method
+   before being compared with the Hunting Horn rows.
+
+   sub-state figures, for reference:
+      Switch Axe     axe  886 dps        sword 1334 dps
+      Charge Blade   sword 913 dps       Axe Boost 3244 dps
+
+
+=== WHY dps/atk IS NOT A CLEAN CLASS COMPARISON ===
+
+ELEMENT. The Datura Horn carries 364 element against 1017 attack, so a
+large share of its damage is elemental and a no-element horn will not
+reproduce 0.765. The two Switch Axe and Charge Blade weapons have no
+element at all. dps/ae is the other bound; the truth is between, and
+separating them needs one more weapon with a different element split.
+
+AFFINITY. Thanatos Force sits at -30% affinity, so its 0.951 is
+achieved DESPITE a penalty the other weapons do not carry. Corrected
+upward it would be higher still, which widens rather than narrows the
+Charge Blade's lead.
+
+ATTACK SCALING MAY NOT BE LINEAR. Every row here comes from one weapon
+per class, so dividing by attack assumes damage is proportional to it.
+Nothing in this project has tested that. Two weapons of the same class
+at different attack values would settle it and should be the next thing
+added.
+
+WHAT THE TABLE IS GOOD FOR AS IT STANDS: comparing STYLES within one
+weapon, where everything else is held constant and the numbers are
+exact. The Hunting Horn block and the Switch Axe block are each
+internally sound. Comparing ACROSS blocks is not yet supported.
