@@ -1,0 +1,101 @@
+The Hunting Horn's three styles, and the Shockwave mechanic solved
+==================================================================
+Dummy, 2026-11-23, Datura Horn 3: 1017 attack, 0% AFFINITY chosen
+deliberately so damage is deterministic, element 364. Three recordings,
+one per style. The engine models NONE of this - styleVariants() returns
+a single unlabelled variant for the Hunting Horn and nothing prices the
+melodies at all.
+
+BUFF STATE IS MACHINE-READABLE. Three slots sit above the special
+button; an activated one becomes a red-bordered icon where an inactive
+one shows plain notes. Sampling that strip gives the buff count through
+a whole recording without the player narrating it.
+
+
+SHOCKWAVE: THE MECHANIC, SOLVED EXACTLY
+---------------------------------------
+The player's first description was that Shockwave "adds one shock wave
+damage per buff when performing certain attacks". Close, but it missed
+a step, and they corrected it after seeing the first numbers:
+
+   THREE BUFFS ARE A PREREQUISITE, NOT THE TRIGGER. A jump shockwave
+   attack must be performed to arm the state. Only then do following
+   attacks spawn shockwaves.
+
+The counter confirms it to the digit:
+
+   t=48   781 damage / 4 HIT   =  463 + 106 x 3      1 real hit + 3 waves
+   t=49  +1006        / +4     =  688 + 106 x 3
+   t=52  + 106        / +1     <- a lone shockwave, no base hit at all
+
+That third line is the cleanest evidence available: a shockwave landing
+by itself, for exactly 106, counted as one hit.
+
+   ONE SHOCKWAVE = 106 on this weapon, and the player has since tested
+   that it SCALES WITH BOTH ATTACK AND ELEMENT. So it is an ordinary
+   damage instance, not a flat bonus - which means its value as a
+   PERCENTAGE should carry across weapons, rather than being worth more
+   on a weak horn.
+
+DURATION IS ABOUT TEN SECONDS. Reading the deltas through burst B5:
+multi-hit groups run to t=55 and only single hits appear from t=57,
+against an activation at roughly t=45 and the first shockwave at t=48.
+
+IT RE-ARMS WITHOUT RE-BUFFING. Burst B8 opens at 781 / 4 HIT - the same
+463 + 106x3 signature - after a re-activation at the end of B7, with no
+new notes played. The player predicted this and the counter agrees.
+
+WHAT IT IS WORTH
+----------------
+   base hits observed      463, 688, 476, 623, 860, 371, 835, 411, 569
+                           mean 588
+   during the state        588 -> 906 per hit        = +54%
+
+   AND THE ACTIVATOR IS THE BEST MOVE IN THE VIDEO. The jump shockwave
+   attack itself scored 2978 over 3s = 993 dps, the highest burst of the
+   eight. Re-arming therefore costs nothing.
+
+   re-arming promptly   ~13s cycle, 77% up   ->  +42%
+   as actually played   activations 28s apart, 36% up  ->  +19%
+
+So Shockwave is worth roughly +20% as it was played and up to +40%
+played tightly, against its own unshockwaved damage. THE GAP BETWEEN
+THOSE TWO IS PURE PLAY, and it is larger than most skills this engine
+prices.
+
+   (the 993 dps sits in a 3-second window, where measured repeatability
+   is about 14%, so treat it as "highest" rather than exact)
+
+
+WHAT THESE THREE VIDEOS CANNOT ANSWER
+-------------------------------------
+The styles cannot be compared from them, and the reason is structural
+rather than a measurement problem.
+
+   Shockwave        bursts at 641, 798, 717, 993, 672, 463, 789, 700 dps
+   Fleeting Melody  bursts at 900, 645, 826, 1131, 678, 741 dps
+   Normal           bursts at 635, 1119, 490, 719, 598, 606 dps
+
+EVERY BURST IS A DIFFERENT MOVE. Within Shockwave alone the bursts
+range from 463 to 993 dps - more than 2x - so the move matters more
+than the style, and pooling them mixes the two. Buff count also drifts
+inside several bursts.
+
+One thing that IS visible: BUFF RETENTION DIFFERS. Fleeting Melody held
+three buffs from t=10 to t=40, thirty unbroken seconds. Normal reached
+three by t=10, lost them by t=30-35, sat at zero to t=42 and had to
+rebuild. Whether that is the style or the player is not separable from
+one run each, but it matches the player's description of Fleeting
+Melody re-applying buffs whenever the right notes are played.
+
+WHAT WOULD SETTLE IT, and it is much less work than mapping twenty
+bursts to moves: ONE MOVE, repeated continuously for ten seconds or
+more, at THREE BUFFS, once per style. Three short runs. The move must
+be the same in all three and must not be the jump activator. That gives
+one directly comparable number per style and nothing to disentangle.
+
+A STANDING CAVEAT ON ALL OF IT: a dummy has no team, so Fleeting
+Melody's entire team-buff half is worth exactly zero in this test while
+Shockwave loses nothing it would not lose anyway. These figures are
+PERSONAL damage, which is what the engine scores - they are not a
+verdict on which style wins a four-player base defence.
