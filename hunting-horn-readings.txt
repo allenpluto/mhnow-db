@@ -51,20 +51,34 @@ WHAT IT IS WORTH
                            mean 588
    during the state        588 -> 906 per hit        = +54%
 
-   AND THE ACTIVATOR IS THE BEST MOVE IN THE VIDEO. The jump shockwave
-   attack itself scored 2978 over 3s = 993 dps, the highest burst of the
-   eight. Re-arming therefore costs nothing.
+   THE ACTIVATOR IS A BELOW-AVERAGE MOVE, NOT THE BEST ONE. It was first
+   written up here as 993 dps and the highest burst of the eight, off a
+   3-second window taken from the damage counter. The player then timed
+   the move properly, 41.13 to 46.16s, and it is 5.03 SECONDS - the
+   counter window had missed the wind-up and the recovery, which on this
+   move are most of it.
 
-   re-arming promptly   ~13s cycle, 77% up   ->  +42%
-   as actually played   activations 28s apart, 36% up  ->  +19%
+      2978 damage over 5.03s = 592 dps
+      the other seven bursts: 463, 641, 672, 700, 717, 789, 798
 
-So Shockwave is worth roughly +20% as it was played and up to +40%
-played tightly, against its own unshockwaved damage. THE GAP BETWEEN
-THOSE TWO IS PURE PLAY, and it is larger than most skills this engine
-prices.
+   So arming the state is second-lowest of the eight, and re-arming is
+   NOT free. That removes the main reason to re-arm the instant it
+   drops, and it cuts the best case badly:
 
-   (the 993 dps sits in a 3-second window, where measured repeatability
-   is about 14%, so treat it as "highest" rather than exact)
+   re-arm as soon as it drops   15.0s cycle  ->  915 dps  = +31%
+   as actually played, 28s      28.0s cycle  ->  816 dps  = +17%
+
+   (previously reported as +42% and +19%, on the free-activator error)
+
+So Shockwave is worth roughly +17% as it was played and about +31%
+played tightly. The gap is still pure play, but it is half what it
+looked like, and the ceiling is a good deal lower.
+
+   A CAUTION ON THE +54% PER HIT. It does not carry straight through to
+   dps, because hit rate differs between moves and the shockwaves land
+   on the same instant as their parent hit. The cycle figures above use
+   an assumed 700 dps base from the unshockwaved bursts, which is the
+   weakest number in this section.
 
 
 WHAT THESE THREE VIDEOS CANNOT ANSWER
