@@ -400,3 +400,51 @@ NOTHING FURTHER CAN BE MEASURED HERE: the base defence event has ended,
 so there are no more live fights to record. What stands is the dummy
 work, which is unaffected, and the live record, which says the two
 styles are indistinguishable at n=5 against n=2.
+
+
+ALL THREE STYLES, ONE MINUTE OF CONTINUOUS ATTACKING EACH
+-----------------------------------------------------------
+The cleanest style comparison available: the same weapon, the same
+dummy, continuous attacking, measured first damage to last with the
+panel's idle reset excluded.
+
+   Datura Horn 3 - attack 1017, element 364, affinity 0%
+
+   style             damage    span     dps   dps/attack  dps/(atk+ele)
+   Shockwave          52811   67.85s    778     0.765        0.564
+   Fleeting Melody    50174   69.10s    726     0.714        0.526
+   Normal             41030   70.45s    582     0.573        0.422
+
+   Shockwave vs Fleeting Melody   +7.2%
+   Shockwave vs Normal            +34%
+   Fleeting Melody vs Normal      +25%
+
+BOTH STYLES BEAT NORMAL BY A LARGE MARGIN, and that part is not close -
++34% and +25% against a long-window repeatability of 2.4%. Picking
+either style over none is worth about a quarter to a third of the
+weapon's output.
+
+SHOCKWAVE AHEAD BY 7.2%, WHICH IS ABOVE THE NOISE BUT IS ONE RUN EACH.
+It also reverses what the per-hit work suggested, and the reason is
+probably uptime rather than strength: these totals include whatever
+share of the minute each armed state happened to be up, and the player
+was re-arming Shockwave deliberately here where the earlier recording
+let it lapse for 28 seconds at a time.
+
+   so the honest reading is that Shockwave rewards attention and
+   Fleeting Melody does not need it - the measured gap is what good
+   Shockwave play buys over ordinary Fleeting Melody play
+
+THE STANDARDISED COLUMN, at the player's request. dps/attack is the
+figure to carry to other horns, but note this weapon has 364 element
+against 1017 attack, so part of every number above is elemental and a
+no-element horn would not reproduce it. dps/(attack+element) is given
+as the other bound. The true scaling is somewhere between, and only a
+second horn with a different element split would separate them.
+
+AND NONE OF IT COUNTS THE TEAM. Shockwave's 7.2% is personal damage.
+Fleeting Melody additionally hands three teammates ten seconds of +20%
+attack per activation - about 39% of one player's output given away -
+which no dummy can score. In a four-player base defence that is not a
+close contest; solo or with a horn already in the party, Shockwave's
+7.2% is real.
