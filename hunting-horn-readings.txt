@@ -113,3 +113,44 @@ Melody's entire team-buff half is worth exactly zero in this test while
 Shockwave loses nothing it would not lose anyway. These figures are
 PERSONAL damage, which is what the engine scores - they are not a
 verdict on which style wins a four-player base defence.
+
+
+FLEETING MELODY IS ITS OWN ARMED STATE, AND A BIGGER ONE
+---------------------------------------------------------
+Fleeting Melody turns out to work the same way Shockwave does - the
+notes bar filling arms a state, and attacks landed while it is up are
+worth more. The player timed one heavy attack on each side of it, and
+because it is THE SAME MOVE WITH THE SAME HIT COUNT this is the
+cleanest style measurement taken so far:
+
+   32.24 - 38.18s  FM ACTIVE    5.94s   4524  4 hits   762 dps  1131/hit
+   40.11 - 47.18s  FM expired   7.07s   2712  4 hits   384 dps   678/hit
+
+   per hit   678 -> 1131   = +67%
+
+THAT IS A BETTER NUMBER THAN ANYTHING IN THE SHOCKWAVE SECTION, because
+it is one move against itself rather than a mean over several. The +54%
+quoted for Shockwave was computed against an average base hit drawn
+from different moves and deserves less weight than this.
+
+DPS MOVED FURTHER THAN DAMAGE PER HIT - 384 to 762, +98% - because the
+unbuffed window also ran 1.1 SECONDS LONGER for the same four hits.
+Either Fleeting Melody speeds the attack up as well, or the two window
+boundaries are not measuring quite the same thing. Worth one more pair
+to separate, and until then the +67% per hit is the figure to trust.
+
+IT ALSO LASTS FAR LONGER THAN SHOCKWAVE. The state armed at 15.13s and
+had expired by somewhere between 38.18 and 40.11s:
+
+   Fleeting Melody   about 23-25 seconds
+   Shockwave         about 10 seconds, plus 5.03s of activator to arm it
+
+SO ON PERSONAL DAMAGE ALONE, FLEETING MELODY CURRENTLY LOOKS BETTER
+THAN SHOCKWAVE ON BOTH TERMS - a larger per-hit uplift held for more
+than twice as long - and it buffs the team on top, which this dummy
+scores at zero. That is the opposite of the advice the player was given
+when they switched styles. One sample each, so it is a direction rather
+than a verdict.
+
+   the burst that straddles the 15.13s activation cannot help: the
+   after-window is a single hit in under two seconds
