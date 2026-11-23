@@ -344,3 +344,59 @@ AGAINST SHOCKWAVE, with both now measured properly:
    Shockwave         +54% per hit for ~10s, after 5.03s of its worst move
 
 Fleeting Melody is now ahead on every term that has been measured.
+
+
+THE LIVE SCORES DO NOT CONTRADICT THE DUMMY - THEY ARE MAX-OF-N
+----------------------------------------------------------------
+The player's own impression from the event: best Fleeting Melody score
+about 660k, best Shockwave about 840k, so Shockwave by 27%. Those match
+the recorded fights exactly - 426,091 x 1.6 = 682k and 515,229 x 1.6 =
+824k - so the two numbers are the two best fights in this file.
+
+Put all of them side by side:
+
+   Shockwave  n=5   246012, 319244, 386100, 410746, 515229
+   Fleeting   n=2   324548, 426091
+
+   MAX    515,229  vs  426,091      Shockwave +21%
+   MEAN   375,466  vs  375,320      0.04% APART
+
+THE MEANS ARE THE SAME TO WITHIN A TWENTY-FIFTH OF ONE PERCENT. The
+entire apparent gap is max-of-five against max-of-two, drawn from
+distributions that spread 84%. Play any style five times and the best
+of those five will beat the best of two, whatever the style is.
+
+   base dps, which divides out open time and the multipliers:
+      Shockwave mean 2720 over five fights
+      Fleeting       2919 over one
+
+So nothing in the live record argues for Shockwave. It argues that two
+samples cannot be compared with five, which this file has now said in
+five different ways.
+
+THE ONE REAL ARGUMENT FOR SHOCKWAVE, AND IT IS A GOOD ONE
+----------------------------------------------------------
+The player: "if teammate use fm, i get 10s 20% attack boost every time
+it is activated."
+
+FLEETING MELODY'S TEAM BUFF IS A PUBLIC GOOD. If someone else in the
+party is already providing it, a second horn playing Fleeting Melody
+duplicates a buff the team already has, while Shockwave adds damage
+nobody else can supply. That is a genuine reason to run the selfish
+style - but it is conditional on a teammate carrying the other one, and
+it is invisible both to a dummy and to this engine.
+
+AND IT PUTS A NUMBER ON WHAT A FLEETING MELODY HORN GIVES A PARTY. Ten
+seconds of +20% attack per activation, on a cycle of about 15.5s, is
+roughly 65% uptime of +20% - call it +13% average attack for each of
+three teammates, or about 39% of one player's output handed to the rest
+of the party.
+
+   against that, the selfish style's advantage is whatever Shockwave
+   beats Fleeting Melody by on personal damage - and the dummy says
+   that number is negative
+
+NOTHING FURTHER CAN BE MEASURED HERE: the base defence event has ended,
+so there are no more live fights to record. What stands is the dummy
+work, which is unaffected, and the live record, which says the two
+styles are indistinguishable at n=5 against n=2.
