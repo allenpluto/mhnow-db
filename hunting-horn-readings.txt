@@ -154,3 +154,69 @@ than a verdict.
 
    the burst that straddles the 15.13s activation cannot help: the
    after-window is a single hit in under two seconds
+
+
+CORRECTION: FLEETING MELODY IS +20%, NOT +67%
+----------------------------------------------
+The +67% above was wrong, and the player's own test replaced it. They
+timed the same tap-tap-tap moves either side of the buff and recorded
+each hit:
+
+   without FM   463   609   238   794  1058
+   with FM      556   730   286   952  1270
+   ratio       1.2009 1.1987 1.2017 1.1990 1.2004
+
+MEAN 1.2001, SPREAD 0.25%. At 0% affinity the damage is deterministic,
+so five identical ratios are not a sample of the multiplier - they ARE
+the multiplier. FLEETING MELODY IS EXACTLY +20% PER HIT.
+
+WHY THE EARLIER FIGURES WERE INFLATED. The +67% came from a heavy-
+attack pair whose "expired" window dropped from three melody buffs to
+two partway through, so it was measuring Fleeting Melody PLUS a melody
+buff. A second pair of normal attacks gave +38% and had the same
+problem in reverse, two buffs against three. Neither held buff count
+constant; the player's test did, by comparing single hits of the same
+move.
+
+   the lesson is not subtle: same move, same buff count, single hits.
+   Windows and averages buried a clean 1.20 under confounds twice.
+
+
+THE INDICATOR, AND WHAT IT SAYS ABOUT DURATION
+-----------------------------------------------
+Fleeting Melody has its own display, which the player pointed out: a
+CURVED LINE OF SEVEN DOTS sitting above the three buff-activation
+icons, which themselves sit above the special button.
+
+   grey diamond   empty slot
+   red ring       charged slot, filling toward seven
+   ORANGE STAR    the state is ACTIVE, and these deplete
+
+Counting strongly-orange pixels in that strip separates active from
+charging without matching shapes, because the star's halo is far more
+orange than a ring. Validated on video 2 against the player's own
+15.13s activation.
+
+   video 2: armed ~15.1s, stars gone by ~31.5s   =  16.4 SECONDS
+
+THAT REVISES THE 23-25s ESTIMATE WRITTEN EARLIER, which was inferred
+from damage falling off between two bursts rather than read off the
+state itself.
+
+AND IT IS NOT A PLAIN TIMER. The dot count runs 7, 6, 5, 3, 2, 0 across
+successive samples - uneven steps. The player's explanation is that a
+heavy attack consumes extra Fleeting Melody time, so the state is a
+RESOURCE SPENT BY ATTACKING rather than a clock. Anything modelling its
+uptime has to know what the player was doing with it.
+
+   AND IT UNDERMINES THE +67% A SECOND WAY. That comparison called
+   31.24-38.18s "FM active", but the stars were gone by about 31.5s -
+   so most of that window was not under the buff at all.
+
+ONE RECORDING COULD NOT BE USED: 14-25-17, a minute of tap-tap-tap
+intended to measure attack SPEED, shows 0 damage and 0 HIT for its
+entire length while the Fleeting Melody dots arm and deplete normally.
+The player believes the counter bugged. The speed question - whether
+the +20% damage is joined by a +20% attack rate, which would make the
+buff 1.44x rather than 1.20x - is therefore still open, and it is the
+last unknown on this style.
