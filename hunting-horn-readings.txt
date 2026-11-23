@@ -287,3 +287,60 @@ move getting there and lasts ten.
 AND FLEETING MELODY BUFFS THE TEAM, which a dummy scores at zero. On
 personal damage alone the two are closer than they look; with the team
 counted, nothing in these recordings argues for Shockwave.
+
+
+CORRECTION: x1.63 DPS, NOT x1.35. THE HEAVY ATTACK DOUBLES.
+------------------------------------------------------------
+The x1.35 above is wrong. The player split each combo into its normal-
+attack phase and its heavy finisher and timed all three points - start,
+last damage before the heavy, end - and the two halves behave
+completely differently.
+
+   combo      normals   heavy    total   damage   dps
+   1 no FM     3.05s     5.98s    9.03s    5146    570
+   2 no FM     3.05s     5.98s    9.03s    5146    570
+   3 mixed     2.98s     5.01s    7.99s    7351    920
+   4 FM        2.97s     5.06s    8.03s    7444    927
+
+THE TWO UNBUFFED COMBOS ARE IDENTICAL TO THE HUNDREDTH - 3.05 / 5.98 /
+9.03 and 5146 damage, twice. At 0% affinity the whole combo is
+deterministic, which is what makes the rest of this readable.
+
+   NORMAL ATTACKS   3.05s -> 2.975s    2.5%, i.e. NO SPEED CHANGE
+   HEAVY ATTACK     5.98s -> 5.035s    19% FASTER
+
+   normals  3559 -> 4270   x1.200
+   heavy    1587 -> 3174   x2.000   EXACTLY DOUBLE
+   combo    5146 -> 7444   x1.447
+
+   dps      570 -> 927     x1.626
+
+SO FLEETING MELODY IS WORTH ABOUT +63%, and it is not a flat buff at
+all. Normal attacks get +20% damage and nothing else. The heavy
+finisher gets DOUBLE damage and comes out a fifth faster. Averaging
+those two into one number, which is what the earlier x1.35 did, hides
+the entire mechanic.
+
+WHERE MY x1.35 WENT WRONG, since it is worth being specific:
+   - it applied x1.20 to the heavy attack, which actually doubles
+   - it measured the speed-up across the whole combo, where the heavy
+     attack's 19% is diluted by normals that do not speed up at all
+Both errors came from treating the combo as one thing. The player's
+three-point timing is what separated them.
+
+THE COST SIDE. The player reports the heavy attack consumes about three
+of the seven dots. Two heavies therefore spend six, which matches the
+window observed here: Fleeting Melody armed during combo 3 at about
+21s, carried combos 3 and 4 with their two heavy finishers, and was
+gone before combo 5 began at 37s. About 15.5 seconds, against 16.4s
+measured independently on video 2.
+
+   so the state is spent by heavy attacks more than by time, and the
+   right way to use it is two heavy finishers per activation
+
+AGAINST SHOCKWAVE, with both now measured properly:
+
+   Fleeting Melody   x1.63 dps for ~15.5s, free to arm, buffs the team
+   Shockwave         +54% per hit for ~10s, after 5.03s of its worst move
+
+Fleeting Melody is now ahead on every term that has been measured.
