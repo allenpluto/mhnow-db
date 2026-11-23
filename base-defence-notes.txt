@@ -768,3 +768,61 @@ effect above is +53%. So it neither confirms nor refutes the estimate.
 It is also far below the player's own best glaive result, the
 unrecorded 1.2m score that implies 750,000 raw against this fight's
 430,896 - a 74% gap on one weapon, which is the same story again.
+
+
+DEAD TIME EXPLAINS MOST OF THE HUNTING HORN SPREAD
+---------------------------------------------------
+The player's own account of the bad fights: "the extremely lower one
+might be the unlucky fight i got knocked out multiple times, or even
+give up the fight in early stage, symptom is damage stop growing for
+long period."
+
+That is directly measurable - the base-defence counter never resets, so
+a flat stretch IS a stretch with no damage landed. Sampling the counter
+every three seconds through the best and worst fights:
+
+   HH1  base 1909    dead 31s of 107s = 29%   four stretches, longest 10s
+   HH5  base 3503    dead  3s of 106s =  3%   one stretch of 3s
+
+HH1's flats sit at roughly 53-59s, 77-86s, 92-98s and 113-122s. THE
+LAST ONE RUNS TO THE END OF THE FIGHT - ten seconds of nothing while
+the x2.0 window was still open, which is the single most expensive
+place in a base defence to be doing nothing.
+
+CORRECTING EACH TO THE SECONDS IT WAS ACTUALLY FIGHTING:
+
+   HH1   2670 dps live      HH5   3605 dps live
+   the gap falls from 83% to 35%
+
+So DEAD TIME ACCOUNTS FOR ABOUT 58% OF THE DIFFERENCE between the best
+and worst Hunting Horn fight. The player's explanation is confirmed,
+and the remaining 35% is ordinary play variation of the size seen
+everywhere else.
+
+AND IT IS NOT THE BUILD. The player confirms no set change across the
+whole weekend - Hunting Horn, Bazelgeuse greaves, Set C throughout. So
+the +53% step between 20 and 21 November is not gear. It is how many
+knockdowns happened, which is a property of the fight rather than of
+anything this engine could score.
+
+THAT IS THE MOST USEFUL THING THE WHOLE BASE-DEFENCE EFFORT HAS
+PRODUCED ABOUT ITS OWN NOISE. The instrument's spread is not mysterious
+run-to-run variance; it is substantially one measurable thing, and that
+thing can be measured and corrected for. A fight with its dead time
+reported alongside its damage is worth far more than one without.
+
+   worth doing on every fight from here: dead time as a percentage,
+   quoted next to base dps
+
+A NOTE ON STYLE, which cannot be resolved. These weekend fights used
+SHOCKWAVE, described by the player as a selfish style - more damage for
+the player, no boost for the team - where the earlier Hunting Horn
+fights used Fleeting Melody.
+
+   Fleeting Melody   base 2919   (one fight, 19 Nov)
+   Shockwave         base 1909, 2224, 2942, 3021, 3503   mean 2720
+
+The Shockwave mean is nominally 7% BELOW the single Fleeting Melody
+figure, which proves nothing at all against a spread of 83%. If the
+style question matters, it needs the dead-time correction above and
+fights from one sitting - not five fights across three days.
