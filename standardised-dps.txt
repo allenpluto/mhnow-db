@@ -2,74 +2,97 @@ Standardised dummy DPS, for comparing weapons and styles
 =========================================================
 A running table of dummy measurements normalised by weapon attack, so
 figures taken on different weapons can be set side by side. NOT used by
-the engine - this is a reference for judging future measurements.
+the engine - a reference for judging future measurements.
 
-HOW TO ADD A ROW. Dummy, 0% AFFINITY so the damage is deterministic,
-attack continuously for about a minute, and take the span from the
-first damage to the last with the panel's idle reset excluded. State
-the weapon's attack, element and affinity. That method is one recording
-and needs no phase bookkeeping, and it is what the Hunting Horn rows
-below use.
+A FLAT ONE-MINUTE NUMBER IS NOT ENOUGH, which is the main thing this
+file exists to say. Most weapons cycle between a weak state and a
+strong one, often with dead time to transform between them, and a
+single blended figure throws that structure away. The structure is
+exactly what decides whether an uptime skill like Power Prolonger is
+worth a slot.
 
-   dps/atk = dps / attack            the figure to compare
-   dps/ae  = dps / (attack+element)  the other bound, see the caveats
+SO EACH ROW RECORDS FOUR THINGS, not one:
+
+   down     dps while the state is down (charging, normal, sword...)
+   up       dps while it is up (boosted, demon, axe boost...)
+   up dur   how long the state lasts once armed
+   cycle    down duration + activation + up duration
+
+   blended  = computed from those, and is the comparable figure
+   dps/atk  = blended / attack
+
+ONE CONTINUOUS RECORDING CAN GIVE ALL OF IT, which is the cheap part:
+attack for about a minute on a 0% AFFINITY weapon so damage is
+deterministic, then split the recording by state afterwards. The
+Fleeting Melody row below was taken that way - the same recording gave
+570 down, 927 up and the 726 blended.
 
 
-=== MEASURED BY CONTINUOUS ATTACKING (directly comparable) ===
+=== HUNTING HORN - Datura Horn 3 (atk 1017, ele 364, aff 0%) ===
 
- weapon             class          atk   ele  aff   style              dps  dps/atk  dps/ae
- Datura Horn 3      Hunting Horn  1017   364   0%   Shockwave          778   0.765   0.564
- Datura Horn 3      Hunting Horn  1017   364   0%   Fleeting Melody    726   0.714   0.526
- Datura Horn 3      Hunting Horn  1017   364   0%   Normal             582   0.573   0.422
+ style             down    up   ratio  up dur  cycle  uptime  blended  dps/atk
+ Shockwave            -     -       -       -      -       -      778    0.765
+ Fleeting Melody    570   927   1.63x   15.5s  33.5s    46%      726    0.714
+ Normal               -     -       -       -      -       -      582    0.573
 
-   measured 2026-11-23, ~68-70s of continuous attacking each.
-   Both styles beat Normal by +34% and +25%; Shockwave leads Fleeting
-   Melody by 7.2%, which is above the 2.4% repeatability but is one run
-   each and reflects how attentively each armed state was maintained.
+   measured 2026-11-23, ~68-70s continuous each. Blended figures are
+   direct measurements; the Fleeting Melody split is from the same run.
+   Shockwave and Normal were not split by state and should be.
+
+   both styles beat Normal by +34% and +25%; Shockwave leads Fleeting
+   Melody by 7.2%, one run each, and that gap reflects how attentively
+   each armed state was kept up rather than the styles' raw strength
 
 
-=== MODELLED FROM PHASE CYCLES (NOT directly comparable to the above) ===
+=== OTHER CLASSES - assembled from phases, NOT directly comparable ===
 
- weapon             class          atk  ele   aff   style              dps  dps/atk
- Thanatos Force 6   Charge Blade  2760    0  -30%   Axe Boost         2625   0.951
- Lumu Smasher 5     Switch Axe    1949    0    0%   no style          1082   0.555
- Lumu Smasher 5     Switch Axe    1949    0    0%   Soaring Wyvern*   1069   0.549
- Lumu Smasher 5     Switch Axe    1949    0    0%   Element Burst C.  1046   0.537
+ weapon            class          atk  aff    down    up   ratio  uptime  blended  dps/atk
+ Thanatos Force 6  Charge Blade  2760 -30%     913  3244   3.55x    76%     2674    0.969
+ Lumu Smasher 5    Switch Axe    1949   0%     886  1334   1.51x    50%     1110    0.570
 
-   * played correctly, firing the power attack straight after the
-     transform rather than repeating the weak charge. As played it was
-     1015 / 0.521.
+   Each is a cycle built from separately timed phases rather than one
+   continuous run, so the blended figures are modelled. Re-take by the
+   continuous method before comparing with the Hunting Horn block.
 
-   THESE ARE ASSEMBLED, NOT MEASURED. Each is a cycle built from
-   separately timed phases - charge, transform, spend - rather than one
-   continuous run. They should be re-taken by the continuous method
-   before being compared with the Hunting Horn rows.
+   Switch Axe styles, blended: no style 1082, Soaring Wyvern Blade 1069
+   played correctly, Element Burst Counter 1046. All within 3.4%.
 
-   sub-state figures, for reference:
-      Switch Axe     axe  886 dps        sword 1334 dps
-      Charge Blade   sword 913 dps       Axe Boost 3244 dps
+
+=== WHAT THE DECOMPOSITION IS FOR ===
+
+Pricing an uptime skill needs the up/down RATIO and the CURRENT UPTIME
+together - neither alone is enough. Applying Power Prolonger 3's
+measured 2.50x window extension to each row above:
+
+   class          ratio  uptime -> uptime   gain
+   Charge Blade   3.55x    76%  ->  89%    +11.3%
+   Hunting Horn   1.63x    46%  ->  68%    +10.7%
+   Switch Axe     1.51x    50%  ->  71%     +8.6%
+
+THEY LAND WITHIN THREE POINTS OF EACH OTHER DESPITE RATIOS FROM 1.5x TO
+3.6x, because a weapon with a strong up-state tends to already spend
+most of its cycle there, and the two effects partly cancel. The engine
+carries POWER_PROLONGER[3] = 0.120 flat for all seven weapon types and
+the Charge Blade measured +12.5%; this is why a single constant has
+survived, and it is a better reason than the one originally given.
+
+   the decomposition would matter much more for a weapon that breaks
+   the pattern - a strong up-state held only briefly, or a weak one
+   held nearly always. None has turned up yet. Finding one is the
+   reason to keep recording the split rather than just the total.
 
 
 === WHY dps/atk IS NOT A CLEAN CLASS COMPARISON ===
 
-ELEMENT. The Datura Horn carries 364 element against 1017 attack, so a
-large share of its damage is elemental and a no-element horn will not
-reproduce 0.765. The two Switch Axe and Charge Blade weapons have no
-element at all. dps/ae is the other bound; the truth is between, and
-separating them needs one more weapon with a different element split.
+ELEMENT. Datura Horn carries 364 element against 1017 attack, so much
+of its damage is elemental; the Switch Axe and Charge Blade weapons
+have none. A no-element horn will not reproduce 0.765.
 
-AFFINITY. Thanatos Force sits at -30% affinity, so its 0.951 is
-achieved DESPITE a penalty the other weapons do not carry. Corrected
-upward it would be higher still, which widens rather than narrows the
-Charge Blade's lead.
+AFFINITY. Thanatos Force sits at -30%, so its 0.969 is achieved DESPITE
+a penalty the others do not carry. Correcting for it widens the Charge
+Blade's lead rather than narrowing it.
 
-ATTACK SCALING MAY NOT BE LINEAR. Every row here comes from one weapon
-per class, so dividing by attack assumes damage is proportional to it.
-Nothing in this project has tested that. Two weapons of the same class
-at different attack values would settle it and should be the next thing
-added.
-
-WHAT THE TABLE IS GOOD FOR AS IT STANDS: comparing STYLES within one
-weapon, where everything else is held constant and the numbers are
-exact. The Hunting Horn block and the Switch Axe block are each
-internally sound. Comparing ACROSS blocks is not yet supported.
+ATTACK SCALING MAY NOT BE LINEAR. One weapon per class, so dividing by
+attack assumes proportionality nothing here has tested. Two weapons of
+the same class at different attack values would settle it and are the
+most valuable rows to add next.
