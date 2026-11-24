@@ -448,3 +448,68 @@ attack per activation - about 39% of one player's output given away -
 which no dummy can score. In a four-player base defence that is not a
 close contest; solo or with a horn already in the party, Shockwave's
 7.2% is real.
+
+
+THE COMBO'S TAIL COSTS MORE THAN IT PAYS - SKIP IT
+----------------------------------------------------
+The player's observation, and the numbers back it hard. The tap-tap-tap
+combo on Datura Horn 3 runs:
+
+   463 | 609 | 238 | 794 1058 | 397 1587
+
+and the bars are the points where it can be BROKEN - by dodging or
+switching to a hold move. The last pair is committed once started.
+
+SPLIT BY PHASE, WITHOUT FLEETING MELODY:
+
+   first five hits   3162 damage over 3.05s   = 1037 dps
+   397 + 1587        1984 damage over 5.98s   =  332 dps
+   whole combo       5146 damage over 9.03s   =  570 dps
+
+THE TAIL IS 39% OF THE DAMAGE FOR 66% OF THE TIME. It drags the combo
+from 1037 dps down to 570 - the finisher is less than a third as good
+as the opening it is attached to.
+
+WHAT BREAKING AFTER 1058 IS WORTH, over the same 9.03s window:
+
+   break cost   damage   dps    vs the full combo
+      0.0s        9362   1037        +82%
+      0.3s        8523    944        +66%
+      0.5s        8043    891        +56%
+      1.0s        7050    781        +37%
+      1.5s        6275    695        +22%
+
+A dodge is quick, so the realistic range is +50% TO +80%. That is far
+larger than any style choice measured on this weapon - Shockwave over
+Normal was +34% - and larger than most skills in the engine.
+
+UNDER FLEETING MELODY THE GAIN SHRINKS, because the finisher is the
+part that doubles:
+
+   first five hits   3794 over 2.97s = 1277 dps
+   476 + 3174        3650 over 5.06s =  721 dps
+   whole combo       7444 over 8.03s =  927 dps
+
+   breaking after 1270: +25% at a 0.3s break, +18% at 0.5s, +3% at 1.0s
+
+So the finisher goes from badly unprofitable to roughly break-even once
+Fleeting Melody is up. THE RIGHT PLAY LOOKS LIKE: break the combo while
+the buff is down, and let it run while the buff is up.
+
+AND THERE IS A SECOND REASON TO SKIP IT UNDER FLEETING MELODY, pointing
+the other way. The heavy consumes about three of the seven Fleeting
+Melody dots. Skipping it should stretch the window substantially - the
+observed 15.5s window carried two heavies, so six of its seven dots
+went on them. A run of nothing but the first five hits might hold the
+buff several times longer, which is worth more than the +25% the tail
+earns while it is up.
+
+   UNTESTED, and it is the obvious next recording: one continuous
+   minute breaking after 1058 every time, with the dots watched. It
+   would settle both the dps gain and the window extension at once.
+
+A CAUTION ON ALL OF THIS. The dummy does not move. In a real fight the
+break is a dodge you may need anyway, which makes it cheaper than the
+table suggests - or the monster is somewhere else, which makes the
+whole question moot. The 1037 dps opening is also a burst rate, not
+something sustained across a hunt.
